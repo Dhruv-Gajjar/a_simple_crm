@@ -1,19 +1,28 @@
 package main
 
 import (
+	"log"
+	"log/slog"
+	"os"
+
+	"founder-diary/internal/middlewares"
 	"founder-diary/internal/routes"
 	"founder-diary/pkg/config"
-	"log"
 
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	config.LoadEnv()
-
 	port := config.GetEnv("PORT", "8080")
+	gin.DisableConsoleColor()
 
-	router := gin.Default()
+	f, _ := os.Create("gin.log")
+	logger := slog.New(slog.NewJSONHandler(f, nil))
+
+	router := gin.New()
+	router.Use(middlewares.SlogMiddleware(logger))
+	router.Use(gin.Recovery())
 
 	config.ConnectDB()
 
