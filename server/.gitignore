@@ -13,6 +13,7 @@ pkg/*
 .env
 *.env
 auth_key.json
+gin.log
 
 #############################
 #  $ gibo Go JetBrains OSX  #
