@@ -19,6 +19,13 @@ type ClientDto struct {
 	Number string
 }
 
+type CreateClientDto struct {
+	Name   string
+	Email  string
+	Status Status
+	Number string
+}
+
 type ClientResponseDto struct {
 	gorm.Model
 	Name   string
