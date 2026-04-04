@@ -1,14 +1,14 @@
-package dto
+package dtos
 
 import "gorm.io/gorm"
 
 type Status string
 
 const (
-	ACTIVE    Status = "active"
-	IN_ACTIVE Status = "in_active"
-	LEAD      Status = "lead"
-	REJECTED  Status = "rejected"
+	Active   Status = "active"
+	InActive Status = "in_active"
+	Lead     Status = "lead"
+	Rejected Status = "rejected"
 )
 
 type ClientDto struct {
