@@ -15,6 +15,7 @@ type Client struct {
 	gorm.Model
 	Name   string `json:"name" gorm:"not null"`
 	Email  string `json:"email" gorm:"unique;not null"`
-	Status Status `json:"status" gorm:"type:varchar(20);default:'lead'"`
+	About  string `json:"about" gorm:"not null"`
+	Status Status `json:"status" gorm:"type:status;default:'lead'"`
 	Number string `json:"number" gorm:"unique;not null"`
 }

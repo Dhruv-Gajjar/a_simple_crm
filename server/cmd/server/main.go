@@ -5,8 +5,11 @@ import (
 	"log/slog"
 	"os"
 
+	"founder-diary/internal/handlers"
 	"founder-diary/internal/middlewares"
+	"founder-diary/internal/repositories"
 	"founder-diary/internal/routes"
+	"founder-diary/internal/services"
 	"founder-diary/pkg/config"
 
 	"github.com/gin-gonic/gin"
@@ -26,13 +29,19 @@ func main() {
 
 	config.ConnectDB()
 
+	// Clients
+	clientRepo := repositories.NewClientRepository(config.DB)
+	clientService := services.NewClientService(clientRepo)
+	clientHandler := handlers.NewClientHandler(clientService)
+
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "CRM Backend Online",
 		})
 	})
+
 	clientGroup := router.Group("/client")
-	routes.SetupClientRoutes(clientGroup)
+	routes.SetupClientRoutes(clientGroup, clientHandler)
 
 	log.Printf("Server starting on port %s", port)
 	router.Run(":" + port)

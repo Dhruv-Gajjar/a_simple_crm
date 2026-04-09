@@ -1,83 +1,60 @@
 package services
 
 import (
+	"context"
 	"founder-diary/internal/dtos"
 	"founder-diary/internal/models"
-	"founder-diary/pkg/config"
+	"founder-diary/internal/repositories"
 )
 
-func GetAllClients() ([]models.Client, error) {
-	var clients []models.Client
-
-	result := config.DB.Find(&clients)
-
-	if result.Error != nil {
-		return nil, result.Error
-	}
-
-	return clients, nil
+type ClientService interface {
+	GetAllClients(ctx context.Context) ([]*models.Client, error)
+	GetClientByID(ctx context.Context, id uint) (*models.Client, error)
+	CreateClient(ctx context.Context, client *dtos.CreateClientDto) (*models.Client, error)
+	UpdateClient(ctx context.Context, client *dtos.ClientDto, id uint) (*models.Client, error)
+	DeleteClient(ctx context.Context, id uint) (*models.Client, error)
 }
 
-func GetClientById(clientId string) (models.Client, error) {
-	var client = models.Client{}
-
-	result := config.DB.Where("id = ?", clientId).First(&client)
-
-	if result.Error != nil {
-		return models.Client{}, result.Error
-	}
-
-	return client, nil
+type clientService struct {
+	repo repositories.ClientRepository
 }
 
-func CreateClient(input dtos.CreateClientDto) (models.Client, error) {
-	client := models.Client{
+func NewClientService(repo repositories.ClientRepository) ClientService {
+	return &clientService{repo: repo}
+}
+
+var _ ClientService = (*clientService)(nil)
+
+func (s *clientService) GetAllClients(ctx context.Context) ([]*models.Client, error) {
+	return s.repo.GetAll(ctx)
+}
+
+func (s *clientService) GetClientByID(ctx context.Context, clientId uint) (*models.Client, error) {
+	return s.repo.GetByID(ctx, clientId)
+}
+
+func (s *clientService) CreateClient(ctx context.Context, input *dtos.CreateClientDto) (*models.Client, error) {
+	client := &models.Client{
 		Name:   input.Name,
 		Email:  input.Email,
+		About:  input.About,
 		Status: models.Status(input.Status),
 		Number: input.Number,
 	}
-
-	result := config.DB.Create(&client)
-
-	if result.Error != nil {
-		return models.Client{}, result.Error
-	}
-
-	return client, nil
+	return s.repo.Create(ctx, client)
 }
 
-func UpdateClient(clientId string, input dtos.ClientDto) (models.Client, error) {
-	var client models.Client
-
-	if err := config.DB.Where("id = ?", clientId).First(&client).Error; err != nil {
-		return models.Client{}, err
-	}
-
-	updateData := models.Client{
+func (s *clientService) UpdateClient(ctx context.Context, input *dtos.ClientDto, id uint) (*models.Client, error) {
+	client := &models.Client{
 		Name:   input.Name,
 		Email:  input.Email,
+		About:  input.About,
 		Status: models.Status(input.Status),
 		Number: input.Number,
 	}
-
-	if err := config.DB.Model(&client).Updates(updateData).Error; err != nil {
-		return models.Client{}, err
-	}
-
-	return client, nil
+	return s.repo.Update(ctx, client, id)
 }
 
-func DeleteClient(clientId string) error {
-	var client models.Client
-
-	if err := config.DB.Where("id = ?", clientId).First(&client).Error; err != nil {
-		return err
-	}
-
-	if err := config.DB.Delete(&client).Error; err != nil {
-		return err
-	}
-
-	return nil
+func (s *clientService) DeleteClient(ctx context.Context, id uint) (*models.Client, error) {
+	return s.repo.Delete(ctx, id)
 }

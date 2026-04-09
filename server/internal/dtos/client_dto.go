@@ -15,6 +15,7 @@ type ClientDto struct {
 	ID     uint
 	Name   string
 	Email  string
+	About  string
 	Status Status
 	Number string
 }
@@ -22,6 +23,7 @@ type ClientDto struct {
 type CreateClientDto struct {
 	Name   string
 	Email  string
+	About  string
 	Status Status
 	Number string
 }
@@ -30,6 +32,7 @@ type ClientResponseDto struct {
 	gorm.Model
 	Name   string
 	Email  string
+	About  string
 	Status Status
 	Number string
 }

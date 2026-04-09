@@ -1,17 +1,28 @@
 package handlers
 
 import (
+	"errors"
 	"net/http"
+	"strconv"
 
 	"founder-diary/internal/dtos"
+	"founder-diary/internal/repositories"
 	"founder-diary/internal/services"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-func GetAllClients(c *gin.Context) {
-	clients, err := services.GetAllClients()
+type ClientHandler struct {
+	clientService services.ClientService
+}
+
+func NewClientHandler(service services.ClientService) *ClientHandler {
+	return &ClientHandler{clientService: service}
+}
+
+func (h *ClientHandler) GetAllClients(c *gin.Context) {
+	clients, err := h.clientService.GetAllClients(c.Request.Context())
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrive clients.!"})
@@ -24,35 +35,40 @@ func GetAllClients(c *gin.Context) {
 	})
 }
 
-func GetClientByID(c *gin.Context) {
-	clientId := c.Param("id")
-	client, err := services.GetClientById(clientId)
+func (h *ClientHandler) GetClientByID(c *gin.Context) {
+	clientIdStr := c.Param("id")
+	clientId, err := strconv.ParseUint(clientIdStr, 10, 32)
 
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid client ID format.!"})
+	}
+
+	client, err := h.clientService.GetClientByID(c.Request.Context(), uint(clientId))
+
+	if err != nil {
+		if errors.Is(err, repositories.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Client not found.!"})
 			return
 		}
 
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error.!"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error.!", "err": err.Error()})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Client Fetch sucesfully.!",
-		"data":    client,
+		"data":    &client,
 	})
 }
 
-func CreateClient(c *gin.Context) {
-	clientInput := dtos.CreateClientDto{}
+func (h *ClientHandler) CreateClient(c *gin.Context) {
+	clientInput := &dtos.CreateClientDto{}
 	if err := c.ShouldBindJSON(&clientInput); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
-	client, err := services.CreateClient(clientInput)
-
+	client, err := h.clientService.CreateClient(c.Request.Context(), clientInput)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create client.!"})
 		return
@@ -64,23 +80,29 @@ func CreateClient(c *gin.Context) {
 	})
 }
 
-func UpdateClient(c *gin.Context) {
-	clientId := c.Param("id")
-	clientInput := dtos.ClientDto{}
+func (h *ClientHandler) UpdateClient(c *gin.Context) {
+	clientIDStr := c.Param("id")
+	clientID, idErr := strconv.ParseUint(clientIDStr, 10, 32)
+
+	if idErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid client ID format.!"})
+	}
+
+	clientInput := &dtos.ClientDto{}
 
 	if err := c.ShouldBindJSON(&clientInput); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	client, err := services.UpdateClient(clientId, clientInput)
+	client, err := h.clientService.UpdateClient(c.Request.Context(), clientInput, uint(clientID))
 
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
+		if errors.Is(err, repositories.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Client not found.!"})
 			return
 		}
 
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error.!"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error.!", "err": err.Error()})
 		return
 	}
 
@@ -90,9 +112,13 @@ func UpdateClient(c *gin.Context) {
 	})
 }
 
-func DeleteClient(c *gin.Context) {
-	clientId := c.Param("id")
-	err := services.DeleteClient(clientId)
+func (h *ClientHandler) DeleteClient(c *gin.Context) {
+	clientIdStr := c.Param("id")
+	clientID, err := strconv.ParseUint(clientIdStr, 10, 32)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid client ID format.!"})
+	}
+	client, err := h.clientService.DeleteClient(c.Request.Context(), uint(clientID))
 
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
@@ -107,5 +133,6 @@ func DeleteClient(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Client deleted sucessfully.!",
+		"data":    client,
 	})
 }
