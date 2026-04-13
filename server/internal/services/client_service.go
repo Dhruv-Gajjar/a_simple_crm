@@ -5,14 +5,16 @@ import (
 	"founder-diary/internal/dtos"
 	"founder-diary/internal/models"
 	"founder-diary/internal/repositories"
+
+	"github.com/google/uuid"
 )
 
 type ClientService interface {
 	GetAllClients(ctx context.Context) ([]*models.Client, error)
-	GetClientByID(ctx context.Context, id uint) (*models.Client, error)
+	GetClientByID(ctx context.Context, id uuid.UUID) (*models.Client, error)
 	CreateClient(ctx context.Context, client *dtos.CreateClientDto) (*models.Client, error)
-	UpdateClient(ctx context.Context, client *dtos.ClientDto, id uint) (*models.Client, error)
-	DeleteClient(ctx context.Context, id uint) (*models.Client, error)
+	UpdateClient(ctx context.Context, client *dtos.ClientDto, id uuid.UUID) (*models.Client, error)
+	DeleteClient(ctx context.Context, id uuid.UUID) (*models.Client, error)
 }
 
 type clientService struct {
@@ -29,7 +31,7 @@ func (s *clientService) GetAllClients(ctx context.Context) ([]*models.Client, er
 	return s.repo.GetAll(ctx)
 }
 
-func (s *clientService) GetClientByID(ctx context.Context, clientId uint) (*models.Client, error) {
+func (s *clientService) GetClientByID(ctx context.Context, clientId uuid.UUID) (*models.Client, error) {
 	return s.repo.GetByID(ctx, clientId)
 }
 
@@ -39,22 +41,22 @@ func (s *clientService) CreateClient(ctx context.Context, input *dtos.CreateClie
 		Email:  input.Email,
 		About:  input.About,
 		Status: models.Status(input.Status),
-		Number: input.Number,
+		Phone:  input.Phone,
 	}
 	return s.repo.Create(ctx, client)
 }
 
-func (s *clientService) UpdateClient(ctx context.Context, input *dtos.ClientDto, id uint) (*models.Client, error) {
+func (s *clientService) UpdateClient(ctx context.Context, input *dtos.ClientDto, id uuid.UUID) (*models.Client, error) {
 	client := &models.Client{
 		Name:   input.Name,
 		Email:  input.Email,
 		About:  input.About,
 		Status: models.Status(input.Status),
-		Number: input.Number,
+		Phone:  input.Phone,
 	}
 	return s.repo.Update(ctx, client, id)
 }
 
-func (s *clientService) DeleteClient(ctx context.Context, id uint) (*models.Client, error) {
+func (s *clientService) DeleteClient(ctx context.Context, id uuid.UUID) (*models.Client, error) {
 	return s.repo.Delete(ctx, id)
 }

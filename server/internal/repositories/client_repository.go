@@ -5,6 +5,7 @@ import (
 	"errors"
 	"founder-diary/internal/models"
 
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -48,8 +49,9 @@ func (r *clientRepository) Create(ctx context.Context, entity *models.Client) (*
 	return client, nil
 }
 
-func (r *clientRepository) GetByID(ctx context.Context, id uint) (*models.Client, error) {
+func (r *clientRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.Client, error) {
 	var client *models.Client
+
 	result := r.db.WithContext(ctx).First(&client, id)
 
 	if result.Error != nil {
@@ -62,7 +64,7 @@ func (r *clientRepository) GetByID(ctx context.Context, id uint) (*models.Client
 	return client, nil
 }
 
-func (r *clientRepository) Update(ctx context.Context, entity *models.Client, id uint) (*models.Client, error) {
+func (r *clientRepository) Update(ctx context.Context, entity *models.Client, id uuid.UUID) (*models.Client, error) {
 	client := entity
 
 	result := r.db.WithContext(ctx).Where("id = ?", id).Updates(&client)
@@ -78,8 +80,9 @@ func (r *clientRepository) Update(ctx context.Context, entity *models.Client, id
 	return client, nil
 }
 
-func (r *clientRepository) Delete(ctx context.Context, id uint) (*models.Client, error) {
+func (r *clientRepository) Delete(ctx context.Context, id uuid.UUID) (*models.Client, error) {
 	var client *models.Client
+
 	result := r.db.WithContext(ctx).Delete(&models.Client{}, id)
 
 	if result.Error != nil {

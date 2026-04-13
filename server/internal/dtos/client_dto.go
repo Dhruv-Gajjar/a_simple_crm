@@ -1,38 +1,26 @@
 package dtos
 
-import "gorm.io/gorm"
+import (
+	"founder-diary/internal/models"
+
+	"github.com/google/uuid"
+)
 
 type Status string
 
-const (
-	Active   Status = "active"
-	InActive Status = "in_active"
-	Lead     Status = "lead"
-	Rejected Status = "rejected"
-)
-
 type ClientDto struct {
-	ID     uint
+	ID     uuid.UUID
 	Name   string
 	Email  string
 	About  string
-	Status Status
-	Number string
+	Status models.Status
+	Phone  string
 }
 
 type CreateClientDto struct {
 	Name   string
 	Email  string
 	About  string
-	Status Status
-	Number string
-}
-
-type ClientResponseDto struct {
-	gorm.Model
-	Name   string
-	Email  string
-	About  string
-	Status Status
-	Number string
+	Status models.Status
+	Phone  string
 }

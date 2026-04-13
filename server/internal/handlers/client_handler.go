@@ -3,13 +3,13 @@ package handlers
 import (
 	"errors"
 	"net/http"
-	"strconv"
 
 	"founder-diary/internal/dtos"
 	"founder-diary/internal/repositories"
 	"founder-diary/internal/services"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -36,14 +36,15 @@ func (h *ClientHandler) GetAllClients(c *gin.Context) {
 }
 
 func (h *ClientHandler) GetClientByID(c *gin.Context) {
-	clientIdStr := c.Param("id")
-	clientId, err := strconv.ParseUint(clientIdStr, 10, 32)
 
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid client ID format.!"})
+	clientIDStr := c.Param("id")
+	clientID, parseErr := uuid.Parse(clientIDStr)
+
+	if parseErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID type.!"})
 	}
 
-	client, err := h.clientService.GetClientByID(c.Request.Context(), uint(clientId))
+	client, err := h.clientService.GetClientByID(c.Request.Context(), clientID)
 
 	if err != nil {
 		if errors.Is(err, repositories.ErrNotFound) {
@@ -82,10 +83,10 @@ func (h *ClientHandler) CreateClient(c *gin.Context) {
 
 func (h *ClientHandler) UpdateClient(c *gin.Context) {
 	clientIDStr := c.Param("id")
-	clientID, idErr := strconv.ParseUint(clientIDStr, 10, 32)
+	clientID, parseErr := uuid.Parse(clientIDStr)
 
-	if idErr != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid client ID format.!"})
+	if parseErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID type.!"})
 	}
 
 	clientInput := &dtos.ClientDto{}
@@ -94,7 +95,7 @@ func (h *ClientHandler) UpdateClient(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 	}
 
-	client, err := h.clientService.UpdateClient(c.Request.Context(), clientInput, uint(clientID))
+	client, err := h.clientService.UpdateClient(c.Request.Context(), clientInput, clientID)
 
 	if err != nil {
 		if errors.Is(err, repositories.ErrNotFound) {
@@ -113,12 +114,14 @@ func (h *ClientHandler) UpdateClient(c *gin.Context) {
 }
 
 func (h *ClientHandler) DeleteClient(c *gin.Context) {
-	clientIdStr := c.Param("id")
-	clientID, err := strconv.ParseUint(clientIdStr, 10, 32)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid client ID format.!"})
+	clientIDStr := c.Param("id")
+	clientID, parseErr := uuid.Parse(clientIDStr)
+
+	if parseErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID type.!"})
 	}
-	client, err := h.clientService.DeleteClient(c.Request.Context(), uint(clientID))
+
+	client, err := h.clientService.DeleteClient(c.Request.Context(), clientID)
 
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
