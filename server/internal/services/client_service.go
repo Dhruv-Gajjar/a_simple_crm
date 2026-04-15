@@ -40,7 +40,7 @@ func (s *clientService) CreateClient(ctx context.Context, input *dtos.CreateClie
 		Name:   input.Name,
 		Email:  input.Email,
 		About:  input.About,
-		Status: models.Status(input.Status),
+		Status: models.ClientStatus(input.Status),
 		Phone:  input.Phone,
 	}
 	return s.repo.Create(ctx, client)
@@ -51,7 +51,7 @@ func (s *clientService) UpdateClient(ctx context.Context, input *dtos.ClientDto,
 		Name:   input.Name,
 		Email:  input.Email,
 		About:  input.About,
-		Status: models.Status(input.Status),
+		Status: models.ClientStatus(input.Status),
 		Phone:  input.Phone,
 	}
 	return s.repo.Update(ctx, client, id)
