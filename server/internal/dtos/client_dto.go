@@ -7,18 +7,21 @@ import (
 )
 
 type ClientDto struct {
-	ID     uuid.UUID
-	Name   string
-	Email  string
-	About  string
-	Status models.ClientStatus
-	Phone  string
+	ID          uuid.UUID
+	Name        string
+	Email       string
+	Soruce      string
+	Status      models.ClientStatus
+	PhoneNumber string
+	Remarks     string
+	Projects    []models.Projects
 }
 
 type CreateClientDto struct {
-	Name   string
-	Email  string
-	About  string
-	Status models.ClientStatus
-	Phone  string
+	Name        string
+	Email       string
+	Soruce      string
+	Status      models.ClientStatus
+	PhoneNumber string
+	Remarks     string
 }

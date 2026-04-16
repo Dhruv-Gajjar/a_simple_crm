@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"founder-diary/internal/dtos"
+	"founder-diary/internal/models"
 	"founder-diary/internal/repositories"
 	"founder-diary/internal/services"
 
@@ -22,7 +23,9 @@ func NewClientHandler(service services.ClientService) *ClientHandler {
 }
 
 func (h *ClientHandler) GetAllClients(c *gin.Context) {
-	clients, err := h.clientService.GetAllClients(c.Request.Context())
+	var clients []*models.Clients
+
+	clients, err := h.clientService.GetAllClients(c.Request.Context(), clients)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrive clients.!"})
@@ -36,7 +39,7 @@ func (h *ClientHandler) GetAllClients(c *gin.Context) {
 }
 
 func (h *ClientHandler) GetClientByID(c *gin.Context) {
-
+	var client *models.Clients
 	clientIDStr := c.Param("id")
 	clientID, parseErr := uuid.Parse(clientIDStr)
 
@@ -44,7 +47,7 @@ func (h *ClientHandler) GetClientByID(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID type.!"})
 	}
 
-	client, err := h.clientService.GetClientByID(c.Request.Context(), clientID)
+	client, err := h.clientService.GetClientByID(c.Request.Context(), client, clientID)
 
 	if err != nil {
 		if errors.Is(err, repositories.ErrNotFound) {
@@ -114,6 +117,7 @@ func (h *ClientHandler) UpdateClient(c *gin.Context) {
 }
 
 func (h *ClientHandler) DeleteClient(c *gin.Context) {
+	var client *models.Clients
 	clientIDStr := c.Param("id")
 	clientID, parseErr := uuid.Parse(clientIDStr)
 
@@ -121,7 +125,7 @@ func (h *ClientHandler) DeleteClient(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID type.!"})
 	}
 
-	client, err := h.clientService.DeleteClient(c.Request.Context(), clientID)
+	client, err := h.clientService.DeleteClient(c.Request.Context(), client, clientID)
 
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {

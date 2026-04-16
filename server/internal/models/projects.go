@@ -22,7 +22,12 @@ type Projects struct {
 	Description string `json:"description"`
 	Status      Status `json:"status" gorm:"type:status;default:'todo'"`
 	ClientID    uuid.UUID
-	Client      Client    `gorm:"foreignKey:ClientID"`
 	StartDate   time.Time `json:"start_date"`
 	EndDate     time.Time `json:"end_date"`
+	TotalCost   float64   `json:"total_cost" gorm:"type:decimal(10,1);default:0.00;not null"`
+	Iterations  int       `json:"iterations" gorm:"default:0;not null"`
+
+	Transactions []Transactions `json:"transactions,omitempty" gorm:"foreignKey:ProjectID"`
+	Notes        []Notes        `json:"notes,omitempty" gorm:"foreignKey:ProjectID"`
+	Invoices     []Invoices     `json:"invoices,omitempty" gorm:"foreignKey:ProjectID"`
 }

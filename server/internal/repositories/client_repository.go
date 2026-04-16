@@ -10,7 +10,7 @@ import (
 )
 
 type ClientRepository interface {
-	BaseReporitory[models.Client]
+	BaseReporitory[models.Clients]
 }
 
 type clientRepository struct {
@@ -23,8 +23,8 @@ func NewClientRepository(db *gorm.DB) ClientRepository {
 
 var _ ClientRepository = (*clientRepository)(nil)
 
-func (r *clientRepository) GetAll(ctx context.Context) ([]*models.Client, error) {
-	var clients []*models.Client
+func (r *clientRepository) GetAll(ctx context.Context, entity []*models.Clients) ([]*models.Clients, error) {
+	clients := entity
 
 	result := r.db.WithContext(ctx).Find(&clients)
 
@@ -35,7 +35,7 @@ func (r *clientRepository) GetAll(ctx context.Context) ([]*models.Client, error)
 	return clients, nil
 }
 
-func (r *clientRepository) Create(ctx context.Context, entity *models.Client) (*models.Client, error) {
+func (r *clientRepository) Create(ctx context.Context, entity *models.Clients) (*models.Clients, error) {
 	client := entity
 	result := r.db.WithContext(ctx).Create(client)
 
@@ -49,8 +49,8 @@ func (r *clientRepository) Create(ctx context.Context, entity *models.Client) (*
 	return client, nil
 }
 
-func (r *clientRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.Client, error) {
-	var client *models.Client
+func (r *clientRepository) GetByID(ctx context.Context, entity *models.Clients, id uuid.UUID) (*models.Clients, error) {
+	client := entity
 
 	result := r.db.WithContext(ctx).First(&client, id)
 
@@ -64,7 +64,7 @@ func (r *clientRepository) GetByID(ctx context.Context, id uuid.UUID) (*models.C
 	return client, nil
 }
 
-func (r *clientRepository) Update(ctx context.Context, entity *models.Client, id uuid.UUID) (*models.Client, error) {
+func (r *clientRepository) Update(ctx context.Context, entity *models.Clients, id uuid.UUID) (*models.Clients, error) {
 	client := entity
 
 	result := r.db.WithContext(ctx).Where("id = ?", id).Updates(&client)
@@ -80,10 +80,10 @@ func (r *clientRepository) Update(ctx context.Context, entity *models.Client, id
 	return client, nil
 }
 
-func (r *clientRepository) Delete(ctx context.Context, id uuid.UUID) (*models.Client, error) {
-	var client *models.Client
+func (r *clientRepository) Delete(ctx context.Context, entity *models.Clients, id uuid.UUID) (*models.Clients, error) {
+	client := entity
 
-	result := r.db.WithContext(ctx).Delete(&models.Client{}, id)
+	result := r.db.WithContext(ctx).Delete(&models.Clients{}, id)
 
 	if result.Error != nil {
 		return nil, result.Error

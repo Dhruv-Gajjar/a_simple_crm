@@ -10,11 +10,11 @@ import (
 )
 
 type ClientService interface {
-	GetAllClients(ctx context.Context) ([]*models.Client, error)
-	GetClientByID(ctx context.Context, id uuid.UUID) (*models.Client, error)
-	CreateClient(ctx context.Context, client *dtos.CreateClientDto) (*models.Client, error)
-	UpdateClient(ctx context.Context, client *dtos.ClientDto, id uuid.UUID) (*models.Client, error)
-	DeleteClient(ctx context.Context, id uuid.UUID) (*models.Client, error)
+	GetAllClients(ctx context.Context, clients []*models.Clients) ([]*models.Clients, error)
+	GetClientByID(ctx context.Context, client *models.Clients, id uuid.UUID) (*models.Clients, error)
+	CreateClient(ctx context.Context, client *dtos.CreateClientDto) (*models.Clients, error)
+	UpdateClient(ctx context.Context, client *dtos.ClientDto, id uuid.UUID) (*models.Clients, error)
+	DeleteClient(ctx context.Context, client *models.Clients, id uuid.UUID) (*models.Clients, error)
 }
 
 type clientService struct {
@@ -27,36 +27,38 @@ func NewClientService(repo repositories.ClientRepository) ClientService {
 
 var _ ClientService = (*clientService)(nil)
 
-func (s *clientService) GetAllClients(ctx context.Context) ([]*models.Client, error) {
-	return s.repo.GetAll(ctx)
+func (s *clientService) GetAllClients(ctx context.Context, clients []*models.Clients) ([]*models.Clients, error) {
+	return s.repo.GetAll(ctx, clients)
 }
 
-func (s *clientService) GetClientByID(ctx context.Context, clientId uuid.UUID) (*models.Client, error) {
-	return s.repo.GetByID(ctx, clientId)
+func (s *clientService) GetClientByID(ctx context.Context, client *models.Clients, clientId uuid.UUID) (*models.Clients, error) {
+	return s.repo.GetByID(ctx, client, clientId)
 }
 
-func (s *clientService) CreateClient(ctx context.Context, input *dtos.CreateClientDto) (*models.Client, error) {
-	client := &models.Client{
-		Name:   input.Name,
-		Email:  input.Email,
-		About:  input.About,
-		Status: models.ClientStatus(input.Status),
-		Phone:  input.Phone,
+func (s *clientService) CreateClient(ctx context.Context, input *dtos.CreateClientDto) (*models.Clients, error) {
+	client := &models.Clients{
+		Name:        input.Name,
+		Email:       input.Email,
+		Soruce:      input.Soruce,
+		Status:      models.ClientStatus(input.Status),
+		PhoneNumber: input.PhoneNumber,
+		Remarks:     input.Remarks,
 	}
 	return s.repo.Create(ctx, client)
 }
 
-func (s *clientService) UpdateClient(ctx context.Context, input *dtos.ClientDto, id uuid.UUID) (*models.Client, error) {
-	client := &models.Client{
-		Name:   input.Name,
-		Email:  input.Email,
-		About:  input.About,
-		Status: models.ClientStatus(input.Status),
-		Phone:  input.Phone,
+func (s *clientService) UpdateClient(ctx context.Context, input *dtos.ClientDto, id uuid.UUID) (*models.Clients, error) {
+	client := &models.Clients{
+		Name:        input.Name,
+		Email:       input.Email,
+		Soruce:      input.Soruce,
+		Status:      models.ClientStatus(input.Status),
+		PhoneNumber: input.PhoneNumber,
+		Remarks:     input.Remarks,
 	}
 	return s.repo.Update(ctx, client, id)
 }
 
-func (s *clientService) DeleteClient(ctx context.Context, id uuid.UUID) (*models.Client, error) {
-	return s.repo.Delete(ctx, id)
+func (s *clientService) DeleteClient(ctx context.Context, client *models.Clients, id uuid.UUID) (*models.Clients, error) {
+	return s.repo.Delete(ctx, client, id)
 }

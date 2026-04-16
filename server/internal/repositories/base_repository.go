@@ -14,11 +14,11 @@ var (
 )
 
 type BaseReporitory[T any] interface {
-	GetAll(ctx context.Context) ([]*T, error)
+	GetAll(ctx context.Context, entity []*T) ([]*T, error)
 	Create(ctx context.Context, entity *T) (*T, error)
-	GetByID(ctx context.Context, ID uuid.UUID) (*T, error)
+	GetByID(ctx context.Context, entity *T, ID uuid.UUID) (*T, error)
 	Update(ctx context.Context, entity *T, ID uuid.UUID) (*T, error)
-	Delete(ctx context.Context, ID uuid.UUID) (*T, error)
+	Delete(ctx context.Context, entity *T, ID uuid.UUID) (*T, error)
 }
 
 // TODO: CRUD takes argument data and pass it inside entity
