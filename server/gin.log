@@ -1,3 +1,0 @@
-{"time":"2026-04-01T19:32:21.9484562+05:30","level":"INFO","msg":"request","method":"POST","path":"/client/","query":"","status":200,"latency":507800,"client_ip":"::1","body_size":67}
-{"time":"2026-04-01T19:32:37.8693628+05:30","level":"INFO","msg":"request","method":"POST","path":"/client/","query":"","status":200,"latency":0,"client_ip":"::1","body_size":67}
-{"time":"2026-04-01T19:35:41.0853921+05:30","level":"INFO","msg":"request","method":"GET","path":"/client/","query":"","status":200,"latency":1883200,"client_ip":"::1","body_size":32}
