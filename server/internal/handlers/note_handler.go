@@ -119,6 +119,7 @@ func (h *NotesHandler) Update(c *gin.Context) {
 
 func (h *NotesHandler) Delete(c *gin.Context) {
 	var note *models.Notes
+
 	notesIDStr := c.Param("id")
 	noteID, noteIDErr := uuid.Parse(notesIDStr)
 

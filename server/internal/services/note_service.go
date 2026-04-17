@@ -54,5 +54,5 @@ func (s *notesService) Update(ctx context.Context, input *dtos.NoteDto, id uuid.
 }
 
 func (s *notesService) Delete(ctx context.Context, note *models.Notes, id uuid.UUID) (*models.Notes, error) {
-	return s.Delete(ctx, note, id)
+	return s.repo.Delete(ctx, note, id)
 }

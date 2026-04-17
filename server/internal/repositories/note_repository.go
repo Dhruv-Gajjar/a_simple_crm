@@ -77,10 +77,14 @@ func (r *noteRepository) Update(ctx context.Context, entity *models.Notes, id uu
 func (r *noteRepository) Delete(ctx context.Context, entity *models.Notes, id uuid.UUID) (*models.Notes, error) {
 	note := entity
 
-	result := r.db.WithContext(ctx).Delete(&note)
+	result := r.db.WithContext(ctx).Delete(&note, id)
 
 	if result.Error != nil {
 		return nil, result.Error
+	}
+
+	if result.RowsAffected == 0 {
+		return nil, ErrNotFound
 	}
 
 	return note, nil
