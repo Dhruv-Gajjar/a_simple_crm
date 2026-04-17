@@ -61,7 +61,7 @@ func (h *ClientHandler) GetClientByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Client Fetch sucesfully.!",
-		"data":    &client,
+		"data":    client,
 	})
 }
 

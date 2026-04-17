@@ -36,6 +36,34 @@ func (h *NotesHandler) GetAll(c *gin.Context) {
 	})
 }
 
+func (h *NotesHandler) GetByID(c *gin.Context) {
+	var noteEntity *models.Notes
+
+	notesIDStr := c.Param("id")
+	noteID, noteIDErr := uuid.Parse(notesIDStr)
+
+	if noteIDErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format.!"})
+		return
+	}
+
+	note, err := h.notesService.GetByID(c.Request.Context(), noteEntity, noteID)
+
+	if err != nil {
+		if errors.Is(err, repositories.ErrNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Note not found.!"})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error.!", "err": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Note Fetch sucesfully.!",
+		"data":    note,
+	})
+}
+
 func (h *NotesHandler) Create(c *gin.Context) {
 	input := &dtos.CreateNoteDto{}
 
@@ -86,5 +114,32 @@ func (h *NotesHandler) Update(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Note updated sucesfully.!",
 		"data":    note,
+	})
+}
+
+func (h *NotesHandler) Delete(c *gin.Context) {
+	var note *models.Notes
+	notesIDStr := c.Param("id")
+	noteID, noteIDErr := uuid.Parse(notesIDStr)
+
+	if noteIDErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid ID format.!"})
+		return
+	}
+
+	deletedNote, err := h.notesService.Delete(c.Request.Context(), note, noteID)
+
+	if err != nil {
+		if errors.Is(err, repositories.ErrNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "Note not found.!"})
+			return
+		}
+
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error.!", "err": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Note deleted sucesfully.!",
+		"data":    deletedNote,
 	})
 }

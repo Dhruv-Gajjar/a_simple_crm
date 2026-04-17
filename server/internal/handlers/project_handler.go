@@ -60,7 +60,7 @@ func (h *ProjectHandler) GetProjectByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Project Fetch sucesfully.!",
-		"data":    &project,
+		"data":    project,
 	})
 }
 

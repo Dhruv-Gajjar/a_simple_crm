@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"founder-diary/internal/dtos"
 	"founder-diary/internal/models"
 
 	"github.com/google/uuid"
@@ -10,9 +9,7 @@ import (
 )
 
 type NoteRepository interface {
-	GetAll(ctx context.Context, entity []*models.Notes) ([]*models.Notes, error)
-	Create(ctx context.Context, entity *dtos.CreateNoteDto) (*models.Notes, error)
-	Update(ctx context.Context, entity *dtos.NoteDto, id uuid.UUID) (*models.Notes, error)
+	BaseReporitory[models.Notes]
 }
 
 type noteRepository struct {
@@ -37,11 +34,20 @@ func (r *noteRepository) GetAll(ctx context.Context, entities []*models.Notes) (
 	return notes, nil
 }
 
-func (r *noteRepository) Create(ctx context.Context, input *dtos.CreateNoteDto) (*models.Notes, error) {
-	note := &models.Notes{
-		ProjectID: input.ProjectID,
-		Content:   input.Content,
+func (r *noteRepository) GetByID(ctx context.Context, entity *models.Notes, id uuid.UUID) (*models.Notes, error) {
+	note := entity
+
+	result := r.db.WithContext(ctx).First(&note, id)
+
+	if result.Error != nil {
+		return nil, result.Error
 	}
+
+	return note, nil
+}
+
+func (r *noteRepository) Create(ctx context.Context, entity *models.Notes) (*models.Notes, error) {
+	note := entity
 
 	result := r.db.WithContext(ctx).Create(&note)
 
@@ -52,12 +58,8 @@ func (r *noteRepository) Create(ctx context.Context, input *dtos.CreateNoteDto) 
 	return note, nil
 }
 
-func (r *noteRepository) Update(ctx context.Context, input *dtos.NoteDto, id uuid.UUID) (*models.Notes, error) {
-	note := &models.Notes{
-		ID:        input.ID,
-		ProjectID: input.ProjectID,
-		Content:   input.Content,
-	}
+func (r *noteRepository) Update(ctx context.Context, entity *models.Notes, id uuid.UUID) (*models.Notes, error) {
+	note := entity
 
 	result := r.db.WithContext(ctx).Where("id = ?", id).Updates(&note)
 
@@ -67,6 +69,18 @@ func (r *noteRepository) Update(ctx context.Context, input *dtos.NoteDto, id uui
 
 	if result.RowsAffected == 0 {
 		return nil, ErrNotFound
+	}
+
+	return note, nil
+}
+
+func (r *noteRepository) Delete(ctx context.Context, entity *models.Notes, id uuid.UUID) (*models.Notes, error) {
+	note := entity
+
+	result := r.db.WithContext(ctx).Delete(&note)
+
+	if result.Error != nil {
+		return nil, result.Error
 	}
 
 	return note, nil
