@@ -34,14 +34,24 @@ func main() {
 	clientService := services.NewClientService(clientRepo)
 	clientHandler := handlers.NewClientHandler(clientService)
 
+	// Projects
+	projectRepo := repositories.NewProjectRepository(config.DB)
+	projectService := services.NewProjectService(projectRepo)
+	projectHandler := handlers.NewProjectHandler(projectService)
+
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "CRM Backend Online",
 		})
 	})
 
+	// Clients
 	clientGroup := router.Group("/client")
 	routes.SetupClientRoutes(clientGroup, clientHandler)
+
+	// Projects
+	projectGroup := router.Group("/project")
+	routes.SetupProjectsRoutes(projectGroup, projectHandler)
 
 	log.Printf("Server starting on port %s", port)
 	router.Run(":" + port)

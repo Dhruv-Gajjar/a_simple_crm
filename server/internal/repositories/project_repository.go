@@ -31,7 +31,6 @@ func (r *projectRepository) GetAll(ctx context.Context, entity []*models.Project
 	if result.Error != nil {
 		return nil, result.Error
 	}
-
 	return projects, nil
 }
 

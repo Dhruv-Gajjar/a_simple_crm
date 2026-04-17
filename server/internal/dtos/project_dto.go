@@ -15,6 +15,8 @@ type ProjectDTO struct {
 	ClientID    uuid.UUID
 	StartDate   time.Time
 	EndDate     time.Time
+	TotalCost   float64
+	Iterations  int
 }
 
 type CreateProjectDTO struct {
@@ -24,4 +26,6 @@ type CreateProjectDTO struct {
 	ClientID    uuid.UUID
 	StartDate   time.Time
 	EndDate     time.Time
+	TotalCost   float64
+	Iterations  int
 }

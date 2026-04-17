@@ -20,7 +20,7 @@ type Projects struct {
 	BaseModel
 	Name        string `json:"name" gorm:"not null"`
 	Description string `json:"description"`
-	Status      Status `json:"status" gorm:"type:status;default:'todo'"`
+	Status      Status `json:"status" gorm:"column:status;default:'todo'"`
 	ClientID    uuid.UUID
 	StartDate   time.Time `json:"start_date"`
 	EndDate     time.Time `json:"end_date"`

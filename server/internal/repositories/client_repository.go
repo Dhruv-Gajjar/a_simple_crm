@@ -26,7 +26,7 @@ var _ ClientRepository = (*clientRepository)(nil)
 func (r *clientRepository) GetAll(ctx context.Context, entity []*models.Clients) ([]*models.Clients, error) {
 	clients := entity
 
-	result := r.db.WithContext(ctx).Find(&clients)
+	result := r.db.WithContext(ctx).Preload("Projects").Find(&clients)
 
 	if result.Error != nil {
 		return nil, result.Error
