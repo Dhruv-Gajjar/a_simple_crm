@@ -26,7 +26,7 @@ var _ ProjectRepository = (*projectRepository)(nil)
 func (r *projectRepository) GetAll(ctx context.Context, entity []*models.Projects) ([]*models.Projects, error) {
 	var projects []*models.Projects
 
-	result := r.db.WithContext(ctx).Preload("Notes").Find(&projects)
+	result := r.db.WithContext(ctx).Preload("Notes").Preload("Transactions").Find(&projects)
 
 	if result.Error != nil {
 		return nil, result.Error

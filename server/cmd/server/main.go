@@ -44,6 +44,11 @@ func main() {
 	noteService := services.NewNotesService(noteRepo)
 	noteHandler := handlers.NewNotesHandler(noteService)
 
+	// Transactions
+	transactionRepo := repositories.NewTransactionRepository(config.DB)
+	transactionService := services.NewTransactionService(transactionRepo)
+	transactionHandler := handlers.NewTransactionHandler(transactionService)
+
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
 			"message": "CRM Backend Online",
@@ -61,6 +66,10 @@ func main() {
 	// Notes
 	noteGroup := router.Group("/note")
 	routes.SetupNotesRoutes(noteGroup, noteHandler)
+
+	// Transactions
+	transactionGroup := router.Group("/transaction")
+	routes.SetupTransactionsRoutes(transactionGroup, transactionHandler)
 
 	log.Printf("Server starting on port %s", port)
 	router.Run(":" + port)
