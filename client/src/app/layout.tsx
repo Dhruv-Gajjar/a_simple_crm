@@ -2,8 +2,19 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Noto_Sans } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import Providers from "@/providers";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
 
-const notoSansHeading = Noto_Sans({subsets:['latin'],variable:'--font-heading'});
+const notoSansHeading = Noto_Sans({
+  subsets: ["latin"],
+  variable: "--font-main",
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,9 +39,34 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, notoSansHeading.variable)}
+      className={cn(
+        "h-full",
+        "antialiased",
+        geistSans.variable,
+        geistMono.variable,
+        notoSansHeading.variable,
+      )}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body
+        className="min-h-full flex flex-col font-main"
+        suppressHydrationWarning
+      >
+        <Providers>
+          <TooltipProvider>
+            <SidebarProvider>
+              <AppSidebar />
+              <SidebarInset>
+                <div className="flex flex-1 flex-col gap-4 p-4">
+                  <main>
+                    <SidebarTrigger />
+                    {children}
+                  </main>
+                </div>
+              </SidebarInset>
+            </SidebarProvider>
+          </TooltipProvider>
+        </Providers>
+      </body>
     </html>
   );
 }
