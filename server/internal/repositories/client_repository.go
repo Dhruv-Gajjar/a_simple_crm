@@ -59,10 +59,6 @@ func (r *clientRepository) GetAllClientsCount(ctx context.Context, entity []*mod
 		return nil, result.Error
 	}
 
-	fmt.Printf("Clients %v", clients)
-	fmt.Printf("TotalClients %v", stats.Total)
-	fmt.Printf("ActiveClients %v", stats.Active)
-
 	return &models.ClientResponse{
 		ActiveClients: clients,
 		Total:         stats.Total,

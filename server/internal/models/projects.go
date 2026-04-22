@@ -31,3 +31,9 @@ type Projects struct {
 	Notes        []Notes        `json:"notes,omitempty" gorm:"foreignKey:ProjectID"`
 	Invoices     []Invoices     `json:"invoices,omitempty" gorm:"foreignKey:ProjectID"`
 }
+
+type ProjectResponse struct {
+	Projects []*Projects
+	Total         int64
+	Active        int64
+}

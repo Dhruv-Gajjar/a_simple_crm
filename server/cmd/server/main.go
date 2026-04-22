@@ -12,6 +12,7 @@ import (
 	"founder-diary/internal/services"
 	"founder-diary/pkg/config"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -24,6 +25,7 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(f, nil))
 
 	router := gin.New()
+	router.Use(cors.Default())
 	router.Use(middlewares.SlogMiddleware(logger))
 	router.Use(gin.Recovery())
 

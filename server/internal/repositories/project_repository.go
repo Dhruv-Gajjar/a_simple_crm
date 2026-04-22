@@ -11,6 +11,7 @@ import (
 
 type ProjectRepository interface {
 	BaseReporitory[models.Projects]
+	GetAllProjectsCount(ctx context.Context, entity []*models.Projects) (*models.ProjectResponse, error)
 }
 
 type projectRepository struct {
@@ -32,6 +33,34 @@ func (r *projectRepository) GetAll(ctx context.Context, entity []*models.Project
 		return nil, result.Error
 	}
 	return projects, nil
+}
+
+func (r *projectRepository) GetAllProjectsCount(ctx context.Context, entity []*models.Projects) (*models.ProjectResponse, error) {
+	projects := entity
+
+	type Stats struct {
+		Total  int64
+		Active int64
+	}
+
+	var stats Stats
+	countErr := r.db.Model(projects).Select("COUNT(*) as total, COUNT(*) FILTER(WHERE status = 'active') as active").Scan(&stats).Error
+
+	if countErr != nil {
+		return nil, countErr
+	}
+
+	result := r.db.WithContext(ctx).Preload("Projects").Where("status = ?", "active").Find(&projects)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return &models.ProjectResponse{
+		Projects: projects,
+		Total:         stats.Total,
+		Active:        stats.Active,
+	}, nil
 }
 
 func (r *projectRepository) GetByID(ctx context.Context, entity *models.Projects, id uuid.UUID) (*models.Projects, error) {

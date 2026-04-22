@@ -23,7 +23,9 @@ func NewProjectHandler(service services.ProjectService) *ProjectHandler {
 
 func (h *ProjectHandler) GetAllProjects(c *gin.Context) {
 	var projects []*models.Projects
-	projects, err := h.projectService.GetAllProjects(c.Request.Context(), projects)
+	var projectRes *models.ProjectResponse
+
+	projectRes, err := h.projectService.GetAllProjects(c.Request.Context(), projects)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrive projects.!"})
@@ -32,7 +34,7 @@ func (h *ProjectHandler) GetAllProjects(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Project Fetch sucesfully.!",
-		"data":    &projects,
+		"data":    &projectRes,
 	})
 
 }

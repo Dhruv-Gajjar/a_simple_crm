@@ -10,7 +10,7 @@ import (
 )
 
 type ProjectService interface {
-	GetAllProjects(ctx context.Context, projects []*models.Projects) ([]*models.Projects, error)
+	GetAllProjects(ctx context.Context, projects []*models.Projects) (*models.ProjectResponse, error)
 	GetProjectByID(ctx context.Context, project *models.Projects, id uuid.UUID) (*models.Projects, error)
 	Create(ctx context.Context, projectDto *dtos.CreateProjectDTO) (*models.Projects, error)
 	Update(ctx context.Context, projectDto *dtos.ProjectDTO, id uuid.UUID) (*models.Projects, error)
@@ -27,8 +27,8 @@ func NewProjectService(repo repositories.ProjectRepository) ProjectService {
 
 var _ ProjectService = (*projectService)(nil)
 
-func (s *projectService) GetAllProjects(ctx context.Context, projects []*models.Projects) ([]*models.Projects, error) {
-	return s.repo.GetAll(ctx, projects)
+func (s *projectService) GetAllProjects(ctx context.Context, projects []*models.Projects) (*models.ProjectResponse, error) {
+	return s.repo.GetAllProjectsCount(ctx, projects)
 }
 
 func (s *projectService) GetProjectByID(ctx context.Context, project *models.Projects, id uuid.UUID) (*models.Projects, error) {
