@@ -44,13 +44,13 @@ func (r *projectRepository) GetAllProjectsCount(ctx context.Context, entity []*m
 	}
 
 	var stats Stats
-	countErr := r.db.Model(projects).Select("COUNT(*) as total, COUNT(*) FILTER(WHERE status = 'active') as active").Scan(&stats).Error
+	countErr := r.db.Model(projects).Select("COUNT(*) as total, COUNT(*) FILTER(WHERE status = 'in_progress') as active").Scan(&stats).Error
 
 	if countErr != nil {
 		return nil, countErr
 	}
 
-	result := r.db.WithContext(ctx).Preload("Projects").Where("status = ?", "active").Find(&projects)
+	result := r.db.WithContext(ctx).Preload("Notes").Preload("Transactions").Find(&projects)
 
 	if result.Error != nil {
 		return nil, result.Error
@@ -58,8 +58,8 @@ func (r *projectRepository) GetAllProjectsCount(ctx context.Context, entity []*m
 
 	return &models.ProjectResponse{
 		Projects: projects,
-		Total:         stats.Total,
-		Active:        stats.Active,
+		Total:    stats.Total,
+		Active:   stats.Active,
 	}, nil
 }
 
