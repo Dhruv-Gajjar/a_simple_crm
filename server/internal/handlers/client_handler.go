@@ -24,8 +24,9 @@ func NewClientHandler(service services.ClientService) *ClientHandler {
 
 func (h *ClientHandler) GetAllClients(c *gin.Context) {
 	var clients []*models.Clients
+	var clientRes *models.ClientResponse
 
-	clients, err := h.clientService.GetAllClients(c.Request.Context(), clients)
+	clientRes, err := h.clientService.GetAllClients(c.Request.Context(), clients)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrive clients.!"})
@@ -34,7 +35,7 @@ func (h *ClientHandler) GetAllClients(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "All clients fetch sucessfully.!",
-		"data":    clients,
+		"data":    clientRes,
 	})
 }
 

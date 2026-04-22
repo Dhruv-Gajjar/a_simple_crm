@@ -3,6 +3,7 @@ package repositories
 import (
 	"context"
 	"errors"
+	"fmt"
 	"founder-diary/internal/models"
 
 	"github.com/google/uuid"
@@ -11,6 +12,7 @@ import (
 
 type ClientRepository interface {
 	BaseReporitory[models.Clients]
+	GetAllClientsCount(ctx context.Context, entity []*models.Clients) (*models.ClientResponse, error)
 }
 
 type clientRepository struct {
@@ -33,6 +35,39 @@ func (r *clientRepository) GetAll(ctx context.Context, entity []*models.Clients)
 	}
 
 	return clients, nil
+}
+
+func (r *clientRepository) GetAllClientsCount(ctx context.Context, entity []*models.Clients) (*models.ClientResponse, error) {
+	clients := entity
+
+	type Stats struct {
+		Total  int64
+		Active int64
+	}
+
+	var stats Stats
+	countErr := r.db.Model(clients).Select("COUNT(*) as total, COUNT(*) FILTER(WHERE status = 'active') as active").Scan(&stats).Error
+
+	if countErr != nil {
+		fmt.Printf("Get All Clients Count: %v", countErr)
+		return nil, countErr
+	}
+
+	result := r.db.WithContext(ctx).Preload("Projects").Where("status = ?", "active").Find(&clients)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	fmt.Printf("Clients %v", clients)
+	fmt.Printf("TotalClients %v", stats.Total)
+	fmt.Printf("ActiveClients %v", stats.Active)
+
+	return &models.ClientResponse{
+		ActiveClients: clients,
+		Total:         stats.Total,
+		Active:        stats.Active,
+	}, nil
 }
 
 func (r *clientRepository) Create(ctx context.Context, entity *models.Clients) (*models.Clients, error) {

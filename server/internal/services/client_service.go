@@ -10,7 +10,7 @@ import (
 )
 
 type ClientService interface {
-	GetAllClients(ctx context.Context, clients []*models.Clients) ([]*models.Clients, error)
+	GetAllClients(ctx context.Context, clients []*models.Clients) (*models.ClientResponse, error)
 	GetClientByID(ctx context.Context, client *models.Clients, id uuid.UUID) (*models.Clients, error)
 	CreateClient(ctx context.Context, client *dtos.CreateClientDto) (*models.Clients, error)
 	UpdateClient(ctx context.Context, client *dtos.ClientDto, id uuid.UUID) (*models.Clients, error)
@@ -27,8 +27,8 @@ func NewClientService(repo repositories.ClientRepository) ClientService {
 
 var _ ClientService = (*clientService)(nil)
 
-func (s *clientService) GetAllClients(ctx context.Context, clients []*models.Clients) ([]*models.Clients, error) {
-	return s.repo.GetAll(ctx, clients)
+func (s *clientService) GetAllClients(ctx context.Context, clients []*models.Clients) (*models.ClientResponse, error) {
+	return s.repo.GetAllClientsCount(ctx, clients)
 }
 
 func (s *clientService) GetClientByID(ctx context.Context, client *models.Clients, clientId uuid.UUID) (*models.Clients, error) {

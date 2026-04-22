@@ -19,3 +19,9 @@ type Clients struct {
 	Remarks      string       `json:"remarks,omitempty"`
 	Projects     []Projects   `gorm:"foreignKey:ClientID"`
 }
+
+type ClientResponse struct {
+	ActiveClients []*Clients
+	Total         int64
+	Active        int64
+}
