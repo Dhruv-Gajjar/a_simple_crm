@@ -53,7 +53,7 @@ func (r *clientRepository) GetAllClientsCount(ctx context.Context, entity []*mod
 		return nil, countErr
 	}
 
-	result := r.db.WithContext(ctx).Preload("Projects").Where("status = ?", "active").Find(&clients)
+	result := r.db.WithContext(ctx).Preload("Projects").Find(&clients)
 
 	if result.Error != nil {
 		return nil, result.Error

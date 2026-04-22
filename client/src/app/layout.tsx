@@ -1,15 +1,16 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono, Noto_Sans } from "next/font/google";
-import "./globals.css";
-import { cn } from "@/lib/utils";
-import Providers from "@/providers";
-import { TooltipProvider } from "@/components/ui/tooltip";
+import { AppSidebar } from "@/components/app-sidebar";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/app-sidebar";
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import Providers from "@/providers";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono, Noto_Sans } from "next/font/google";
+import "./globals.css";
 
 const notoSansHeading = Noto_Sans({
   subsets: ["latin"],
@@ -61,6 +62,7 @@ export default function RootLayout({
                     <SidebarTrigger />
                     {children}
                   </main>
+                  <Toaster />
                 </div>
               </SidebarInset>
             </SidebarProvider>
