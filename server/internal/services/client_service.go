@@ -37,24 +37,24 @@ func (s *clientService) GetClientByID(ctx context.Context, client *models.Client
 
 func (s *clientService) CreateClient(ctx context.Context, input *dtos.CreateClientDto) (*models.Clients, error) {
 	client := &models.Clients{
-		Name:         input.Name,
-		Email:        input.Email,
-		Soruce:       input.Soruce,
-		ClientStatus: models.ClientStatus(input.ClientStatus),
-		PhoneNumber:  input.PhoneNumber,
-		Remarks:      input.Remarks,
+		Name:        input.Name,
+		Email:       input.Email,
+		Soruce:      input.Soruce,
+		Status:      models.ClientStatus(input.Status),
+		PhoneNumber: input.PhoneNumber,
+		Remarks:     input.Remarks,
 	}
 	return s.repo.Create(ctx, client)
 }
 
 func (s *clientService) UpdateClient(ctx context.Context, input *dtos.ClientDto, id uuid.UUID) (*models.Clients, error) {
 	client := &models.Clients{
-		Name:         input.Name,
-		Email:        input.Email,
-		Soruce:       input.Soruce,
-		ClientStatus: models.ClientStatus(input.ClientStatus),
-		PhoneNumber:  input.PhoneNumber,
-		Remarks:      input.Remarks,
+		Name:        input.Name,
+		Email:       input.Email,
+		Soruce:      input.Soruce,
+		Status:      models.ClientStatus(input.Status),
+		PhoneNumber: input.PhoneNumber,
+		Remarks:     input.Remarks,
 	}
 	return s.repo.Update(ctx, client, id)
 }
