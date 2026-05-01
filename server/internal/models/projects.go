@@ -34,6 +34,7 @@ type Projects struct {
 
 type ProjectResponse struct {
 	Projects []*Projects
-	Total         int64
-	Active        int64
+	Total    int64
+	Active   int64
 }
+

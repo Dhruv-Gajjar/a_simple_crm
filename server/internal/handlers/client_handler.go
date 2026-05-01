@@ -2,12 +2,11 @@ package handlers
 
 import (
 	"errors"
-	"net/http"
-
 	"founder-diary/internal/dtos"
 	"founder-diary/internal/models"
 	"founder-diary/internal/repositories"
 	"founder-diary/internal/services"
+	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -27,15 +26,16 @@ func (h *ClientHandler) GetAllClients(c *gin.Context) {
 	var clientRes *models.ClientResponse
 
 	clientRes, err := h.clientService.GetAllClients(c.Request.Context(), clients)
-
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrive clients.!"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "All clients fetch sucessfully.!",
-		"data":    clientRes,
+		"message":        "All clients fetch sucessfully.!",
+		"clients":        clientRes.ActiveClients,
+		"total_clients":  clientRes.Total,
+		"active_clients": clientRes.Active,
 	})
 }
 
@@ -49,7 +49,6 @@ func (h *ClientHandler) GetClientByID(c *gin.Context) {
 	}
 
 	client, err := h.clientService.GetClientByID(c.Request.Context(), client, clientID)
-
 	if err != nil {
 		if errors.Is(err, repositories.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Client not found.!"})
@@ -100,7 +99,6 @@ func (h *ClientHandler) UpdateClient(c *gin.Context) {
 	}
 
 	client, err := h.clientService.UpdateClient(c.Request.Context(), clientInput, clientID)
-
 	if err != nil {
 		if errors.Is(err, repositories.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Client not found.!"})
@@ -127,7 +125,6 @@ func (h *ClientHandler) DeleteClient(c *gin.Context) {
 	}
 
 	client, err := h.clientService.DeleteClient(c.Request.Context(), client, clientID)
-
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 
