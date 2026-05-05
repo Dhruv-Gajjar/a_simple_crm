@@ -39,7 +39,7 @@ func (s *clientService) CreateClient(ctx context.Context, input *dtos.CreateClie
 	client := &models.Clients{
 		Name:        input.Name,
 		Email:       input.Email,
-		Soruce:      input.Soruce,
+		Source:      input.Source,
 		Status:      models.ClientStatus(input.Status),
 		PhoneNumber: input.PhoneNumber,
 		Remarks:     input.Remarks,
@@ -51,7 +51,7 @@ func (s *clientService) UpdateClient(ctx context.Context, input *dtos.ClientDto,
 	client := &models.Clients{
 		Name:        input.Name,
 		Email:       input.Email,
-		Soruce:      input.Soruce,
+		Source:      input.Source,
 		Status:      models.ClientStatus(input.Status),
 		PhoneNumber: input.PhoneNumber,
 		Remarks:     input.Remarks,

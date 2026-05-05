@@ -10,7 +10,7 @@ type ClientDto struct {
 	ID          uuid.UUID
 	Name        string
 	Email       string
-	Soruce      string
+	Source      string
 	Status      models.Status
 	PhoneNumber string
 	Remarks     string
@@ -20,7 +20,7 @@ type ClientDto struct {
 type CreateClientDto struct {
 	Name        string
 	Email       string
-	Soruce      string
+	Source      string
 	Status      models.Status
 	PhoneNumber string
 	Remarks     string
