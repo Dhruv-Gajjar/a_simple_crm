@@ -1,5 +1,3 @@
-import { useClientStore } from "@/stores/clientStore";
-
 import {
   Field,
   FieldContent,
@@ -9,8 +7,8 @@ import {
 } from "./ui/field";
 import { Input } from "./ui/input";
 import * as z from "zod";
-import { CLIENT_STATUS } from "@/types";
-import { Controller, useForm } from "react-hook-form";
+import { Client, CLIENT_STATUS, NewClient } from "@/types";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import {
@@ -28,6 +26,9 @@ import {
 } from "./ui/input-group";
 import useClientManager from "@/hooks/use-client-manager";
 import { Spinner } from "./ui/spinner";
+import { useGlobalStore } from "@/stores/globalStore";
+import { useClientStore } from "@/stores/clientStore";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   name: z.string().min(4).max(50),
@@ -40,7 +41,7 @@ const formSchema = z.object({
     CLIENT_STATUS.Rejected,
   ]),
   phoneNumber: z.string().min(14),
-  remarks: z.optional(z.string()),
+  remarks: z.string().optional(),
 });
 
 const defaultFormValues = {
@@ -57,45 +58,135 @@ const ClientForm = () => {
     resolver: zodResolver(formSchema),
     defaultValues: defaultFormValues,
   });
-  const { createNewClient } = useClientManager();
-  const setOpen = useClientStore((state) => state.setOpenCreateClient);
+  const watchValue = useWatch({
+    control: form.control,
+    name: "status",
+  });
+  const { clientsData, createNewClient, updateClient } = useClientManager();
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    console.log("DATA: ", data);
-    createNewClient.mutate({
-      name: data.name,
-      email: data.email,
-      soruce: data.source,
-      status: data.status,
-      phoneNumber: data.phoneNumber,
-      remarks: data.remarks ? data.remarks : "",
-    });
+  const clientID = useClientStore((state) => state.selectedClientID);
+  const setClientID = useClientStore((state) => state.setClientID);
 
-    if (createNewClient.isError) {
-      toast(`Failed to add new client: ${createNewClient.error.message}`, {
-        duration: 4000,
-      });
+  const setOpen = useGlobalStore((state) => state.setOpenClientDialog);
+  const isEditMode = useGlobalStore((state) => state.isEditMode);
+  const setEditMode = useGlobalStore((state) => state.setIsEditMode);
+
+  useEffect(() => {
+    if (isEditMode && clientID && clientsData) {
+      const client = clientsData?.clients?.find(
+        (client: Client) => client.ID === clientID,
+      );
+
+      if (client) {
+        form.setValues({
+          name: client.name,
+          email: client.email,
+          source: client.source,
+          status: client.status,
+          phoneNumber: client.phone_number,
+          remarks: client.remarks ? client.remarks : "",
+        });
+      } else {
+        toast.error("Client not found.!", { duration: 3000 });
+      }
+    } else {
       return;
     }
+  }, [isEditMode, clientID, clientsData, form]);
 
-    if (createNewClient.isPending) {
-      <div>
-        <p>Adding new client...</p>
-        <Spinner />
-      </div>;
-    }
-    setOpen();
-    toast("You submitted the following values:", {
-      description: (
-        <pre className="mt-2 w-[320px] overflow-x-auto rounded-md bg-code p-4 text-black">
-          <code>{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-      position: "bottom-right",
-      classNames: {
-        content: "flex flex-col gap-2",
+  function createClient(data: NewClient) {
+    createNewClient.mutate(
+      {
+        name: data.name,
+        email: data.email,
+        source: data.source,
+        status: data.status,
+        phoneNumber: data.phoneNumber,
+        remarks: data.remarks ? data.remarks : "",
       },
-    });
+      {
+        onSuccess: () => {
+          toast("You submitted the following values:", {
+            description: (
+              <pre className="mt-2 w-[320px] overflow-x-auto rounded-md bg-code p-4 text-black">
+                <code>{JSON.stringify(data, null, 2)}</code>
+              </pre>
+            ),
+            position: "bottom-right",
+            classNames: {
+              content: "flex flex-col gap-2",
+            },
+          });
+          setOpen();
+        },
+        onError: (error) => {
+          toast(`Failed to add new client: ${error.message}`, {
+            duration: 4000,
+          });
+        },
+      },
+    );
+  }
+
+  function editClient(data: NewClient) {
+    if (clientID && clientsData) {
+      const client = clientsData?.clients.find(
+        (client: Client) => client.ID === clientID,
+      );
+
+      updateClient.mutate(
+        {
+          ID: client.ID,
+          name: data.name,
+          email: data.email,
+          source: data.source,
+          status: data.status,
+          phoneNumber: data.phoneNumber,
+          remarks: data.remarks ? data.remarks : "",
+          Projects: client.projects,
+        },
+        {
+          onSuccess: (data) => {
+            setEditMode();
+            setClientID("");
+            toast.success(data?.message, {
+              duration: 3000,
+            });
+            form.reset();
+            setOpen();
+          },
+          onError: (error) => {
+            toast.error(error?.message, {
+              duration: 3000,
+            });
+          },
+        },
+      );
+    }
+  }
+
+  function onSubmit(data: z.infer<typeof formSchema>) {
+    if (!isEditMode) {
+      createClient(data);
+    } else {
+      editClient(data);
+    }
+  }
+
+  if (createNewClient.isPending) {
+    return (
+      <div className="w-full h-full">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (updateClient.isPending) {
+    return (
+      <div className="w-full h-full">
+        <Spinner />
+      </div>
+    );
   }
 
   return (
@@ -147,10 +238,10 @@ const ClientForm = () => {
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel>Soruce</FieldLabel>
+                <FieldLabel>Source</FieldLabel>
                 <Input
                   {...field}
-                  id="client-form-soruce"
+                  id="client-form-source"
                   aria-invalid={fieldState.invalid}
                   placeholder="Found via network."
                   autoComplete="off"
@@ -173,6 +264,7 @@ const ClientForm = () => {
                   )}
                 </FieldContent>
                 <Select
+                  key={field.value}
                   name={field.name}
                   value={field.value}
                   onValueChange={(value) => {
@@ -190,16 +282,20 @@ const ClientForm = () => {
                     <SelectValue placeholder="Client Status" />
                   </SelectTrigger>
                   <SelectContent position="item-aligned">
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="in_active">In Active</SelectItem>
-                    <SelectItem value="lead">Lead</SelectItem>
-                    <SelectItem value="rejected">Rejected</SelectItem>
+                    <SelectItem value={CLIENT_STATUS.Active}>Active</SelectItem>
+                    <SelectItem value={CLIENT_STATUS.InActive}>
+                      In Active
+                    </SelectItem>
+                    <SelectItem value={CLIENT_STATUS.Lead}>Lead</SelectItem>
+                    <SelectItem value={CLIENT_STATUS.Rejected}>
+                      Rejected
+                    </SelectItem>
                   </SelectContent>
                 </Select>{" "}
               </Field>
             )}
           />
-          {form.watch("status") === CLIENT_STATUS.Rejected && (
+          {watchValue === CLIENT_STATUS.Rejected && (
             <Controller
               name="remarks"
               control={form.control}

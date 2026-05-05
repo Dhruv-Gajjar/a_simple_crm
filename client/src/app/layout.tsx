@@ -9,8 +9,18 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import Providers from "@/providers";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Noto_Sans } from "next/font/google";
+import {
+  Geist,
+  Geist_Mono,
+  Noto_Sans,
+  Inter,
+  Montserrat,
+} from "next/font/google";
 import "./globals.css";
+
+const interHeading = Inter({ subsets: ["latin"], variable: "--font-heading" });
+
+const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
 
 const notoSansHeading = Noto_Sans({
   subsets: ["latin"],
@@ -46,6 +56,9 @@ export default function RootLayout({
         geistSans.variable,
         geistMono.variable,
         notoSansHeading.variable,
+        "font-sans",
+        montserrat.variable,
+        interHeading.variable,
       )}
     >
       <body

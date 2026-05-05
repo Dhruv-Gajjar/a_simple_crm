@@ -1,20 +1,74 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Row } from "@tanstack/react-table";
 import { Badge } from "../ui/badge";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
+import { MoreHorizontal } from "lucide-react";
+import { useGlobalStore } from "@/stores/globalStore";
+import { FC } from "react";
+import { useClientStore } from "@/stores/clientStore";
+import { Client } from "@/types";
 
-export type Clients = {
-  id: string;
-  name: string;
-  email: string;
-  soruce: string;
-  status: "active" | "in_active" | "lead" | "rejected";
-  phone_number: string;
-  remarks: string;
-  projects: unknown[];
+type ActionCellProps = {
+  row: Row<Client>;
 };
 
-export const columns: ColumnDef<Clients>[] = [
+const ActionCell: FC<ActionCellProps> = ({ row }) => {
+  const client = row.original;
+
+  const setOpenDeleteDialog = useGlobalStore(
+    (state) => state.setOpenDeleteDialog,
+  );
+  const setOpenClientDialog = useGlobalStore(
+    (state) => state.setOpenClientDialog,
+  );
+  const setEditMode = useGlobalStore((state) => state.setIsEditMode);
+
+  const setClientName = useClientStore((state) => state.setClientName);
+  const setClientID = useClientStore((state) => state.setClientID);
+
+  return (
+    <>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="h-8 w-8 p-0">
+            <MoreHorizontal />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end">
+          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+          <DropdownMenuItem
+            onClick={() => {
+              setEditMode();
+              setClientID(client.ID);
+              setOpenClientDialog();
+            }}
+          >
+            Edit
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => {
+              setClientID(client.ID);
+              setClientName(client.name);
+              setOpenDeleteDialog();
+            }}
+          >
+            Delete
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
+  );
+};
+
+export const columns: ColumnDef<Client>[] = [
   {
     accessorKey: "name",
     header: "Name",
@@ -24,7 +78,7 @@ export const columns: ColumnDef<Clients>[] = [
     header: "Email",
   },
   {
-    accessorKey: "soruce",
+    accessorKey: "source",
     header: "Source",
   },
   {
@@ -54,5 +108,11 @@ export const columns: ColumnDef<Clients>[] = [
   {
     accessorKey: "phone_number",
     header: "Phone Number",
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => {
+      return <ActionCell row={row} />;
+    },
   },
 ];

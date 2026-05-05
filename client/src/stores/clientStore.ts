@@ -1,24 +1,26 @@
-import { Client } from "@/types";
 import { create } from "zustand";
 
 type State = {
   selectedClientID: string | null;
-  isCreateClientModalOpen: boolean;
-  isEditClientModalOpen: boolean;
-  setOpenCreateClient: () => void;
-  setOpenEditClient: () => void;
+  clientName: string;
 };
 
-export const useClientStore = create<State>((set) => ({
+type Action = {
+  setClientID: (clientID: string) => void;
+  setClientName: (clientName: string) => void;
+};
+
+export const useClientStore = create<State & Action>((set) => ({
   selectedClientID: null,
-  isCreateClientModalOpen: false,
-  isEditClientModalOpen: false,
-  setOpenCreateClient: () =>
-    set((state) => ({
-      isCreateClientModalOpen: !state.isCreateClientModalOpen,
-    })),
-  setOpenEditClient: () =>
-    set((state) => ({
-      isEditClientModalOpen: !state.isEditClientModalOpen,
-    })),
+  clientName: "",
+
+  setClientID: (clientID: string) =>
+    set({
+      selectedClientID: clientID,
+    }),
+
+  setClientName: (clientName: string) =>
+    set({
+      clientName: clientName,
+    }),
 }));

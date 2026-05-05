@@ -53,10 +53,7 @@ const data = {
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
-    <Sidebar
-      {...props}
-      className="text-sidebar-foreground border-sidebar-border"
-    >
+    <Sidebar {...props} className="text-white border-sidebar-border">
       <SidebarHeader>
         <header className="flex items-center gap-4 p-4 font-mono">
           <Boxes size={28} />
@@ -81,7 +78,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarContent>
       <SidebarFooter>
         <footer className="flex items-center gap-4 p-4">
-          <Button variant="outline" className="w-full rounded-sm">
+          <Button variant="outline" className="w-full">
             <LogOut data-icon="inline-end" />
             Logout
           </Button>

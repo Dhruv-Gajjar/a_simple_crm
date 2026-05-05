@@ -20,20 +20,20 @@ export const enum INVOICES_STATUS {
 }
 
 export interface Client {
-  id: string;
+  ID: string;
   name: string;
   email: string;
-  soruce: string;
+  source: string;
   status: CLIENT_STATUS;
   phoneNumber: string;
-  remarks: string;
-  projects: Project[];
+  remarks?: string;
+  Projects: Project[];
 }
 
-export type NewClient = Omit<Client, "id" | "projects">;
+export type NewClient = Omit<Client, "ID" | "Projects">;
 
 export interface Project {
-  id: string;
+  ID: string;
   name: string;
   description: string;
   status: PROJECT_STATUS;
@@ -43,34 +43,34 @@ export interface Project {
   total_cost: number;
   iterations: number;
 
-  transactions: Transactions[];
-  notes: Notes[];
-  invoices: Invoices[];
+  Transactions: Transactions[];
+  Notes: Notes[];
+  Invoices: Invoices[];
 }
 
 export interface Transactions {
-  id: string;
+  ID: string;
   projectId: string;
   amount_paid: number;
   paymentMethod: string;
   paymentDate: Date;
-  createdAt: Date;
+  CreatedAt: Date;
 }
 
 export interface Notes {
-  id: string;
+  ID: string;
   projectId: string;
   content: string;
-  createdAt: Date;
+  CreatedAt: Date;
 }
 
 export interface Invoices {
-  id: string;
+  ID: string;
   projectId: string;
   invoiceNumber: number;
   amount: number;
   status: INVOICES_STATUS;
   issueDate: Date;
   dueDate: Date;
-  createdAt: Date;
+  CreatedAt: Date;
 }

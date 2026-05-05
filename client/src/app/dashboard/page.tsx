@@ -3,12 +3,14 @@ import axiosInstance from "@/api";
 import { columns } from "@/components/AppTable/columns";
 import { AppDataTable } from "@/components/AppTable/data-table";
 import CreateClientDialog from "@/components/CreateClientDialog";
+import DeleteDialog from "@/components/DeleteDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useClientManager from "@/hooks/use-client-manager";
 import { useClientStore } from "@/stores/clientStore";
+import { useGlobalStore } from "@/stores/globalStore";
 import { Transactions } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 import { PlusCircle } from "lucide-react";
@@ -17,12 +19,14 @@ import { toast } from "sonner";
 
 const Dashboard: FC = () => {
   let totalEarnings: number = 0;
-  const { clients, isClientsLoading, isClientsError, clientsError } =
+  const { clientsData, isClientsLoading, isClientsError, clientsError } =
     useClientManager();
 
-  const setOepnCreateClient = useClientStore(
-    (state) => state.setOpenCreateClient,
+  const setOepnCreateClient = useGlobalStore(
+    (state) => state.setOpenClientDialog,
   );
+
+  const clientName = useClientStore((state) => state.clientName);
 
   const {
     data: projects,
@@ -107,7 +111,7 @@ const Dashboard: FC = () => {
                   <CardContent>
                     <h4 className="text-foreground">Total Clients</h4>
                     <p className="text-3xl font-bold pt-2">
-                      {clients.active_clients} / {clients.total_clients}
+                      {clientsData.active_clients} / {clientsData.total_clients}
                     </p>
                   </CardContent>
                 </Card>
@@ -128,8 +132,9 @@ const Dashboard: FC = () => {
               </div>
 
               <div className="pt-4">
-                {clients && (
-                  <AppDataTable columns={columns} data={clients.clients} />
+                <DeleteDialog name={clientName} />
+                {clientsData.clients && (
+                  <AppDataTable columns={columns} data={clientsData.clients} />
                 )}
               </div>
             </>

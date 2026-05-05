@@ -1,4 +1,3 @@
-import { useClientStore } from "@/stores/clientStore";
 import {
   Dialog,
   DialogClose,
@@ -11,10 +10,11 @@ import {
 import { Field } from "./ui/field";
 import { Button } from "./ui/button";
 import ClientForm from "./ClientForm";
+import { useGlobalStore } from "@/stores/globalStore";
 
 const CreateClientDialog = () => {
-  const isOpen = useClientStore((state) => state.isCreateClientModalOpen);
-  const setOpen = useClientStore((state) => state.setOpenCreateClient);
+  const isOpen = useGlobalStore((state) => state.isClientDialogOpen);
+  const setOpen = useGlobalStore((state) => state.setOpenClientDialog);
 
   return (
     <Dialog open={isOpen}>
