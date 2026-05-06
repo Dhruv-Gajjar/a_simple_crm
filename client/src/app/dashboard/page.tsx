@@ -4,6 +4,7 @@ import { columns } from "@/components/AppTable/columns";
 import { AppDataTable } from "@/components/AppTable/data-table";
 import CreateClientDialog from "@/components/CreateClientDialog";
 import DeleteDialog from "@/components/DeleteDialog";
+import { AppBarChart } from "@/components/AppBarChart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
@@ -16,6 +17,7 @@ import { useQuery } from "@tanstack/react-query";
 import { PlusCircle } from "lucide-react";
 import { FC } from "react";
 import { toast } from "sonner";
+import { AppPieChart } from "@/components/AppPieChart";
 
 const Dashboard: FC = () => {
   let totalEarnings: number = 0;
@@ -140,8 +142,9 @@ const Dashboard: FC = () => {
             </>
           </TabsContent>
           <TabsContent value="analytics">
-            <div>
-              <p>Analytics</p>
+            <div className="grid grid-cols-1 lg:grid-cols-2 items-center gap-4 p-4 w-full">
+              <AppBarChart />
+              <AppPieChart />
             </div>
           </TabsContent>
         </Tabs>

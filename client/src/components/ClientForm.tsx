@@ -117,6 +117,7 @@ const ClientForm = () => {
               content: "flex flex-col gap-2",
             },
           });
+          form.reset();
           setOpen();
         },
         onError: (error) => {
