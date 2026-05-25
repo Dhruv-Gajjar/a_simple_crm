@@ -15,6 +15,7 @@ import { useGlobalStore } from "@/stores/globalStore";
 const CreateClientDialog = () => {
   const isOpen = useGlobalStore((state) => state.isClientDialogOpen);
   const setOpen = useGlobalStore((state) => state.setOpenClientDialog);
+  const setIsEdit = useGlobalStore((state) => state.setIsEditMode);
 
   return (
     <Dialog open={isOpen}>
@@ -34,7 +35,10 @@ const CreateClientDialog = () => {
               <Button
                 className="w-30"
                 variant="outline"
-                onClick={() => setOpen()}
+                onClick={() => {
+                  setIsEdit();
+                  setOpen();
+                }}
               >
                 Close
               </Button>

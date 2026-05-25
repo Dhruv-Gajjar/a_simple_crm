@@ -1,4 +1,5 @@
 import { ClientService } from "@/services/clientService";
+import { useGlobalStore } from "@/stores/globalStore";
 import { Client, NewClient } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
@@ -10,6 +11,7 @@ type ClientResponse = {
 };
 
 const useClientManager = () => {
+  const page = useGlobalStore((state) => state.page);
   const queryClient = useQueryClient();
 
   const {
@@ -18,9 +20,9 @@ const useClientManager = () => {
     isError: isClientsError,
     error: clientsError,
   } = useQuery({
-    queryKey: ["clients"],
+    queryKey: ["clients", page],
     queryFn: async () => {
-      const client = await ClientService.getAllClients();
+      const client = await ClientService.getAllClients(page);
       return client;
     },
   });

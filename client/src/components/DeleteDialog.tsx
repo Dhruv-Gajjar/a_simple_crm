@@ -55,8 +55,8 @@ const DeleteDialog: FC<DeleteDialogProps> = ({ name }) => {
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete:
-            <b>{name}</b>
+            This action cannot be undone. This will permanently delete:{" "}
+            <b>{name.padStart(1)}</b>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

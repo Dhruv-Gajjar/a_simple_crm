@@ -18,6 +18,7 @@ import { PlusCircle } from "lucide-react";
 import { FC } from "react";
 import { toast } from "sonner";
 import { AppPieChart } from "@/components/AppPieChart";
+import { mockClients } from "@/mockData";
 
 const Dashboard: FC = () => {
   let totalEarnings: number = 0;
@@ -30,60 +31,63 @@ const Dashboard: FC = () => {
 
   const clientName = useClientStore((state) => state.clientName);
 
-  const {
-    data: projects,
-    isError: isProjectsError,
-    error: projectsError,
-    isLoading: isProjectsLoading,
-  } = useQuery({
-    queryKey: ["getAllProjects"],
-    queryFn: async () => {
-      const response = await axiosInstance.get("project/");
-      return response.data;
-    },
-  });
+  // const {
+  //   data: projects,
+  //   isError: isProjectsError,
+  //   error: projectsError,
+  //   isLoading: isProjectsLoading,
+  // } = useQuery({
+  //   queryKey: ["getAllProjects"],
+  //   queryFn: async () => {
+  //     const response = await axiosInstance.get("project/");
+  //     return response.data;
+  //   },
+  // });
 
-  const {
-    data: transactions,
-    isError: isTransactionsError,
-    error: transactionsError,
-    isLoading: isTransactionLoading,
-  } = useQuery({
-    queryKey: ["getAllTransactions"],
-    queryFn: async () => {
-      const response = await axiosInstance.get("transaction/");
-      return response.data;
-    },
-  });
+  // const {
+  //   data: transactions,
+  //   isError: isTransactionsError,
+  //   error: transactionsError,
+  //   isLoading: isTransactionLoading,
+  // } = useQuery({
+  //   queryKey: ["getAllTransactions"],
+  //   queryFn: async () => {
+  //     const response = await axiosInstance.get("transaction/");
+  //     return response.data;
+  //   },
+  // });
 
-  if (isClientsError || isProjectsError || isTransactionsError) {
+  if (
+    isClientsError
+    // || isProjectsError
+    // || isTransactionsError
+  ) {
     return (
       <div className="text-red-400 w-full h-screen">
-        Error while loading data:{" "}
         {isClientsError && clientsError instanceof Error
           ? toast.error(clientsError?.message, { duration: 5000 })
           : "Unknown Error"}
-        {isProjectsError && projectsError instanceof Error
+        {/*{isProjectsError && projectsError instanceof Error
           ? toast.error(projectsError?.message, { duration: 5000 })
           : "Unknown Error"}
         {isTransactionsError && transactionsError instanceof Error
           ? toast.error(transactionsError?.message, { duration: 5000 })
-          : "Unknown Error"}
+          : "Unknown Error"}*/}
       </div>
     );
   }
 
-  if (transactions) {
-    const totalCost = transactions?.data?.reduce(
-      (acc: number, val: Transactions) => {
-        return acc + val.amount_paid;
-      },
-      0,
-    );
-    totalEarnings = totalCost;
-  }
+  // if (transactions) {
+  //   const totalCost = transactions?.data?.reduce(
+  //     (acc: number, val: Transactions) => {
+  //       return acc + val.amount_paid;
+  //     },
+  //     0,
+  //   );
+  //   totalEarnings = totalCost;
+  // }
 
-  if (isClientsLoading || isProjectsLoading || isTransactionLoading) {
+  if (isClientsLoading) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
         <Spinner className="size-8 text-primary" />
@@ -113,7 +117,8 @@ const Dashboard: FC = () => {
                   <CardContent>
                     <h4 className="text-foreground">Total Clients</h4>
                     <p className="text-3xl font-bold pt-2">
-                      {clientsData.active_clients} / {clientsData.total_clients}
+                      {clientsData ? clientsData.active_clients : 2} /{" "}
+                      {clientsData ? clientsData.total_clients : 4}
                     </p>
                   </CardContent>
                 </Card>
@@ -121,14 +126,16 @@ const Dashboard: FC = () => {
                   <CardContent>
                     <h4 className="text-foreground">Total Projects</h4>
                     <p className="text-3xl font-bold pt-2">
-                      {projects.data.Active} / {projects.data.Total}
+                      {1} / {2}
                     </p>
                   </CardContent>
                 </Card>
                 <Card size="sm" className="mx-auto w-full max-w-sm">
                   <CardContent>
                     <h4 className="text-foreground">Total Earnings</h4>
-                    <p className="text-3xl font-bold pt-2">$ {totalEarnings}</p>
+                    <p className="text-3xl font-bold pt-2">
+                      $ {totalEarnings ? totalEarnings : 20000}
+                    </p>
                   </CardContent>
                 </Card>
               </div>
@@ -136,7 +143,11 @@ const Dashboard: FC = () => {
               <div className="pt-4">
                 <DeleteDialog name={clientName} />
                 {clientsData.clients && (
-                  <AppDataTable columns={columns} data={clientsData.clients} />
+                  <AppDataTable
+                    columns={columns}
+                    data={clientsData.clients}
+                    isPagination={false}
+                  />
                 )}
               </div>
             </>

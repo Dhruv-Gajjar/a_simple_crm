@@ -28,6 +28,10 @@ export interface Client {
   phoneNumber: string;
   remarks?: string;
   Projects: Project[];
+
+  CreatedAt: Date;
+  UpdatedAt: Date;
+  DeletedAt: Date;
 }
 
 export type NewClient = Omit<Client, "ID" | "Projects">;

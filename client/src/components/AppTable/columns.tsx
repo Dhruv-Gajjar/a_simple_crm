@@ -10,11 +10,12 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, PencilLine, Trash2, ArrowUpDown } from "lucide-react";
 import { useGlobalStore } from "@/stores/globalStore";
 import { FC } from "react";
 import { useClientStore } from "@/stores/clientStore";
 import { Client } from "@/types";
+import { DataTableColumnHeader } from "./data-table-column-header";
 
 type ActionCellProps = {
   row: Row<Client>;
@@ -51,6 +52,7 @@ const ActionCell: FC<ActionCellProps> = ({ row }) => {
               setOpenClientDialog();
             }}
           >
+            <PencilLine />
             Edit
           </DropdownMenuItem>
           <DropdownMenuItem
@@ -60,6 +62,7 @@ const ActionCell: FC<ActionCellProps> = ({ row }) => {
               setOpenDeleteDialog();
             }}
           >
+            <Trash2 />
             Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -71,19 +74,27 @@ const ActionCell: FC<ActionCellProps> = ({ row }) => {
 export const columns: ColumnDef<Client>[] = [
   {
     accessorKey: "name",
-    header: "Name",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Name" />
+    ),
   },
   {
     accessorKey: "email",
-    header: "Email",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Email" />
+    ),
   },
   {
     accessorKey: "source",
-    header: "Source",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Soruce" />
+    ),
   },
   {
     accessorKey: "status",
-    header: "Status",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Status" />
+    ),
     cell: ({ row }) => {
       const status: string = row.getValue("status");
 
@@ -107,9 +118,12 @@ export const columns: ColumnDef<Client>[] = [
   },
   {
     accessorKey: "phone_number",
-    header: "Phone Number",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Phone Number" />
+    ),
   },
   {
+    header: "Actions",
     id: "actions",
     cell: ({ row }) => {
       return <ActionCell row={row} />;

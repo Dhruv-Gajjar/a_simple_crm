@@ -2,32 +2,28 @@ import { create } from "zustand";
 
 type State = {
   isClientDialogOpen: boolean;
-  // isEditClientModalOpen: boolean;
   isDeleteDialogOpen: boolean;
   isEditMode: boolean;
+  page: number;
 };
 
 type Action = {
   setOpenClientDialog: () => void;
-  // setOpenEditClient: () => void;
   setOpenDeleteDialog: () => void;
   setIsEditMode: () => void;
+  setPage: (page: number) => void;
 };
 
 export const useGlobalStore = create<State & Action>((set) => ({
   isClientDialogOpen: false,
-  // isEditClientModalOpen: false,
   isDeleteDialogOpen: false,
   isEditMode: false,
+  page: 1,
 
   setOpenClientDialog: () =>
     set((state) => ({
       isClientDialogOpen: !state.isClientDialogOpen,
     })),
-  // setOpenEditClient: () =>
-  //   set((state) => ({
-  //     isEditClientModalOpen: !state.isEditClientModalOpen,
-  //   })),
   setOpenDeleteDialog: () =>
     set((state) => ({
       isDeleteDialogOpen: !state.isDeleteDialogOpen,
@@ -35,5 +31,9 @@ export const useGlobalStore = create<State & Action>((set) => ({
   setIsEditMode: () =>
     set((state) => ({
       isEditMode: !state.isEditMode,
+    })),
+  setPage: (page: number) =>
+    set(() => ({
+      page,
     })),
 }));
