@@ -22,10 +22,13 @@ func NewClientHandler(service services.ClientService) *ClientHandler {
 }
 
 func (h *ClientHandler) GetAllClients(c *gin.Context) {
+	page := c.Query("page")
+	limit := c.Query("limit")
+
 	var clients []*models.Clients
 	var clientRes *models.ClientResponse
 
-	clientRes, err := h.clientService.GetAllClients(c.Request.Context(), clients)
+	clientRes, err := h.clientService.GetAllClients(c.Request.Context(), clients, page, limit)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrive clients.!"})
 		return

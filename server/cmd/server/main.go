@@ -4,6 +4,7 @@ import (
 	"log"
 	"log/slog"
 	"os"
+	"time"
 
 	"founder-diary/internal/handlers"
 	"founder-diary/internal/middlewares"
@@ -25,7 +26,13 @@ func main() {
 	logger := slog.New(slog.NewJSONHandler(f, nil))
 
 	router := gin.New()
-	router.Use(cors.Default())
+	router.Use(cors.New(cors.Config{
+		AllowAllOrigins:  true,
+		AllowMethods:     []string{"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"},
+		AllowHeaders:     []string{"Origin", "Content-Length", "Content-Type", "Authorization", "Accept", "X-Requested-With"},
+		AllowCredentials: false,
+		MaxAge:           12 * time.Hour,
+	}))
 	router.Use(middlewares.SlogMiddleware(logger))
 	router.Use(gin.Recovery())
 

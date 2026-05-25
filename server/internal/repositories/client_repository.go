@@ -3,8 +3,8 @@ package repositories
 import (
 	"context"
 	"errors"
-	"fmt"
 	"founder-diary/internal/models"
+	"strconv"
 
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -12,7 +12,7 @@ import (
 
 type ClientRepository interface {
 	BaseReporitory[models.Clients]
-	GetAllClientsCount(ctx context.Context, entity []*models.Clients) (*models.ClientResponse, error)
+	GetAllClientsCount(ctx context.Context, entity []*models.Clients, pageStr string, limitStr string) (*models.ClientResponse, error)
 }
 
 type clientRepository struct {
@@ -37,7 +37,20 @@ func (r *clientRepository) GetAll(ctx context.Context, entity []*models.Clients)
 	return clients, nil
 }
 
-func (r *clientRepository) GetAllClientsCount(ctx context.Context, entity []*models.Clients) (*models.ClientResponse, error) {
+func (r *clientRepository) GetAllClientsCount(ctx context.Context, entity []*models.Clients, pageStr string, limitStr string) (*models.ClientResponse, error) {
+	page, pageErr := strconv.Atoi(pageStr)
+
+	if pageErr != nil || page < 1 {
+		page = 1
+	}
+
+	limit, limitErr := strconv.Atoi(limitStr)
+
+	if limitErr != nil || limit < 1 {
+		limit = 10
+	}
+	offset := (page - 1) * limit
+
 	clients := entity
 
 	type Stats struct {
@@ -46,14 +59,14 @@ func (r *clientRepository) GetAllClientsCount(ctx context.Context, entity []*mod
 	}
 
 	var stats Stats
+
 	countErr := r.db.Model(clients).Select("COUNT(*) as total, COUNT(*) FILTER(WHERE status = 'active') as active").Scan(&stats).Error
 
 	if countErr != nil {
-		fmt.Printf("Get All Clients Count: %v", countErr)
 		return nil, countErr
 	}
 
-	result := r.db.WithContext(ctx).Preload("Projects").Find(&clients)
+	result := r.db.WithContext(ctx).Preload("Projects").Offset(offset).Limit(limit).Find(&clients)
 
 	if result.Error != nil {
 		return nil, result.Error

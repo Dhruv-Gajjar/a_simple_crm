@@ -2,7 +2,6 @@ services:
   postgres:
     image: postgres:latest
     container_name: psql_container
-    restart: unless-stopped
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
@@ -15,10 +14,10 @@ services:
   pg_admin:
     container_name: pgadmin4_container
     image: dpage/pgadmin4
-    restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PG_ADMIN_EMAIL}
       PGADMIN_DEFAULT_PASSWORD: ${PG_ADMIN_PASSWORD}
+    depends_on: [postgres]
     ports:
       - "5050:80"
 
