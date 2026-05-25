@@ -21,7 +21,6 @@ import { AppPieChart } from "@/components/AppPieChart";
 import { mockClients } from "@/mockData";
 
 const Dashboard: FC = () => {
-  let totalEarnings: number = 0;
   const { clientsData, isClientsLoading, isClientsError, clientsError } =
     useClientManager();
 
@@ -31,61 +30,15 @@ const Dashboard: FC = () => {
 
   const clientName = useClientStore((state) => state.clientName);
 
-  // const {
-  //   data: projects,
-  //   isError: isProjectsError,
-  //   error: projectsError,
-  //   isLoading: isProjectsLoading,
-  // } = useQuery({
-  //   queryKey: ["getAllProjects"],
-  //   queryFn: async () => {
-  //     const response = await axiosInstance.get("project/");
-  //     return response.data;
-  //   },
-  // });
-
-  // const {
-  //   data: transactions,
-  //   isError: isTransactionsError,
-  //   error: transactionsError,
-  //   isLoading: isTransactionLoading,
-  // } = useQuery({
-  //   queryKey: ["getAllTransactions"],
-  //   queryFn: async () => {
-  //     const response = await axiosInstance.get("transaction/");
-  //     return response.data;
-  //   },
-  // });
-
-  if (
-    isClientsError
-    // || isProjectsError
-    // || isTransactionsError
-  ) {
+  if (isClientsError) {
     return (
       <div className="text-red-400 w-full h-screen">
         {isClientsError && clientsError instanceof Error
           ? toast.error(clientsError?.message, { duration: 5000 })
           : "Unknown Error"}
-        {/*{isProjectsError && projectsError instanceof Error
-          ? toast.error(projectsError?.message, { duration: 5000 })
-          : "Unknown Error"}
-        {isTransactionsError && transactionsError instanceof Error
-          ? toast.error(transactionsError?.message, { duration: 5000 })
-          : "Unknown Error"}*/}
       </div>
     );
   }
-
-  // if (transactions) {
-  //   const totalCost = transactions?.data?.reduce(
-  //     (acc: number, val: Transactions) => {
-  //       return acc + val.amount_paid;
-  //     },
-  //     0,
-  //   );
-  //   totalEarnings = totalCost;
-  // }
 
   if (isClientsLoading) {
     return (
