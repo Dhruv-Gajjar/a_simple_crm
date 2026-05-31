@@ -1,5 +1,4 @@
 "use client";
-import axiosInstance from "@/api";
 import { columns } from "@/components/AppTable/columns";
 import { AppDataTable } from "@/components/AppTable/data-table";
 import CreateClientDialog from "@/components/CreateClientDialog";
@@ -86,9 +85,7 @@ const Dashboard: FC = () => {
                 <Card size="sm" className="mx-auto w-full max-w-sm">
                   <CardContent>
                     <h4 className="text-foreground">Total Earnings</h4>
-                    <p className="text-3xl font-bold pt-2">
-                      $ {totalEarnings ? totalEarnings : 20000}
-                    </p>
+                    <p className="text-3xl font-bold pt-2">$ {20000}</p>
                   </CardContent>
                 </Card>
               </div>

@@ -20,24 +20,30 @@ export const enum INVOICES_STATUS {
 }
 
 export interface Client {
-  ID: string;
+  id?: string;
+  ID?: string;
   name: string;
   email: string;
   source: string;
   status: CLIENT_STATUS;
-  phoneNumber: string;
+  phoneNumber?: string;
+  phone_number?: string;
   remarks?: string;
-  Projects: Project[];
+  projects?: Project[];
+  Projects?: Project[];
 
-  CreatedAt: Date;
-  UpdatedAt: Date;
-  DeletedAt: Date;
+  createdAt?: Date;
+  CreatedAt?: Date;
+  updatedAt?: Date;
+  UpdatedAt?: Date;
+  deletedAt?: Date | null;
+  DeletedAt?: Date | null;
 }
 
-export type NewClient = Omit<Client, "ID" | "Projects">;
+export type NewClient = Omit<Client, "id" | "projects">;
 
 export interface Project {
-  ID: string;
+  id: string;
   name: string;
   description: string;
   status: PROJECT_STATUS;

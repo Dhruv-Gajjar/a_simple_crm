@@ -16,6 +16,7 @@ import { FC } from "react";
 import { useClientStore } from "@/stores/clientStore";
 import { Client } from "@/types";
 import { DataTableColumnHeader } from "./data-table-column-header";
+import { DataTableRowActions } from "./data-table-actions";
 
 type ActionCellProps = {
   row: Row<Client>;
@@ -48,7 +49,7 @@ const ActionCell: FC<ActionCellProps> = ({ row }) => {
           <DropdownMenuItem
             onClick={() => {
               setEditMode();
-              setClientID(client.ID);
+              setClientID(client.id || "");
               setOpenClientDialog();
             }}
           >
@@ -57,7 +58,7 @@ const ActionCell: FC<ActionCellProps> = ({ row }) => {
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => {
-              setClientID(client.ID);
+              setClientID(client.id || "");
               setClientName(client.name);
               setOpenDeleteDialog();
             }}
@@ -85,9 +86,9 @@ export const columns: ColumnDef<Client>[] = [
     ),
   },
   {
-    accessorKey: "source",
+    accessorKey: "phone_number",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Soruce" />
+      <DataTableColumnHeader column={column} title="Phone Number" />
     ),
   },
   {
@@ -117,16 +118,14 @@ export const columns: ColumnDef<Client>[] = [
     },
   },
   {
-    accessorKey: "phone_number",
+    accessorKey: "source",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Phone Number" />
+      <DataTableColumnHeader column={column} title="Soruce" />
     ),
   },
+
   {
-    header: "Actions",
     id: "actions",
-    cell: ({ row }) => {
-      return <ActionCell row={row} />;
-    },
+    cell: ({ row }) => <DataTableRowActions row={row} />,
   },
 ];

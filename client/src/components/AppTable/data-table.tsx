@@ -20,7 +20,12 @@ import {
 } from "@/components/ui/table";
 import { Button } from "../ui/button";
 import { useState } from "react";
-import { mockClients } from "@/mockData";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { CLIENT_STATUS } from "@/types";
+import { toast } from "sonner";
+import { DataTableToolbar } from "./data-table-toolbar";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -31,7 +36,27 @@ interface DataTableProps<TData, TValue> {
   currentPage?: number;
   pageCount?: number;
   isEndOfData?: boolean;
+  canShowOptions?: boolean;
+  showAddButton?: boolean;
+  onAddClick?: () => void;
 }
+
+const dataTableSchema = z.object({
+  searchString: z.string(),
+  status: z.array(
+    z.enum([
+      CLIENT_STATUS.Active,
+      CLIENT_STATUS.InActive,
+      CLIENT_STATUS.Lead,
+      CLIENT_STATUS.Rejected,
+    ]),
+  ),
+});
+
+const defaultValues = {
+  searchString: "",
+  status: [],
+};
 
 export function AppDataTable<TData, TValue>({
   columns,
@@ -42,7 +67,14 @@ export function AppDataTable<TData, TValue>({
   currentPage,
   pageCount,
   isEndOfData,
+  canShowOptions = false,
+  showAddButton = false,
+  onAddClick,
 }: DataTableProps<TData, TValue>) {
+  const form = useForm({
+    resolver: zodResolver(dataTableSchema),
+    defaultValues: defaultValues,
+  });
   const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
@@ -68,8 +100,24 @@ export function AppDataTable<TData, TValue>({
       ? currentPage >= pageCount
       : !table.getCanNextPage());
 
+  function onSubmit(data: z.infer<typeof dataTableSchema>) {
+    toast("You submitted the following values:", {
+      description: (
+        <pre className="mt-2 w-[320px] overflow-x-auto rounded-md bg-code p-4 text-black">
+          <code>{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      ),
+      position: "bottom-right",
+      classNames: {
+        content: "flex flex-col gap-2",
+      },
+    });
+    form.reset();
+  }
+
   return (
-    <div>
+    <div className="flex flex-col gap-4">
+      <DataTableToolbar table={table} inputPlaceholder="Filter clients..." />
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>

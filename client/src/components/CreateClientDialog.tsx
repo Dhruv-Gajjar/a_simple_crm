@@ -11,11 +11,14 @@ import { Field } from "./ui/field";
 import { Button } from "./ui/button";
 import ClientForm from "./ClientForm";
 import { useGlobalStore } from "@/stores/globalStore";
+import { useClientStore } from "@/stores/clientStore";
 
 const CreateClientDialog = () => {
   const isOpen = useGlobalStore((state) => state.isClientDialogOpen);
   const setOpen = useGlobalStore((state) => state.setOpenClientDialog);
   const setIsEdit = useGlobalStore((state) => state.setIsEditMode);
+
+  const setClientID = useClientStore((state) => state.setClientID);
 
   return (
     <Dialog open={isOpen}>
@@ -30,22 +33,26 @@ const CreateClientDialog = () => {
           <ClientForm />
         </div>
         <DialogFooter>
-          <Field orientation="horizontal">
+          <Field
+            orientation="horizontal"
+            className="flex items-center justify-end"
+          >
+            <Button className="w-30" type="submit" form="form-client">
+              Save
+            </Button>
             <DialogClose asChild>
               <Button
                 className="w-30"
                 variant="outline"
                 onClick={() => {
                   setIsEdit();
+                  setClientID("");
                   setOpen();
                 }}
               >
                 Close
               </Button>
             </DialogClose>
-            <Button className="w-30" type="submit" form="form-client">
-              Save
-            </Button>
           </Field>
         </DialogFooter>
       </DialogContent>

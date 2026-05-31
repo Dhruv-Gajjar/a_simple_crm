@@ -74,11 +74,11 @@ const ClientForm = () => {
   useEffect(() => {
     if (isEditMode && clientID && clientsData) {
       const client = clientsData?.clients?.find(
-        (client: Client) => client.ID === clientID,
+        (client: Client) => client.id === clientID,
       );
 
       if (client) {
-        form.setValues({
+        form.reset({
           name: client.name,
           email: client.email,
           source: client.source,
@@ -132,19 +132,19 @@ const ClientForm = () => {
   function editClient(data: NewClient) {
     if (clientID && clientsData) {
       const client = clientsData?.clients.find(
-        (client: Client) => client.ID === clientID,
+        (client: Client) => client.id === clientID,
       );
 
       updateClient.mutate(
         {
-          ID: client.ID,
+          id: client.id,
           name: data.name,
           email: data.email,
           source: data.source,
           status: data.status,
           phoneNumber: data.phoneNumber,
           remarks: data.remarks ? data.remarks : "",
-          Projects: client.projects,
+          projects: client.projects,
         },
         {
           onSuccess: (data) => {

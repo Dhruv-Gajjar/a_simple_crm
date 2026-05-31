@@ -17,7 +17,7 @@ type Clients struct {
 	Status      ClientStatus `json:"status" gorm:"column:status;default:'lead'"`
 	PhoneNumber string       `json:"phone_number" gorm:"not null"`
 	Remarks     string       `json:"remarks,omitempty"`
-	Projects    []Projects   `gorm:"foreignKey:ClientID"`
+	Projects    []Projects   `json:"projects" gorm:"foreignKey:ClientID"`
 }
 
 type ClientResponse struct {

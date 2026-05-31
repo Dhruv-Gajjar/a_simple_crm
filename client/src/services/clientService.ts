@@ -12,7 +12,7 @@ export const ClientService = {
     return response.data;
   },
   updateClient: async (body: Client) => {
-    const response = await axiosInstance.patch(`client/${body.ID}`, body);
+    const response = await axiosInstance.patch(`client/${body.id}`, body);
     return response.data;
   },
   deleteClient: async (clientID: string) => {

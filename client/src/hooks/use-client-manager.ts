@@ -63,7 +63,7 @@ const useClientManager = () => {
         queryClient.setQueryData<ClientResponse>(["clients"], {
           ...previousClients,
           clients: previousClients.clients.map((client) =>
-            client.ID === updateClient.ID ? updateClient : client,
+            client.id === updateClient.id ? updateClient : client,
           ),
         });
       }
@@ -88,7 +88,7 @@ const useClientManager = () => {
         queryClient.setQueryData<ClientResponse>(["clients"], {
           ...previousClients,
           clients: previousClients.clients.filter(
-            (client) => client.ID != clientID,
+            (client) => client.id != clientID,
           ),
         });
       }

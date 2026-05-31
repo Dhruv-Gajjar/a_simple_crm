@@ -2,6 +2,8 @@
 
 import { columns } from "@/components/AppTable/columns";
 import { AppDataTable } from "@/components/AppTable/data-table";
+import CreateClientDialog from "@/components/CreateClientDialog";
+import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import useClientManager from "@/hooks/use-client-manager";
 import { ClientService } from "@/services/clientService";
@@ -14,6 +16,9 @@ const Clients: FC = () => {
   const page = useGlobalStore((state) => state.page);
   const setPage = useGlobalStore((state) => state.setPage);
 
+  const setOepnCreateClient = useGlobalStore(
+    (state) => state.setOpenClientDialog,
+  );
   const { clientsData, isClientsLoading, isClientsError, clientsError } =
     useClientManager();
 
@@ -56,6 +61,7 @@ const Clients: FC = () => {
 
   return (
     <div className="w-full h-full">
+      <CreateClientDialog />
       <AppDataTable
         columns={columns}
         data={clientsData.clients}
@@ -65,6 +71,9 @@ const Clients: FC = () => {
         currentPage={page}
         pageCount={pageCount}
         isEndOfData={isEndOfData}
+        canShowOptions={true}
+        showAddButton={true}
+        onAddClick={setOepnCreateClient}
       />
     </div>
   );
