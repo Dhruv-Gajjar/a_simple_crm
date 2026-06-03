@@ -1,9 +1,16 @@
-import { Project } from "@/types";
+import { Project, Client } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "./data-table-column-header";
 import { Badge } from "../ui/badge";
 import { DataTableRowActions } from "./data-table-actions";
 import { format } from "date-fns";
+import useClientManager from "@/hooks/use-client-manager";
+
+const ClientNameCell = ({ clientId }: { clientId: string }) => {
+  const { clientsData } = useClientManager();
+  const client = clientsData?.clients?.find((c: Client) => c.id === clientId);
+  return <span>{client ? client.name : clientId}</span>;
+};
 
 export const projectsColumns: ColumnDef<Project>[] = [
   {
@@ -51,13 +58,8 @@ export const projectsColumns: ColumnDef<Project>[] = [
       <DataTableColumnHeader column={column} title="Client Name" />
     ),
     cell: ({ row }) => {
-      const clientId = row.getValue("clientId");
-      console.log("CLIENT_ID: ", clientId);
-      return (
-        <div>
-          <p>clientId</p>
-        </div>
-      );
+      const clientId = row.getValue("clientId") as string;
+      return <ClientNameCell clientId={clientId} />;
     },
   },
   {
