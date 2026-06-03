@@ -18,10 +18,10 @@ const (
 
 type Projects struct {
 	BaseModel
-	Name        string `json:"name" gorm:"not null"`
-	Description string `json:"description"`
-	Status      Status `json:"status" gorm:"column:status;default:'todo'"`
-	ClientID    uuid.UUID
+	Name        string    `json:"name" gorm:"not null"`
+	Description string    `json:"description"`
+	Status      Status    `json:"status" gorm:"column:status;default:'todo'"`
+	ClientID    uuid.UUID `json:"clientId"`
 	StartDate   time.Time `json:"start_date"`
 	EndDate     time.Time `json:"end_date"`
 	TotalCost   float64   `json:"total_cost" gorm:"type:decimal(10,1);default:0.00;not null"`
@@ -37,4 +37,3 @@ type ProjectResponse struct {
 	Total    int64
 	Active   int64
 }
-

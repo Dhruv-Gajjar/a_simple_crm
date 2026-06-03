@@ -19,8 +19,20 @@ export const enum INVOICES_STATUS {
   Sent = "sent",
 }
 
+export type ResponsePayload<T> = {
+  message: string;
+  data: T;
+  error: boolean;
+};
+
+export type ProjectResponse = {
+  projects: Project[];
+  total_project: number;
+  active_projects: number;
+};
+
 export interface Client {
-  id?: string;
+  id: string;
   ID?: string;
   name: string;
   email: string;
@@ -50,37 +62,45 @@ export interface Project {
   clientId: string;
   startDate: Date;
   endDate: Date;
-  total_cost: number;
+  start_date?: Date;
+  end_date?: Date;
+  total_cost?: number;
+  totalCost?: number;
   iterations: number;
 
-  Transactions: Transactions[];
-  Notes: Notes[];
-  Invoices: Invoices[];
+  transactions: Transactions[];
+  notes: Notes[];
+  invoices: Invoices[];
 }
 
+export type NewProject = Omit<
+  Project,
+  "id" | "transactions" | "notes" | "invoices"
+>;
+
 export interface Transactions {
-  ID: string;
+  iD: string;
   projectId: string;
   amount_paid: number;
   paymentMethod: string;
   paymentDate: Date;
-  CreatedAt: Date;
+  createdAt: Date;
 }
 
 export interface Notes {
-  ID: string;
+  iD: string;
   projectId: string;
   content: string;
-  CreatedAt: Date;
+  createdAt: Date;
 }
 
 export interface Invoices {
-  ID: string;
+  iD: string;
   projectId: string;
   invoiceNumber: number;
   amount: number;
   status: INVOICES_STATUS;
   issueDate: Date;
   dueDate: Date;
-  CreatedAt: Date;
+  createdAt: Date;
 }

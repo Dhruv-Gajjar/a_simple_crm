@@ -26,6 +26,7 @@ import * as z from "zod";
 import { CLIENT_STATUS } from "@/types";
 import { toast } from "sonner";
 import { DataTableToolbar } from "./data-table-toolbar";
+import { AddButton } from "../AddButton";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -39,6 +40,7 @@ interface DataTableProps<TData, TValue> {
   canShowOptions?: boolean;
   showAddButton?: boolean;
   onAddClick?: () => void;
+  addButtonText?: string;
 }
 
 const dataTableSchema = z.object({
@@ -70,6 +72,7 @@ export function AppDataTable<TData, TValue>({
   canShowOptions = false,
   showAddButton = false,
   onAddClick,
+  addButtonText,
 }: DataTableProps<TData, TValue>) {
   const form = useForm({
     resolver: zodResolver(dataTableSchema),
@@ -117,7 +120,17 @@ export function AppDataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col gap-4">
-      <DataTableToolbar table={table} inputPlaceholder="Filter clients..." />
+      <DataTableToolbar
+        table={table}
+        inputPlaceholder="Filter clients..."
+        addButtonText={addButtonText ? addButtonText : ""}
+        actions={
+          <AddButton
+            title={addButtonText ? addButtonText : ""}
+            onClick={onAddClick}
+          />
+        }
+      />
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>

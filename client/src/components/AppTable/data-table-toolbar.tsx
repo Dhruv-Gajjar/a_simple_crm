@@ -13,6 +13,7 @@ import {
 import { Input } from "../ui/input";
 import { DataTableFilter } from "./data-table-filter";
 import { Button } from "../ui/button";
+import { ReactNode } from "react";
 
 const clientStatus = [
   {
@@ -42,11 +43,15 @@ const clientStatus = [
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
   inputPlaceholder: string;
+  addButtonText: string;
+  actions: ReactNode;
 }
 
 export function DataTableToolbar<TData>({
   table,
   inputPlaceholder,
+  addButtonText,
+  actions,
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
@@ -81,9 +86,10 @@ export function DataTableToolbar<TData>({
       </div>
       <div className="flex items-center gap-2">
         {/*<DataTableViewOptions table={table} />*/}
-        <Button size="sm">
-          <PlusCircle /> Add Client
-        </Button>
+        {/*<Button size="sm">
+          <PlusCircle /> {addButtonText}
+        </Button>*/}
+        {actions}
       </div>
     </div>
   );

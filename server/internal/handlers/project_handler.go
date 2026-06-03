@@ -26,17 +26,17 @@ func (h *ProjectHandler) GetAllProjects(c *gin.Context) {
 	var projectRes *models.ProjectResponse
 
 	projectRes, err := h.projectService.GetAllProjects(c.Request.Context(), projects)
-
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrive projects.!"})
 		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message": "Project Fetch sucesfully.!",
-		"data":    &projectRes,
+		"message":         "Project Fetch sucesfully.!",
+		"projects":        &projectRes.Projects,
+		"total_projects":  &projectRes.Total,
+		"active_projects": &projectRes.Active,
 	})
-
 }
 
 func (h *ProjectHandler) GetProjectByID(c *gin.Context) {
@@ -49,7 +49,6 @@ func (h *ProjectHandler) GetProjectByID(c *gin.Context) {
 	}
 
 	project, err := h.projectService.GetProjectByID(c.Request.Context(), project, projectID)
-
 	if err != nil {
 		if errors.Is(err, repositories.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Project not found.!"})
@@ -100,7 +99,6 @@ func (h *ProjectHandler) UpdateProject(c *gin.Context) {
 	}
 
 	project, err := h.projectService.Update(c.Request.Context(), projectInput, projectID)
-
 	if err != nil {
 		if errors.Is(err, repositories.ErrNotFound) {
 			c.JSON(http.StatusNotFound, gin.H{"error": "Project not found.!"})
@@ -127,7 +125,6 @@ func (h *ProjectHandler) DeleteProject(c *gin.Context) {
 	}
 
 	project, err := h.projectService.Delete(c.Request.Context(), project, projectID)
-
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 

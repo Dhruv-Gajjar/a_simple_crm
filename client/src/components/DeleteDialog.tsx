@@ -12,7 +12,9 @@ import {
 import { useGlobalStore } from "@/stores/globalStore";
 import { toast } from "sonner";
 import { useClientStore } from "@/stores/clientStore";
+import { useProjectStore } from "@/stores/projectStore";
 import useClientManager from "@/hooks/use-client-manager";
+import useProject from "@/hooks/use-project";
 import { Spinner } from "./ui/spinner";
 
 interface DeleteDialogProps {
@@ -22,16 +24,32 @@ interface DeleteDialogProps {
 const DeleteDialog: FC<DeleteDialogProps> = ({ name }) => {
   const isOpen = useGlobalStore((state) => state.isDeleteDialogOpen);
   const setOpen = useGlobalStore((state) => state.setOpenDeleteDialog);
+  
   const clientID = useClientStore((state) => state.selectedClientID);
   const setClientID = useClientStore((state) => state.setClientID);
   const { deleteClient } = useClientManager();
+
+  const selectedProjectId = useProjectStore((state) => state.selectedProjectId);
+  const setSelectedProjectId = useProjectStore((state) => state.setSelectedProjectId);
+  const { deleteProject } = useProject();
 
   const handleDelete = async () => {
     if (clientID) {
       deleteClient.mutate(clientID, {
         onSuccess: (data) => {
           setClientID("");
-          toast.success(data?.message);
+          toast.success(data?.message || "Client deleted successfully");
+          setOpen();
+        },
+        onError(error) {
+          toast.error(error?.message);
+        },
+      });
+    } else if (selectedProjectId) {
+      deleteProject.mutate(selectedProjectId, {
+        onSuccess: (data) => {
+          setSelectedProjectId("");
+          toast.success(data?.message || "Project deleted successfully");
           setOpen();
         },
         onError(error) {
@@ -41,7 +59,9 @@ const DeleteDialog: FC<DeleteDialogProps> = ({ name }) => {
     }
   };
 
-  if (deleteClient.isPending) {
+  const isPending = deleteClient.isPending || deleteProject.isPending;
+
+  if (isPending) {
     return (
       <div className="w-full h-full flex items-center justify-center">
         <Spinner />
@@ -60,7 +80,11 @@ const DeleteDialog: FC<DeleteDialogProps> = ({ name }) => {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => setOpen()}>
+          <AlertDialogCancel onClick={() => {
+            setClientID("");
+            setSelectedProjectId("");
+            setOpen();
+          }}>
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction onClick={handleDelete}>Continue</AlertDialogAction>

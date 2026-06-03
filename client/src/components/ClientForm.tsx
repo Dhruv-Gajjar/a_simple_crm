@@ -292,7 +292,7 @@ const ClientForm = () => {
                       Rejected
                     </SelectItem>
                   </SelectContent>
-                </Select>{" "}
+                </Select>
               </Field>
             )}
           />

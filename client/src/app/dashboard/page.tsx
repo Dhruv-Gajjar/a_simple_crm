@@ -1,5 +1,5 @@
 "use client";
-import { columns } from "@/components/AppTable/columns";
+import { clientColumns } from "@/components/AppTable/clients-columns";
 import { AppDataTable } from "@/components/AppTable/data-table";
 import CreateClientDialog from "@/components/CreateClientDialog";
 import DeleteDialog from "@/components/DeleteDialog";
@@ -94,7 +94,7 @@ const Dashboard: FC = () => {
                 <DeleteDialog name={clientName} />
                 {clientsData.clients && (
                   <AppDataTable
-                    columns={columns}
+                    columns={clientColumns}
                     data={clientsData.clients}
                     isPagination={false}
                   />

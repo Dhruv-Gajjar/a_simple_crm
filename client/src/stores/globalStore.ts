@@ -2,6 +2,7 @@ import { create } from "zustand";
 
 type State = {
   isClientDialogOpen: boolean;
+  isProjectDialogOpen: boolean;
   isDeleteDialogOpen: boolean;
   isEditMode: boolean;
   isComboBoxOpen: boolean;
@@ -10,6 +11,7 @@ type State = {
 
 type Action = {
   setOpenClientDialog: () => void;
+  setOpenProjectDialog: () => void;
   setOpenDeleteDialog: () => void;
   setIsEditMode: () => void;
   setIsComboBoxOpen: () => void;
@@ -18,6 +20,7 @@ type Action = {
 
 export const useGlobalStore = create<State & Action>((set) => ({
   isClientDialogOpen: false,
+  isProjectDialogOpen: false,
   isDeleteDialogOpen: false,
   isEditMode: false,
   isComboBoxOpen: false,
@@ -26,6 +29,10 @@ export const useGlobalStore = create<State & Action>((set) => ({
   setOpenClientDialog: () =>
     set((state) => ({
       isClientDialogOpen: !state.isClientDialogOpen,
+    })),
+  setOpenProjectDialog: () =>
+    set((state) => ({
+      isProjectDialogOpen: !state.isProjectDialogOpen,
     })),
   setOpenDeleteDialog: () =>
     set((state) => ({

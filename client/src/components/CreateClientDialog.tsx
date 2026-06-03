@@ -1,17 +1,7 @@
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
-import { Field } from "./ui/field";
-import { Button } from "./ui/button";
 import ClientForm from "./ClientForm";
 import { useGlobalStore } from "@/stores/globalStore";
 import { useClientStore } from "@/stores/clientStore";
+import { FormDialog } from "./FormDialog";
 
 const CreateClientDialog = () => {
   const isOpen = useGlobalStore((state) => state.isClientDialogOpen);
@@ -20,43 +10,22 @@ const CreateClientDialog = () => {
 
   const setClientID = useClientStore((state) => state.setClientID);
 
+  const handleClose = () => {
+    setIsEdit();
+    setClientID("");
+    setOpen();
+  };
+
   return (
-    <Dialog open={isOpen}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Create Client Form</DialogTitle>
-          <DialogDescription>
-            Fill this form to add a new client.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="-mx-4 no-scrollbar max-h-[50vh] rounded-sm overflow-y-auto px-4">
-          <ClientForm />
-        </div>
-        <DialogFooter>
-          <Field
-            orientation="horizontal"
-            className="flex items-center justify-end"
-          >
-            <Button className="w-30" type="submit" form="form-client">
-              Save
-            </Button>
-            <DialogClose asChild>
-              <Button
-                className="w-30"
-                variant="outline"
-                onClick={() => {
-                  setIsEdit();
-                  setClientID("");
-                  setOpen();
-                }}
-              >
-                Close
-              </Button>
-            </DialogClose>
-          </Field>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <FormDialog
+      isOpen={isOpen}
+      onClose={handleClose}
+      title="Create client form"
+      formId="form-client"
+      description="Fill this form to create a new client."
+    >
+      <ClientForm />
+    </FormDialog>
   );
 };
 

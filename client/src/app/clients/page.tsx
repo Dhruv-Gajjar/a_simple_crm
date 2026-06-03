@@ -1,20 +1,21 @@
 "use client";
 
-import { columns } from "@/components/AppTable/columns";
+import { clientColumns } from "@/components/AppTable/clients-columns";
 import { AppDataTable } from "@/components/AppTable/data-table";
 import CreateClientDialog from "@/components/CreateClientDialog";
-import { Button } from "@/components/ui/button";
+import DeleteDialog from "@/components/DeleteDialog";
 import { Spinner } from "@/components/ui/spinner";
 import useClientManager from "@/hooks/use-client-manager";
-import { ClientService } from "@/services/clientService";
+import { useClientStore } from "@/stores/clientStore";
 import { useGlobalStore } from "@/stores/globalStore";
-import { useQuery } from "@tanstack/react-query";
 import { FC, useMemo } from "react";
 import { toast } from "sonner";
 
 const Clients: FC = () => {
   const page = useGlobalStore((state) => state.page);
   const setPage = useGlobalStore((state) => state.setPage);
+
+  const clientName = useClientStore((state) => state.clientName);
 
   const setOepnCreateClient = useGlobalStore(
     (state) => state.setOpenClientDialog,
@@ -62,8 +63,9 @@ const Clients: FC = () => {
   return (
     <div className="w-full h-full">
       <CreateClientDialog />
+      <DeleteDialog name={clientName} />
       <AppDataTable
-        columns={columns}
+        columns={clientColumns}
         data={clientsData.clients}
         isPagination={true}
         nextPage={handleNextPage}
@@ -74,6 +76,7 @@ const Clients: FC = () => {
         canShowOptions={true}
         showAddButton={true}
         onAddClick={setOepnCreateClient}
+        addButtonText="Add Client"
       />
     </div>
   );
