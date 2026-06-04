@@ -74,7 +74,9 @@ const ProjectForm = () => {
   const setIsEditMode = useGlobalStore((state) => state.setIsEditMode);
 
   const selectedProjectId = useProjectStore((state) => state.selectedProjectId);
-  const setSelectedProjectId = useProjectStore((state) => state.setSelectedProjectId);
+  const setSelectedProjectId = useProjectStore(
+    (state) => state.setSelectedProjectId,
+  );
 
   const { clientsData } = useClientManager();
   const { projectsData, createNewProject, updateProject } = useProject();

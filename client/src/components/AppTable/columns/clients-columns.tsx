@@ -1,10 +1,10 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Badge } from "../ui/badge";
+import { Badge } from "@/components/ui/badge";
 import { Client } from "@/types";
-import { DataTableColumnHeader } from "./data-table-column-header";
-import { DataTableRowActions } from "./data-table-actions";
+import { DataTableColumnHeader } from "../data-table-column-header";
+import { DataTableRowActions } from "../data-table-actions";
 
 export const clientColumns: ColumnDef<Client>[] = [
   {

@@ -27,7 +27,7 @@ const useProject = () => {
   });
 
   const createNewProject = useMutation({
-    mutationKey: ["create_projet"],
+    mutationKey: ["create_project"],
     mutationFn: ProjectService.createProject,
     onMutate: async (newProject: NewProject) => {
       await queryClient.cancelQueries({ queryKey: ["projects"] });

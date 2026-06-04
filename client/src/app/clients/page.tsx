@@ -1,6 +1,6 @@
 "use client";
 
-import { clientColumns } from "@/components/AppTable/clients-columns";
+import { clientColumns } from "@/components/AppTable/columns/clients-columns";
 import { AppDataTable } from "@/components/AppTable/data-table";
 import CreateClientDialog from "@/components/CreateClientDialog";
 import DeleteDialog from "@/components/DeleteDialog";

@@ -55,20 +55,30 @@ export function DataTableToolbar<TData>({
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
 
+  const nameColumn = table.getAllColumns().some((col) => col.id === "name")
+    ? table.getColumn("name")
+    : undefined;
+
+  const statusColumn = table.getAllColumns().some((col) => col.id === "status")
+    ? table.getColumn("status")
+    : undefined;
+
   return (
     <div className="flex items-center justify-between">
       <div className="flex flex-1 items-center gap-2">
-        <Input
-          placeholder={inputPlaceholder}
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) =>
-            table.getColumn("name")?.setFilterValue(event.target.value)
-          }
-          className="h-8 w-36 lg:w-60"
-        />
-        {table.getColumn("status") && (
+        {nameColumn && (
+          <Input
+            placeholder={inputPlaceholder}
+            value={(nameColumn.getFilterValue() as string) ?? ""}
+            onChange={(event) =>
+              nameColumn.setFilterValue(event.target.value)
+            }
+            className="h-8 w-36 lg:w-60"
+          />
+        )}
+        {statusColumn && (
           <DataTableFilter
-            column={table.getColumn("status")}
+            column={statusColumn}
             title="Status"
             options={clientStatus}
           />

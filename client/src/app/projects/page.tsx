@@ -1,7 +1,7 @@
 "use client";
 
 import { AppDataTable } from "@/components/AppTable/data-table";
-import { projectsColumns } from "@/components/AppTable/projects-columns";
+import { projectsColumns } from "@/components/AppTable/columns/projects-columns";
 import CreateProjectDialog from "@/components/CreateProjectDialog";
 import DeleteDialog from "@/components/DeleteDialog";
 import { Spinner } from "@/components/ui/spinner";

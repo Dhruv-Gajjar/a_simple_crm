@@ -1,8 +1,8 @@
 import { Project, Client } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
-import { DataTableColumnHeader } from "./data-table-column-header";
-import { Badge } from "../ui/badge";
-import { DataTableRowActions } from "./data-table-actions";
+import { DataTableColumnHeader } from "../data-table-column-header";
+import { Badge } from "@/components/ui/badge";
+import { DataTableRowActions } from "../data-table-actions";
 import { format } from "date-fns";
 import useClientManager from "@/hooks/use-client-manager";
 
@@ -88,7 +88,11 @@ export const projectsColumns: ColumnDef<Project>[] = [
       const dateVal = row.getValue("start_date");
       if (!dateVal) return "-";
       try {
-        return <span>{format(new Date(dateVal as string | number | Date), "PP")}</span>;
+        return (
+          <span>
+            {format(new Date(dateVal as string | number | Date), "PP")}
+          </span>
+        );
       } catch (e) {
         return <span>{String(dateVal)}</span>;
       }
@@ -103,7 +107,11 @@ export const projectsColumns: ColumnDef<Project>[] = [
       const dateVal = row.getValue("end_date");
       if (!dateVal) return "-";
       try {
-        return <span>{format(new Date(dateVal as string | number | Date), "PP")}</span>;
+        return (
+          <span>
+            {format(new Date(dateVal as string | number | Date), "PP")}
+          </span>
+        );
       } catch (e) {
         return <span>{String(dateVal)}</span>;
       }

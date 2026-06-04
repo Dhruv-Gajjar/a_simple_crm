@@ -11,6 +11,7 @@ import {
 import { useGlobalStore } from "@/stores/globalStore";
 import { useClientStore } from "@/stores/clientStore";
 import { useProjectStore } from "@/stores/projectStore";
+import { useTransactionStore } from "@/stores/transactionStore";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -21,29 +22,46 @@ export function DataTableRowActions<TData>({
 }: DataTableRowActionsProps<TData>) {
   const item = row.original as any;
 
-  // Global actions/dialog controls
   const setIsEditMode = useGlobalStore((state) => state.setIsEditMode);
-  const setOpenClientDialog = useGlobalStore((state) => state.setOpenClientDialog);
-  const setOpenProjectDialog = useGlobalStore((state) => state.setOpenProjectDialog);
-  const setOpenDeleteDialog = useGlobalStore((state) => state.setOpenDeleteDialog);
+  const setOpenClientDialog = useGlobalStore(
+    (state) => state.setOpenClientDialog,
+  );
+  const setOpenProjectDialog = useGlobalStore(
+    (state) => state.setOpenProjectDialog,
+  );
+  const setOpenTransactionDialog = useGlobalStore(
+    (state) => state.setOpenTransactionDialog,
+  );
+  const setOpenDeleteDialog = useGlobalStore(
+    (state) => state.setOpenDeleteDialog,
+  );
 
-  // Client store actions
   const setClientID = useClientStore((state) => state.setClientID);
   const setClientName = useClientStore((state) => state.setClientName);
 
-  // Project store actions
-  const setSelectedProjectId = useProjectStore((state) => state.setSelectedProjectId);
+  const setSelectedProjectId = useProjectStore(
+    (state) => state.setSelectedProjectId,
+  );
   const setProjectName = useProjectStore((state) => state.setProjectName);
 
-  // Check if the item is a client or project
-  // Clients have `email` property, Projects do not.
+  const setSelectedTransactionId = useTransactionStore(
+    (state) => state.setSelectedTransactionId,
+  );
+  const setTransactionName = useTransactionStore(
+    (state) => state.setTransactionName,
+  );
+
   const isClient = "email" in item;
+  const isTransaction = "paymentMethod" in item || "payment_method" in item;
 
   const handleEdit = () => {
     setIsEditMode();
     if (isClient) {
       setClientID(item.id || "");
       setOpenClientDialog();
+    } else if (isTransaction) {
+      setSelectedTransactionId(item.id || "");
+      setOpenTransactionDialog();
     } else {
       setSelectedProjectId(item.id || "");
       setOpenProjectDialog();
@@ -54,6 +72,13 @@ export function DataTableRowActions<TData>({
     if (isClient) {
       setClientID(item.id || "");
       setClientName(item.name || "");
+    } else if (isTransaction) {
+      setSelectedTransactionId(item.id || "");
+      setTransactionName(
+        `Transaction: $${item.amount_paid ?? item.amountPaid ?? 0} via ${
+          item.payment_method ?? item.paymentMethod ?? ""
+        }`,
+      );
     } else {
       setSelectedProjectId(item.id || "");
       setProjectName(item.name || "");

@@ -1,3 +1,5 @@
+"use client";
+
 import { FC } from "react";
 import { FormDialog } from "./FormDialog";
 import { useGlobalStore } from "@/stores/globalStore";
@@ -9,7 +11,9 @@ const CreateProjectDialog: FC = () => {
   const setOpen = useGlobalStore((state) => state.setOpenProjectDialog);
   const isEditMode = useGlobalStore((state) => state.isEditMode);
   const setIsEditMode = useGlobalStore((state) => state.setIsEditMode);
-  const setSelectedProjectId = useProjectStore((state) => state.setSelectedProjectId);
+  const setSelectedProjectId = useProjectStore(
+    (state) => state.setSelectedProjectId,
+  );
 
   const handleClose = () => {
     if (isEditMode) {

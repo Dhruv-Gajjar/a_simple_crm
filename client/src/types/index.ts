@@ -33,7 +33,6 @@ export type ProjectResponse = {
 
 export interface Client {
   id: string;
-  ID?: string;
   name: string;
   email: string;
   source: string;
@@ -45,11 +44,8 @@ export interface Client {
   Projects?: Project[];
 
   createdAt?: Date;
-  CreatedAt?: Date;
   updatedAt?: Date;
-  UpdatedAt?: Date;
   deletedAt?: Date | null;
-  DeletedAt?: Date | null;
 }
 
 export type NewClient = Omit<Client, "id" | "projects">;
@@ -79,23 +75,29 @@ export type NewProject = Omit<
 >;
 
 export interface Transactions {
-  iD: string;
-  projectId: string;
-  amount_paid: number;
-  paymentMethod: string;
-  paymentDate: Date;
+  id: string;
+  projectId?: string;
+  project_id?: string;
+  amount_paid?: number;
+  amountPaid?: number;
+  paymentMethod?: string;
+  payment_method?: string;
+  paymentDate?: Date;
+  payment_date?: Date;
   createdAt: Date;
 }
 
+export type NewTransaction = Omit<Transactions, "id" | "createdAt">;
+
 export interface Notes {
-  iD: string;
+  id: string;
   projectId: string;
   content: string;
   createdAt: Date;
 }
 
 export interface Invoices {
-  iD: string;
+  id: string;
   projectId: string;
   invoiceNumber: number;
   amount: number;
