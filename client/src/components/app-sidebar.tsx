@@ -86,7 +86,7 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar {...props} className="text-white border-sidebar-border">
-      <SidebarHeader>
+      <SidebarHeader className="text-white">
         <header className="flex items-center gap-4 p-4 font-mono">
           <Boxes size={28} />
           <h4 className="text-xl font-semibold">Founder Dairy</h4>
@@ -94,7 +94,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Platform</SidebarGroupLabel>
           <SidebarMenu>
             {data.navMain.map((item) => (
               <Collapsible
@@ -106,7 +105,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
                     <Link href={item.url}>
-                      <SidebarMenuButton tooltip={item.title}>
+                      <SidebarMenuButton
+                        tooltip={item.title}
+                        className="text-white hover:text-black"
+                      >
                         {item.icon && <item.icon />}
                         <span>{item.title}</span>
                         {item.children && (
@@ -186,7 +188,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>*/}
       </SidebarContent>
-      <SidebarFooter>
+      <SidebarFooter className="text-white">
         <footer className="flex items-center gap-4 p-4">
           <Button variant="outline" className="w-full">
             <LogOut data-icon="inline-end" />

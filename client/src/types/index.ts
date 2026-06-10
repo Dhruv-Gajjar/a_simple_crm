@@ -14,9 +14,10 @@ export const enum PROJECT_STATUS {
 }
 
 export const enum INVOICES_STATUS {
-  Draf = "draft",
+  Draft = "draft",
   Paid = "paid",
   Sent = "sent",
+  Overdue = "overdue",
 }
 
 export type ResponsePayload<T> = {

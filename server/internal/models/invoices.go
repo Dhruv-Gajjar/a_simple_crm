@@ -9,13 +9,14 @@ import (
 type InvoiceStatus string
 
 const (
-	Draft InvoiceStatus = "draft"
-	Paid  InvoiceStatus = "paid"
-	Sent  InvoiceStatus = "sent"
+	Draft   InvoiceStatus = "draft"
+	Paid    InvoiceStatus = "paid"
+	Sent    InvoiceStatus = "sent"
+	Overdue InvoiceStatus = "overdue"
 )
 
 type Invoices struct {
-	ID            uuid.UUID `gorm:"type:uuid;default:uuid_generate_v4()"`
+	ID            uuid.UUID `json:"id" gorm:"type:uuid;default:uuid_generate_v4()"`
 	ProjectID     uuid.UUID `json:"project_id" gorm:"not null"`
 	InvoiceNumber int       `json:"invoice_number" gorm:"uniqueIndex;not null"`
 	Amount        float64   `json:"amount" gorm:"type:decimal(10,2);default:0.00;not null"`
