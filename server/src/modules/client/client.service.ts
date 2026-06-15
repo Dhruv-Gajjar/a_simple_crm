@@ -1,36 +1,67 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { ClientRepository } from './repositories/client.repository';
+import { PinoLogger } from 'nestjs-pino';
+import { ClientEntity } from './entities/client.entity';
 
 @Injectable()
 export class ClientService {
-  constructor(private readonly clientRepository: ClientRepository) {}
+  constructor(
+    private readonly clientRepository: ClientRepository,
+    private logger: PinoLogger,
+  ) {}
 
-  create(createClientDto: CreateClientDto) {
-    return this.clientRepository.createAndSave({
-      name: createClientDto.name,
-      email: createClientDto.email,
-      source: createClientDto.source,
-      status: createClientDto.status,
-      phoneNumber: createClientDto.phoneNumber,
-      remarks: createClientDto.remakrs ? createClientDto.remakrs : '',
+  async create(payload: CreateClientDto) {
+    const existingClient = await this.clientRepository.findOne({
+      where: { email: payload.email },
     });
+
+    if (!existingClient) {
+      throw new NotFoundException(
+        `Client with ${payload.email} already exists`,
+      );
+    }
+
+    const newClient = await this.clientRepository.createAndSave({
+      name: payload.name,
+      email: payload.email,
+      source: payload.source,
+      status: payload.status,
+      phoneNumber: payload.phoneNumber,
+      remarks: payload.remakrs ? payload.remakrs : '',
+    });
+
+    this.logger.info({ name: payload.name }, 'Client created...!');
+
+    return newClient;
   }
 
-  findAll() {
-    return `This action returns all client`;
+  async findAll() {
+    this.logger.info({ action: 'getClients' }, 'Getting all clients');
+    const clients = await this.clientRepository.findAll({
+      relations: {
+        projects: true,
+      },
+    });
+    return clients;
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     return `This action returns a #${id} client`;
   }
 
-  update(id: number, updateClientDto: UpdateClientDto) {
-    return `This action updates a #${id} client`;
+  async update(id: string, payload: UpdateClientDto) {
+    this.logger.info({ name: payload.name }, 'Client updated...!');
+    return await this.clientRepository.update(id, payload);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} client`;
+  async remove(id: string) {
+    this.logger.info({ id: id }, 'Client deleted...!');
+    return await this.clientRepository.deleteClient(id);
   }
 }

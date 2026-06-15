@@ -6,23 +6,59 @@ import {
   Patch,
   Param,
   Delete,
+  NotFoundException,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ClientEntity } from './entities/client.entity';
+import { ClientDto } from './dto/client.dto';
+import { PinoLogger } from 'nestjs-pino';
 
 @Controller('client')
 export class ClientController {
-  constructor(private readonly clientService: ClientService) {}
+  constructor(
+    private readonly clientService: ClientService,
+    private logger: PinoLogger,
+  ) {}
 
   @Post()
-  create(@Body() createClientDto: CreateClientDto) {
-    return this.clientService.create(createClientDto);
+  @ApiOperation({ summary: 'Register a new client' })
+  @ApiResponse({ status: 201, description: 'Client registered successfully' })
+  @ApiResponse({ status: 400, description: 'Client already exists' })
+  async create(@Body() createClientDto: CreateClientDto) {
+    const client = await this.clientService.create(createClientDto);
+
+    return new ClientDto({
+      id: client.id,
+      name: client.name,
+      email: client.email,
+      source: client.source,
+      status: client.status,
+      phoneNumber: client.phoneNumber,
+      remarks: client.remarks,
+    });
   }
 
   @Get()
-  findAll() {
-    return this.clientService.findAll();
+  @ApiOperation({ summary: 'List all clients' })
+  @ApiResponse({ status: 200, description: 'Returns all clients' })
+  async findAll() {
+    const clients = await this.clientService.findAll();
+    return clients.map(
+      (client: ClientEntity) =>
+        new ClientDto({
+          id: client.id,
+          name: client.name,
+          email: client.email,
+          source: client.source,
+          status: client.status,
+          phoneNumber: client.phoneNumber,
+          remarks: client.remarks,
+          projects: client.projects,
+        }),
+    );
   }
 
   @Get(':id')
@@ -31,12 +67,28 @@ export class ClientController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateClientDto: UpdateClientDto) {
-    return this.clientService.update(+id, updateClientDto);
+  async update(@Param('id') id: string, @Body() payload: UpdateClientDto) {
+    const client = await this.clientService.update(id, payload);
+
+    if (!client) {
+      this.logger.warn({ id: id }, `Client with ID: ${id} not found...`);
+      throw new NotFoundException(`Client with ID: ${id} not found.!`);
+    }
+
+    return new ClientDto({
+      id: client.id,
+      name: client.name,
+      email: client.email,
+      source: client.source,
+      status: client.status,
+      phoneNumber: client.phoneNumber,
+      remarks: client.remarks,
+    });
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.clientService.remove(+id);
+  async remove(@Param('id') id: string) {
+    const isDeleated = await this.clientService.remove(id);
+    return isDeleated;
   }
 }

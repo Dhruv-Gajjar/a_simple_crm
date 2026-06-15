@@ -1,5 +1,6 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { BaseEntity } from 'src/common/entities/base.entity';
+import { ProjectEntity } from 'src/modules/project/entities/project.entity';
 
 export enum CLIENT_STATUS {
   Active = 'active',
@@ -30,6 +31,9 @@ export class ClientEntity extends BaseEntity {
   @Column({ name: 'phone_number', type: 'varchar' })
   phoneNumber!: string;
 
-  @Column({ name: 'remakrs', type: 'varchar' })
+  @Column({ name: 'remarks', type: 'varchar', nullable: true })
   remarks!: string;
+
+  @OneToMany(() => ProjectEntity, (project) => project.client)
+  projects!: ProjectEntity[];
 }

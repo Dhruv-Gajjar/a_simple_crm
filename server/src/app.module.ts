@@ -9,6 +9,7 @@ import { LoggerModule } from 'nestjs-pino';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ClientModule } from './modules/client/client.module';
 import { ClientEntity } from './modules/client/entities/client.entity';
+import { ProjectModule } from './modules/project/project.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { ClientEntity } from './modules/client/entities/client.entity';
       inject: [ConfigService],
     }),
     ClientModule,
+    ProjectModule,
   ],
   controllers: [AppController],
   providers: [AppService],
