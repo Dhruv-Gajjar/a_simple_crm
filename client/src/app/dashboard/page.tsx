@@ -12,7 +12,6 @@ import useClientManager from "@/hooks/use-client-manager";
 import { useClientStore } from "@/stores/clientStore";
 import { useGlobalStore } from "@/stores/globalStore";
 import { Transactions } from "@/types";
-import { useQuery } from "@tanstack/react-query";
 import { PlusCircle } from "lucide-react";
 import { FC } from "react";
 import { toast } from "sonner";
@@ -28,7 +27,7 @@ const Dashboard: FC = () => {
   );
 
   const clientName = useClientStore((state) => state.clientName);
-
+  console.log("Client_Data: ", clientsData?.result);
   if (isClientsError) {
     return (
       <div className="text-red-400 w-full h-screen">
@@ -92,10 +91,10 @@ const Dashboard: FC = () => {
 
               <div className="pt-4">
                 <DeleteDialog name={clientName} />
-                {clientsData.clients && (
+                {clientsData.result && (
                   <AppDataTable
                     columns={clientColumns}
-                    data={clientsData.clients}
+                    data={clientsData.result ? clientsData.result : []}
                     isPagination={false}
                   />
                 )}

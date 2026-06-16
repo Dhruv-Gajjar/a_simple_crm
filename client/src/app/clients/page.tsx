@@ -66,7 +66,7 @@ const Clients: FC = () => {
       <DeleteDialog name={clientName} />
       <AppDataTable
         columns={clientColumns}
-        data={clientsData.clients}
+        data={clientsData?.result}
         isPagination={true}
         nextPage={handleNextPage}
         previousPage={handlePreviousPage}

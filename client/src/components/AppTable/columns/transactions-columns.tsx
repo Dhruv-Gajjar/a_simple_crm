@@ -10,7 +10,7 @@ const ClientNameCell = ({ projectId }: { projectId: string }) => {
   const { projectsData } = useProject();
   const { clientsData } = useClientManager();
 
-  const project = projectsData?.projects?.find(
+  const project = projectsData?.result?.find(
     (p: Project) => p.id === projectId,
   );
   const client = clientsData?.clients?.find(

@@ -26,12 +26,6 @@ export type ResponsePayload<T> = {
   error: boolean;
 };
 
-export type ProjectResponse = {
-  projects: Project[];
-  total_project: number;
-  active_projects: number;
-};
-
 export interface Client {
   id: string;
   name: string;
@@ -62,7 +56,7 @@ export interface Project {
   start_date?: Date;
   end_date?: Date;
   total_cost?: number;
-  totalCost?: number;
+  totalAmount?: number;
   iterations: number;
 
   transactions: Transactions[];

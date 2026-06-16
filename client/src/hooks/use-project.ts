@@ -3,10 +3,10 @@ import { useGlobalStore } from "@/stores/globalStore";
 import { NewProject, Project } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
-type ProjectResponse = {
-  projects: Project[];
-  total: number;
-  active: number;
+type ProjectResponse<T> = {
+  error: boolean;
+  message: string;
+  result: T;
 };
 
 const useProject = () => {
@@ -20,7 +20,7 @@ const useProject = () => {
     error: projectsError,
   } = useQuery({
     queryKey: ["projects", page],
-    queryFn: async (): Promise<ProjectResponse> => {
+    queryFn: async (): Promise<ProjectResponse<Project[]>> => {
       const projects = await ProjectService.getAllProjects(page);
       return projects;
     },

@@ -20,7 +20,7 @@ export const clientColumns: ColumnDef<Client>[] = [
     ),
   },
   {
-    accessorKey: "phone_number",
+    accessorKey: "phoneNumber",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Phone Number" />
     ),

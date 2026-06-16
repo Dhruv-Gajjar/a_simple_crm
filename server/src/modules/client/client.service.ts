@@ -21,7 +21,7 @@ export class ClientService {
       where: { email: payload.email },
     });
 
-    if (!existingClient) {
+    if (existingClient) {
       throw new NotFoundException(
         `Client with ${payload.email} already exists`,
       );
@@ -51,8 +51,13 @@ export class ClientService {
     return clients;
   }
 
-  async findOne(id: number) {
-    return `This action returns a #${id} client`;
+  async findOne(id: string) {
+    const client = await this.clientRepository.findOne({
+      where: { id: id },
+    });
+
+    this.logger.info({ id: id }, 'Getting client with id');
+    return client;
   }
 
   async update(id: string, payload: UpdateClientDto) {

@@ -4,7 +4,11 @@ import { Client, CLIENT_STATUS, NewClient } from "@/types";
 
 export const ClientService = {
   getAllClients: async (page: number) => {
-    const response = await axiosInstance.get(`client?page=${page}`);
+    const response = await axiosInstance.get(`client`);
+    return response.data;
+  },
+  getClientById: async (id: string) => {
+    const response = await axiosInstance.get(`client/${id}`);
     return response.data;
   },
   createClient: async (body: NewClient) => {

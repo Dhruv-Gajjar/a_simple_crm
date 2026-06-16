@@ -44,7 +44,7 @@ export class ClientController {
   @Get()
   @ApiOperation({ summary: 'List all clients' })
   @ApiResponse({ status: 200, description: 'Returns all clients' })
-  async findAll() {
+  async findAll(@Param('page') page: string, @Param('limit') limit: string) {
     const clients = await this.clientService.findAll();
     return clients.map(
       (client: ClientEntity) =>
@@ -62,8 +62,23 @@ export class ClientController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.clientService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const client = await this.clientService.findOne(id);
+
+    if (!client) {
+      this.logger.warn({ id: id }, `Client with ID: ${id} not found...`);
+      throw new NotFoundException(`Client with ID: ${id} not found.!`);
+    }
+
+    return new ClientDto({
+      id: client.id,
+      name: client.name,
+      email: client.email,
+      source: client.source,
+      status: client.status,
+      phoneNumber: client.phoneNumber,
+      remarks: client.remarks,
+    });
   }
 
   @Patch(':id')

@@ -40,7 +40,7 @@ const projectfFormSchema = z.object({
   name: z.string().min(3).max(50),
   description: z.string().max(100),
   clientId: z.string(),
-  totalCost: z.string(),
+  totalAmount: z.string(),
   iterations: z.string(),
   status: z.enum([
     PROJECT_STATUS.Todo,
@@ -57,7 +57,7 @@ const defaultFormValues: z.infer<typeof projectfFormSchema> = {
   name: "",
   description: "",
   clientId: "",
-  totalCost: "0",
+  totalAmount: "0",
   iterations: "0",
   status: PROJECT_STATUS.Todo,
   startDate: new Date(),
@@ -83,7 +83,7 @@ const ProjectForm = () => {
 
   useEffect(() => {
     if (isEditMode && selectedProjectId && projectsData) {
-      const project = projectsData?.projects?.find(
+      const project = projectsData?.result?.find(
         (project: Project) => project.id === selectedProjectId,
       );
 
@@ -92,7 +92,7 @@ const ProjectForm = () => {
           name: project.name,
           description: project.description,
           clientId: project.clientId,
-          totalCost: String(project.total_cost ?? project.totalCost ?? 0),
+          totalAmount: String(project.total_cost ?? project.totalAmount ?? 0),
           iterations: String(project.iterations),
           status: project.status,
           startDate: new Date(project.start_date ?? project.startDate),
@@ -127,10 +127,9 @@ const ProjectForm = () => {
 
   const editProject = (newProject: NewProject) => {
     if (selectedProjectId && projectsData) {
-      const project = projectsData.projects.find(
+      const project = projectsData.result.find(
         (p: Project) => p.id === selectedProjectId,
       );
-
       if (project) {
         updateProject.mutate(
           {
@@ -139,8 +138,7 @@ const ProjectForm = () => {
             description: newProject.description,
             clientId: newProject.clientId,
             status: newProject.status,
-            totalCost: newProject.totalCost,
-            total_cost: newProject.totalCost,
+            totalAmount: newProject.totalAmount,
             iterations: newProject.iterations,
             startDate: newProject.startDate,
             endDate: newProject.endDate,
@@ -175,7 +173,7 @@ const ProjectForm = () => {
         description: data.description,
         clientId: data.clientId,
         status: data.status,
-        totalCost: parseInt(data.totalCost),
+        totalAmount: parseInt(data.totalAmount),
         iterations: parseInt(data.iterations),
         startDate: data.startDate,
         endDate: data.endDate,
@@ -279,7 +277,7 @@ const ProjectForm = () => {
                     <SelectValue placeholder="Client Name" />
                   </SelectTrigger>
                   <SelectContent position="item-aligned">
-                    {clientsData?.clients.map((client: Client) => (
+                    {clientsData?.result.map((client: Client) => (
                       <SelectItem key={client.id} value={client.id}>
                         {client.name}
                       </SelectItem>
@@ -290,16 +288,16 @@ const ProjectForm = () => {
             )}
           />
           <Controller
-            name="totalCost"
+            name="totalAmount"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
-                <FieldLabel htmlFor="form-project-total-cost">
-                  Total Cost
+                <FieldLabel htmlFor="form-project-total-amount">
+                  Total Amount
                 </FieldLabel>
                 <Input
                   {...field}
-                  id="form-project-total-cost"
+                  id="form-project-total-amount"
                   aria-invalid={fieldState.invalid}
                   placeholder="Total amount for the project."
                   autoComplete="off"

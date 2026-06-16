@@ -13,7 +13,7 @@ const ClientNameCell = ({ projectId }: { projectId: string }) => {
 
   if (!projectId) return;
 
-  const project = projectsData?.projects?.find(
+  const project = projectsData?.result?.find(
     (p: Project) => p.id === projectId,
   );
   const client = clientsData?.clients?.find(
