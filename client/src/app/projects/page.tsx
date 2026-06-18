@@ -39,7 +39,7 @@ const Projects: FC = () => {
       {projectsData && (
         <AppDataTable
           columns={projectsColumns}
-          data={projectsData.result ? projectsData.result : []}
+          data={projectsData.result ? projectsData.result?.projects : []}
           isPagination={true}
           addButtonText="Add Project"
           onAddClick={setOpen}

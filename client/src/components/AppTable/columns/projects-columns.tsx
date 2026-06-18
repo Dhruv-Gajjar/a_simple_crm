@@ -8,7 +8,9 @@ import useClientManager from "@/hooks/use-client-manager";
 
 const ClientNameCell = ({ clientId }: { clientId: string }) => {
   const { clientsData } = useClientManager();
-  const client = clientsData?.result?.find((c: Client) => c.id === clientId);
+  const client = clientsData?.result?.clients?.find(
+    (c: Client) => c.id === clientId,
+  );
   return <span>{client ? client.name : clientId}</span>;
 };
 

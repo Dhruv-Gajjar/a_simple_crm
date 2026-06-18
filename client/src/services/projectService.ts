@@ -2,9 +2,7 @@ import axiosInstance from "@/api";
 import { NewProject, Project, ResponsePayload } from "@/types";
 
 export const ProjectService = {
-  getAllProjects: async (
-    _page: number,
-  ): Promise<ResponsePayload<Project[]>> => {
+  getAllProjects: async (_page: number) => {
     const response = await axiosInstance.get(`project/`);
     return response.data;
   },

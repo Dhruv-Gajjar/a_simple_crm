@@ -8,10 +8,36 @@ import {
 } from '@nestjs/common';
 import { UpdateClientDto } from '../dto/update-client.dto';
 
+type ClientResponse = {
+  clients: ClientEntity[];
+  total: number;
+  active: number;
+};
+
 @Injectable()
 export class ClientRepository extends BaseRepository<ClientEntity> {
   constructor(dataSource: DataSource) {
     super(dataSource, ClientEntity);
+  }
+
+  async getAllClients(): Promise<ClientResponse> {
+    const stats = await this.repository
+      .createQueryBuilder('client')
+      .select('COUNT(*)', 'total')
+      .addSelect(`COUNT(*) FILTER(WHERE client.status = 'active')`, 'active')
+      .getRawOne();
+
+    const clients = await this.repository.find({
+      relations: {
+        projects: true,
+      },
+    });
+
+    return {
+      clients: clients,
+      total: Number(stats?.total || 0),
+      active: Number(stats?.active || 0),
+    };
   }
 
   async update(id: string, payload: UpdateClientDto): Promise<ClientEntity> {

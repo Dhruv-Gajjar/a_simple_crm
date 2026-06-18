@@ -43,11 +43,7 @@ export class ClientService {
 
   async findAll() {
     this.logger.info({ action: 'getClients' }, 'Getting all clients');
-    const clients = await this.clientRepository.findAll({
-      relations: {
-        projects: true,
-      },
-    });
+    const clients = await this.clientRepository.getAllClients();
     return clients;
   }
 

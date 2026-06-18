@@ -18,7 +18,7 @@ export class ProjectService {
 
   async findAll() {
     this.logger.info({ action: 'getAllProjects' }, 'Getting all projects');
-    return await this.projectRepository.findAll();
+    return await this.projectRepository.getAllProjects();
   }
 
   async findOne(id: string) {

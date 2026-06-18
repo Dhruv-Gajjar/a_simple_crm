@@ -11,16 +11,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import useClientManager from "@/hooks/use-client-manager";
 import { useClientStore } from "@/stores/clientStore";
 import { useGlobalStore } from "@/stores/globalStore";
-import { Transactions } from "@/types";
 import { PlusCircle } from "lucide-react";
 import { FC } from "react";
 import { toast } from "sonner";
 import { AppPieChart } from "@/components/AppPieChart";
 import { mockClients } from "@/mockData";
+import useProject from "@/hooks/use-project";
 
 const Dashboard: FC = () => {
   const { clientsData, isClientsLoading, isClientsError, clientsError } =
     useClientManager();
+
+  const { projectsData } = useProject();
 
   const setOepnCreateClient = useGlobalStore(
     (state) => state.setOpenClientDialog,
@@ -68,8 +70,8 @@ const Dashboard: FC = () => {
                   <CardContent>
                     <h4 className="text-foreground">Total Clients</h4>
                     <p className="text-3xl font-bold pt-2">
-                      {clientsData ? clientsData.active_clients : 2} /{" "}
-                      {clientsData ? clientsData.total_clients : 4}
+                      {clientsData?.result ? clientsData?.result?.active : 0} /
+                      {clientsData?.result ? clientsData?.result?.total : 0}
                     </p>
                   </CardContent>
                 </Card>
@@ -77,7 +79,8 @@ const Dashboard: FC = () => {
                   <CardContent>
                     <h4 className="text-foreground">Total Projects</h4>
                     <p className="text-3xl font-bold pt-2">
-                      {1} / {2}
+                      {projectsData?.result?.active || 0} /
+                      {projectsData?.result?.total || 0}
                     </p>
                   </CardContent>
                 </Card>
@@ -94,7 +97,11 @@ const Dashboard: FC = () => {
                 {clientsData.result && (
                   <AppDataTable
                     columns={clientColumns}
-                    data={clientsData.result ? clientsData.result : []}
+                    data={
+                      clientsData?.result?.clients
+                        ? clientsData?.result?.clients
+                        : []
+                    }
                     isPagination={false}
                   />
                 )}

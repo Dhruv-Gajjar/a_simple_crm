@@ -83,7 +83,7 @@ const ProjectForm = () => {
 
   useEffect(() => {
     if (isEditMode && selectedProjectId && projectsData) {
-      const project = projectsData?.result?.find(
+      const project = projectsData?.result?.projects.find(
         (project: Project) => project.id === selectedProjectId,
       );
 
@@ -127,7 +127,7 @@ const ProjectForm = () => {
 
   const editProject = (newProject: NewProject) => {
     if (selectedProjectId && projectsData) {
-      const project = projectsData.result.find(
+      const project = projectsData?.result?.projects.find(
         (p: Project) => p.id === selectedProjectId,
       );
       if (project) {
@@ -277,7 +277,7 @@ const ProjectForm = () => {
                     <SelectValue placeholder="Client Name" />
                   </SelectTrigger>
                   <SelectContent position="item-aligned">
-                    {clientsData?.result.map((client: Client) => (
+                    {clientsData?.result?.clients.map((client: Client) => (
                       <SelectItem key={client.id} value={client.id}>
                         {client.name}
                       </SelectItem>

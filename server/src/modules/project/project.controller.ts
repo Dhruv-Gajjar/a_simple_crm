@@ -55,9 +55,9 @@ export class ProjectController {
   @ApiOperation({ summary: 'Get all projects' })
   @ApiResponse({ status: 200, description: 'All projects fetch successfully' })
   async findAll() {
-    const projects = await this.projectService.findAll();
+    const projectsRes = await this.projectService.findAll();
 
-    if (!projects) {
+    if (!projectsRes) {
       this.logger.warn(
         { action: 'getAllProjects' },
         'Error getting all projects...',
@@ -67,20 +67,24 @@ export class ProjectController {
       );
     }
 
-    return projects.map(
-      (project: ProjectEntity) =>
-        new ProjectDto({
-          id: project.id,
-          name: project.name,
-          description: project.description,
-          clientId: project.clientId,
-          status: project.status,
-          totalAmount: project.totalAmount,
-          iterations: project.iterations,
-          startDate: project.startDate,
-          endDate: project.endDate,
-        }),
-    );
+    return {
+      projects: projectsRes.projects.map(
+        (project: ProjectEntity) =>
+          new ProjectDto({
+            id: project.id,
+            name: project.name,
+            description: project.description,
+            clientId: project.clientId,
+            status: project.status,
+            totalAmount: project.totalAmount,
+            iterations: project.iterations,
+            startDate: project.startDate,
+            endDate: project.endDate,
+          }),
+      ),
+      total: projectsRes.total,
+      active: projectsRes.active,
+    };
   }
 
   @Get(':id')
