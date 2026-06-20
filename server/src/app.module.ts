@@ -10,6 +10,8 @@ import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ClientModule } from './modules/client/client.module';
 import { ClientEntity } from './modules/client/entities/client.entity';
 import { ProjectModule } from './modules/project/project.module';
+import { TransactionModule } from './modules/transaction/transaction.module';
+import { NoteModule } from './modules/note/note.module';
 
 @Module({
   imports: [
@@ -50,6 +52,8 @@ import { ProjectModule } from './modules/project/project.module';
     }),
     ClientModule,
     ProjectModule,
+    TransactionModule,
+    NoteModule,
   ],
   controllers: [AppController],
   providers: [AppService],

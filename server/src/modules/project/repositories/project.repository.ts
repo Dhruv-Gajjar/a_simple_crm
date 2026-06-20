@@ -16,8 +16,8 @@ type ProjectResponse = {
 
 @Injectable()
 export class ProjectRepository extends BaseRepository<ProjectEntity> {
-  constructor(dataSoruce: DataSource) {
-    super(dataSoruce, ProjectEntity);
+  constructor(dataSource: DataSource) {
+    super(dataSource, ProjectEntity);
   }
 
   async getAllProjects(): Promise<ProjectResponse> {
@@ -27,7 +27,12 @@ export class ProjectRepository extends BaseRepository<ProjectEntity> {
       .addSelect(`COUNT(*) FILTER(WHERE status = 'in_progress')`, 'active')
       .getRawOne();
 
-    const projects = await this.repository.find();
+    const projects = await this.repository.find({
+      relations: {
+        transactions: true,
+        notes: true,
+      },
+    });
 
     return {
       projects: projects,

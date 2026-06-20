@@ -1,6 +1,8 @@
 import { BaseEntity } from 'src/common/entities/base.entity';
 import { ClientEntity } from 'src/modules/client/entities/client.entity';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { TransactionEntity } from 'src/modules/transaction/entities/transaction.entity';
+import { NoteEntity } from 'src/modules/note/entities/note.entity';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 
 export enum PROJECT_STATUS {
   Todo = 'todo',
@@ -46,4 +48,10 @@ export class ProjectEntity extends BaseEntity {
 
   @Column({ name: 'end_date', type: 'timestamptz', default: new Date() })
   endDate!: Date;
+
+  @OneToMany(() => TransactionEntity, (transaction) => transaction.project)
+  transactions!: TransactionEntity[];
+
+  @OneToMany(() => NoteEntity, (note) => note.project)
+  notes!: NoteEntity[];
 }

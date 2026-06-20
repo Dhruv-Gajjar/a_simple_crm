@@ -80,6 +80,8 @@ export class ProjectController {
             iterations: project.iterations,
             startDate: project.startDate,
             endDate: project.endDate,
+            transactions: project.transactions,
+            notes: project.notes,
           }),
       ),
       total: projectsRes.total,
@@ -88,6 +90,9 @@ export class ProjectController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get project by id' })
+  @ApiResponse({ status: 200, description: 'Project found successfully' })
+  @ApiResponse({ status: 400, description: 'Failed to find project' })
   async findOne(@Param('id') id: string) {
     const project = await this.projectService.findOne(id);
 
@@ -105,10 +110,15 @@ export class ProjectController {
       iterations: project.iterations,
       startDate: project.startDate,
       endDate: project.endDate,
+      transactions: project.transactions,
+      notes: project.notes,
     });
   }
 
   @Patch(':id')
+  @ApiOperation({ summary: 'Update project' })
+  @ApiResponse({ status: 200, description: 'Project updated successfully' })
+  @ApiResponse({ status: 400, description: 'Failed to update project' })
   async update(@Param('id') id: string, @Body() payload: UpdateProjectDto) {
     const project = await this.projectService.update(id, payload);
 
@@ -129,10 +139,15 @@ export class ProjectController {
       iterations: project.iterations,
       startDate: project.startDate,
       endDate: project.endDate,
+      transactions: project.transactions,
+      notes: project.notes,
     });
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete project' })
+  @ApiResponse({ status: 200, description: 'Project deleated successfully' })
+  @ApiResponse({ status: 400, description: 'Failed to delete project' })
   async remove(@Param('id') id: string) {
     const isDeleated = await this.projectService.remove(id);
 
