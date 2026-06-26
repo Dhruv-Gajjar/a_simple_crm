@@ -73,7 +73,7 @@ const ClientForm = () => {
 
   useEffect(() => {
     if (isEditMode && clientID && clientsData) {
-      const client = clientsData?.clients?.find(
+      const client = clientsData?.result?.clients.find(
         (client: Client) => client.id === clientID,
       );
 
@@ -83,7 +83,7 @@ const ClientForm = () => {
           email: client.email,
           source: client.source,
           status: client.status,
-          phoneNumber: client.phone_number,
+          phoneNumber: client.phoneNumber,
           remarks: client.remarks ? client.remarks : "",
         });
       } else {
@@ -131,38 +131,42 @@ const ClientForm = () => {
 
   function editClient(data: NewClient) {
     if (clientID && clientsData) {
-      const client = clientsData?.clients.find(
+      const client = clientsData?.result?.clients.find(
         (client: Client) => client.id === clientID,
       );
 
-      updateClient.mutate(
-        {
-          id: client.id,
-          name: data.name,
-          email: data.email,
-          source: data.source,
-          status: data.status,
-          phoneNumber: data.phoneNumber,
-          remarks: data.remarks ? data.remarks : "",
-          projects: client.projects,
-        },
-        {
-          onSuccess: (data) => {
-            setEditMode();
-            setClientID("");
-            toast.success(data?.message, {
-              duration: 3000,
-            });
-            form.reset();
-            setOpen();
+      if (client) {
+        updateClient.mutate(
+          {
+            id: client.id,
+            name: data.name,
+            email: data.email,
+            source: data.source,
+            status: data.status,
+            phoneNumber: data.phoneNumber,
+            remarks: data.remarks ? data.remarks : "",
+            projects: client.projects,
           },
-          onError: (error) => {
-            toast.error(error?.message, {
-              duration: 3000,
-            });
+          {
+            onSuccess: (data) => {
+              setEditMode();
+              setClientID("");
+              toast.success(data?.message, {
+                duration: 3000,
+              });
+              form.reset();
+              setOpen();
+            },
+            onError: (error) => {
+              toast.error(error?.message, {
+                duration: 3000,
+              });
+            },
           },
-        },
-      );
+        );
+      } else {
+        console.log("ERROR: No client found in client FORM.!");
+      }
     }
   }
 

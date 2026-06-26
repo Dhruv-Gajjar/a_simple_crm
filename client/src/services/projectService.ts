@@ -2,7 +2,9 @@ import axiosInstance from "@/api";
 import { NewProject, Project, ProjectResponse, ResponsePayload } from "@/types";
 
 export const ProjectService = {
-  getAllProjects: async (_page: number): Promise<ProjectResponse> => {
+  getAllProjects: async (
+    _page: number,
+  ): Promise<ResponsePayload<ProjectResponse>> => {
     const response = await axiosInstance.get(`project/`);
     return response.data;
   },
@@ -18,7 +20,7 @@ export const ProjectService = {
   },
   deleteProject: async (
     projectId: string,
-  ): Promise<ResponsePayload<Project>> => {
+  ): Promise<ResponsePayload<boolean>> => {
     const response = await axiosInstance.delete(`project/${projectId}`);
     return response.data;
   },

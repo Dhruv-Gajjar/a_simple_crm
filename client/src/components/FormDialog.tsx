@@ -31,7 +31,7 @@ export const FormDialog: FC<FormDialogProps> = ({
   children,
 }) => {
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => () => !open && onClose()}>
+    <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
@@ -49,7 +49,7 @@ export const FormDialog: FC<FormDialogProps> = ({
               {submitButtonText}
             </Button>
             <DialogClose asChild>
-              <Button className="w-30" variant="outline" onClick={onClose}>
+              <Button className="w-30" variant="outline">
                 Close
               </Button>
             </DialogClose>

@@ -120,17 +120,19 @@ export function AppDataTable<TData, TValue>({
 
   return (
     <div className="flex flex-col gap-4">
-      <DataTableToolbar
-        table={table}
-        inputPlaceholder="Filter clients..."
-        addButtonText={addButtonText ? addButtonText : ""}
-        actions={
-          <AddButton
-            title={addButtonText ? addButtonText : ""}
-            onClick={onAddClick}
-          />
-        }
-      />
+      {showAddButton && (
+        <DataTableToolbar
+          table={table}
+          inputPlaceholder="Filter clients..."
+          addButtonText={addButtonText ? addButtonText : ""}
+          actions={
+            <AddButton
+              title={addButtonText ? addButtonText : ""}
+              onClick={onAddClick}
+            />
+          }
+        />
+      )}
       <div className="overflow-hidden rounded-md border">
         <Table>
           <TableHeader>
@@ -159,7 +161,12 @@ export function AppDataTable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      onClick={() =>
+                        console.log("CELLL: ", cell.row.original.id)
+                      }
+                      key={cell.id}
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext(),

@@ -1,4 +1,5 @@
 import { ClientService } from "@/services/clientService";
+import { useClientStore } from "@/stores/clientStore";
 import { useGlobalStore } from "@/stores/globalStore";
 import { Client, NewClient } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -13,6 +14,11 @@ type ClientResponse = {
 const useClientManager = () => {
   const page = useGlobalStore((state) => state.page);
   const queryClient = useQueryClient();
+  const clientId = useClientStore((state) => state.selectedClientID);
+
+  if (!clientId) {
+    console.log("CLIENT ID INVALID, PROVIDE A CLIENT ID.");
+  }
 
   const {
     data: clientsData,
@@ -22,7 +28,24 @@ const useClientManager = () => {
   } = useQuery({
     queryKey: ["clients", page],
     queryFn: async () => {
-      const client = await ClientService.getAllClients(page);
+      const clients = await ClientService.getAllClients(page);
+      return clients;
+    },
+  });
+
+  const {
+    data: clientData,
+    isLoading: isClientLoading,
+    isError: isClientError,
+    error: clientError,
+  } = useQuery({
+    queryKey: ["clients", clientId],
+    queryFn: async () => {
+      if (!clientId) {
+        console.log("ERROR_SERVICE: client id not found.!");
+        return;
+      }
+      const client = await ClientService.getClientById(clientId);
       return client;
     },
   });
@@ -107,6 +130,10 @@ const useClientManager = () => {
     isClientsLoading,
     isClientsError,
     clientsError,
+    clientData,
+    isClientLoading,
+    isClientError,
+    clientError,
     createNewClient,
     updateClient,
     deleteClient,

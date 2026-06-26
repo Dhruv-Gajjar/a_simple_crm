@@ -8,7 +8,9 @@ import useClientManager from "@/hooks/use-client-manager";
 
 const ClientNameCell = ({ clientId }: { clientId: string }) => {
   const { clientsData } = useClientManager();
-  const client = clientsData?.clients?.find((c: Client) => c.id === clientId);
+  const client = clientsData?.result?.clients?.find(
+    (c: Client) => c.id === clientId,
+  );
   return <span>{client ? client.name : clientId}</span>;
 };
 
@@ -24,6 +26,17 @@ export const projectsColumns: ColumnDef<Project>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Description" />
     ),
+    cell: ({ row }) => {
+      const description: string = row.getValue("description");
+
+      return (
+        <div>
+          <p className="whitespace-nowrap text-ellipsis overflow-hidden max-w-20 md:max-w-50">
+            {description}
+          </p>
+        </div>
+      );
+    },
   },
   {
     accessorKey: "status",
@@ -63,12 +76,12 @@ export const projectsColumns: ColumnDef<Project>[] = [
     },
   },
   {
-    accessorKey: "total_cost",
+    accessorKey: "totalAmount",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Total Cost" />
     ),
     cell: ({ row }) => {
-      const totalCost: number = row.getValue("total_cost");
+      const totalCost: number = row.getValue("totalAmount");
 
       return <p>{totalCost}</p>;
     },
@@ -80,12 +93,12 @@ export const projectsColumns: ColumnDef<Project>[] = [
     ),
   },
   {
-    accessorKey: "start_date",
+    accessorKey: "startDate",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Start Date" />
     ),
     cell: ({ row }) => {
-      const dateVal = row.getValue("start_date");
+      const dateVal = row.getValue("startDate");
       if (!dateVal) return "-";
       try {
         return (
@@ -99,12 +112,12 @@ export const projectsColumns: ColumnDef<Project>[] = [
     },
   },
   {
-    accessorKey: "end_date",
+    accessorKey: "endDate",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="End Date" />
     ),
     cell: ({ row }) => {
-      const dateVal = row.getValue("end_date");
+      const dateVal = row.getValue("endDate");
       if (!dateVal) return "-";
       try {
         return (

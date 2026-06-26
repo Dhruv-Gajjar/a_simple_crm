@@ -22,15 +22,15 @@ export const enum INVOICES_STATUS {
 
 export type ResponsePayload<T> = {
   message: string;
-  data: T;
+  result: T;
   error: boolean;
 };
 
-export type ProjectResponse = {
-  projects: Project[];
-  total_project: number;
-  active_projects: number;
-};
+export interface ClientResponse {
+  clients: Client[];
+  total: number;
+  active: number;
+}
 
 export interface Client {
   id: string;
@@ -51,6 +51,12 @@ export interface Client {
 
 export type NewClient = Omit<Client, "id" | "projects">;
 
+export interface ProjectResponse {
+  projects: Project[];
+  total: number;
+  active: number;
+}
+
 export interface Project {
   id: string;
   name: string;
@@ -62,7 +68,7 @@ export interface Project {
   start_date?: Date;
   end_date?: Date;
   total_cost?: number;
-  totalCost?: number;
+  totalAmount?: number;
   iterations: number;
 
   transactions: Transactions[];

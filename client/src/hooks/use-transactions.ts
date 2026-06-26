@@ -25,23 +25,28 @@ const useTransaction = () => {
     mutationFn: TransactionService.createTransaction,
     onMutate: async (newTransaction: NewTransaction) => {
       await queryClient.cancelQueries({ queryKey: ["transactions"] });
-      const previousTransactions = queryClient.getQueryData<ResponsePayload<Transactions[]>>([
-        "transactions",
-        page,
-      ]);
+      const previousTransactions = queryClient.getQueryData<
+        ResponsePayload<Transactions[]>
+      >(["transactions", page]);
       if (previousTransactions) {
         queryClient.setQueryData<ResponsePayload<Transactions[]>>(
           ["transactions", page],
           {
             ...previousTransactions,
-            data: [...previousTransactions.data, newTransaction as Transactions],
+            result: [
+              ...previousTransactions.result,
+              newTransaction as Transactions,
+            ],
           },
         );
       }
       return { previousTransactions };
     },
     onError: (err, variables, context) => {
-      queryClient.setQueryData(["transactions", page], context?.previousTransactions);
+      queryClient.setQueryData(
+        ["transactions", page],
+        context?.previousTransactions,
+      );
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
@@ -53,19 +58,19 @@ const useTransaction = () => {
     mutationFn: TransactionService.updateTransaction,
     onMutate: async (updatedTransaction: Transactions) => {
       await queryClient.cancelQueries({ queryKey: ["transactions"] });
-      const previousTransactions = queryClient.getQueryData<ResponsePayload<Transactions[]>>([
-        "transactions",
-        page,
-      ]);
+      const previousTransactions = queryClient.getQueryData<
+        ResponsePayload<Transactions[]>
+      >(["transactions", page]);
       if (previousTransactions) {
         queryClient.setQueryData<ResponsePayload<Transactions[]>>(
           ["transactions", page],
           {
             ...previousTransactions,
-            data: previousTransactions.data.map((transaction: Transactions) =>
-              transaction.id === updatedTransaction.id
-                ? updatedTransaction
-                : transaction,
+            result: previousTransactions.result.map(
+              (transaction: Transactions) =>
+                transaction.id === updatedTransaction.id
+                  ? updatedTransaction
+                  : transaction,
             ),
           },
         );
@@ -73,7 +78,10 @@ const useTransaction = () => {
       return { previousTransactions };
     },
     onError: (err, variables, context) => {
-      queryClient.setQueryData(["transactions", page], context?.previousTransactions);
+      queryClient.setQueryData(
+        ["transactions", page],
+        context?.previousTransactions,
+      );
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
@@ -85,16 +93,15 @@ const useTransaction = () => {
     mutationFn: TransactionService.deleteTransaction,
     onMutate: async (transactionId: string) => {
       await queryClient.cancelQueries({ queryKey: ["transactions"] });
-      const previousTransactions = queryClient.getQueryData<ResponsePayload<Transactions[]>>([
-        "transactions",
-        page,
-      ]);
+      const previousTransactions = queryClient.getQueryData<
+        ResponsePayload<Transactions[]>
+      >(["transactions", page]);
       if (previousTransactions) {
         queryClient.setQueryData<ResponsePayload<Transactions[]>>(
           ["transactions", page],
           {
             ...previousTransactions,
-            data: previousTransactions.data.filter(
+            result: previousTransactions.result.filter(
               (transaction) => transaction.id !== transactionId,
             ),
           },
@@ -103,7 +110,10 @@ const useTransaction = () => {
       return { previousTransactions };
     },
     onError: (err, variables, context) => {
-      queryClient.setQueryData(["transactions", page], context?.previousTransactions);
+      queryClient.setQueryData(
+        ["transactions", page],
+        context?.previousTransactions,
+      );
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });

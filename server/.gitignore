@@ -1,89 +1,45 @@
-##############
-#  Original  #
-##############
+# compiled output
+/dist
+/node_modules
 
-# directory structure
-bin/*
-!.gitkeep
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
 
-# goop - go package manager
-.vendor
-
-.env
-*.env
-auth_key.json
-gin.log
-
-#############################
-#  $ gibo Go JetBrains OSX  #
-#############################
-
-### https://raw.github.com/github/gitignore/5a339cce0d8ccac36e71b077ef39a55c682d6d91/Go.gitignore
-
-# Compiled Object files, Static and Dynamic libs (Shared Objects)
-*.o
-*.a
-*.so
-
-# Folders
-_obj
-_test
-
-# Architecture specific extensions/prefixes
-*.[568vq]
-[568vq].out
-
-*.cgo1.go
-*.cgo2.c
-_cgo_defun.c
-_cgo_gotypes.go
-_cgo_export.*
-
-_testmain.go
-
-*.exe
-*.test
-*.prof
-
-
-### https://raw.github.com/github/gitignore/5a339cce0d8ccac36e71b077ef39a55c682d6d91/Global/JetBrains.gitignore
-
-# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
-
-/*.iml
-
-## Directory-based project format:
-.idea/
-
-## File-based project format:
-*.ipr
-*.iws
-
-## Plugin-specific files:
-
-# IntelliJ
-out/
-
-
-### https://raw.github.com/github/gitignore/5a339cce0d8ccac36e71b077ef39a55c682d6d91/Global/OSX.gitignore
-
+# OS
 .DS_Store
-.AppleDouble
-.LSOverride
 
-# Icon must end with two \r
-Icon
+# Tests
+/coverage
+/.nyc_output
 
-# Thumbnails
-._*
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
 
-# Files that might appear on external disk
-.Spotlight-V100
-.Trashes
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.zed/*
 
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
+.data
+/files
+.env
+/ormconfig.json
+.codegpt
+
+# Claude Code runtime state
+.claude/scheduled_tasks.lock

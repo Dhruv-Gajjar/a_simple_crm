@@ -21,7 +21,7 @@ export const TransactionService = {
   },
   deleteTransaction: async (
     transactionId: string,
-  ): Promise<ResponsePayload<Transactions>> => {
+  ): Promise<ResponsePayload<boolean>> => {
     const response = await axiosInstance.delete(`transaction/${transactionId}`);
     return response.data;
   },

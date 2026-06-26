@@ -20,7 +20,7 @@ import "./globals.css";
 
 const interHeading = Inter({ subsets: ["latin"], variable: "--font-heading" });
 
-const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-sans" });
+const inter = Inter({subsets:['latin'],variable:'--font-sans'});
 
 const notoSansHeading = Noto_Sans({
   subsets: ["latin"],
@@ -57,7 +57,7 @@ export default function RootLayout({
         geistMono.variable,
         notoSansHeading.variable,
         "font-sans",
-        montserrat.variable,
+        inter.variable,
         interHeading.variable,
       )}
     >

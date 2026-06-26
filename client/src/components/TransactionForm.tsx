@@ -68,7 +68,7 @@ const TransactionForm = () => {
 
   useEffect(() => {
     if (isEditMode && selectedTransactionId && transactionsData) {
-      const transaction = transactionsData.data.find(
+      const transaction = transactionsData.result.find(
         (t: Transactions) => t.id === selectedTransactionId,
       ) as Transactions;
 
@@ -113,7 +113,7 @@ const TransactionForm = () => {
 
   const editTransaction = (newTransaction: NewTransaction) => {
     if (selectedTransactionId && transactionsData) {
-      const transaction = transactionsData.data.find(
+      const transaction = transactionsData.result.find(
         (t: Transactions) => t.id === selectedTransactionId,
       );
 
@@ -123,9 +123,9 @@ const TransactionForm = () => {
             ...transaction,
             id: transaction.id || selectedTransactionId,
             paymentDate: newTransaction.paymentDate,
-            payment_method: newTransaction.paymentMethod,
-            project_id: newTransaction.projectId,
-            amount_paid: newTransaction.amountPaid,
+            paymentMethod: newTransaction.paymentMethod,
+            projectId: newTransaction.projectId,
+            amount: newTransaction.amountPaid,
           } as Transactions,
           {
             onSuccess: (data) => {
@@ -303,7 +303,7 @@ const TransactionForm = () => {
                     <SelectValue placeholder="Project Name" />
                   </SelectTrigger>
                   <SelectContent position="item-aligned">
-                    {projectsData?.projects.map((project: Project) => (
+                    {projectsData?.result?.projects.map((project: Project) => (
                       <SelectItem key={project.id} value={project.id}>
                         {project.name}
                       </SelectItem>

@@ -1,21 +1,26 @@
 import axiosInstance from "@/api";
-import { mockClients } from "@/mockData";
-import { Client, CLIENT_STATUS, NewClient } from "@/types";
+import { Client, ClientResponse, NewClient, ResponsePayload } from "@/types";
 
 export const ClientService = {
-  getAllClients: async (page: number) => {
-    const response = await axiosInstance.get(`client?page=${page}`);
+  getAllClients: async (
+    page: number,
+  ): Promise<ResponsePayload<ClientResponse>> => {
+    const response = await axiosInstance.get(`client`);
     return response.data;
   },
-  createClient: async (body: NewClient) => {
+  getClientById: async (id: string): Promise<ResponsePayload<Client>> => {
+    const response = await axiosInstance.get(`client/${id}`);
+    return response.data;
+  },
+  createClient: async (body: NewClient): Promise<ResponsePayload<Client>> => {
     const response = await axiosInstance.post("client/", body);
     return response.data;
   },
-  updateClient: async (body: Client) => {
+  updateClient: async (body: Client): Promise<ResponsePayload<Client>> => {
     const response = await axiosInstance.patch(`client/${body.id}`, body);
     return response.data;
   },
-  deleteClient: async (clientID: string) => {
+  deleteClient: async (clientID: string): Promise<boolean> => {
     const response = await axiosInstance.delete(`client/${clientID}`);
     return response.data;
   },
