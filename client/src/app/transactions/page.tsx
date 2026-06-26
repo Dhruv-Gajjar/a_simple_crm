@@ -42,8 +42,9 @@ const Transactions: FC = () => {
       <DeleteDialog name={transactionName} />
       <AppDataTable
         columns={transactionsColumns}
-        data={transactionsData ? transactionsData.data : []}
+        data={transactionsData?.result ?? []}
         isPagination={true}
+        showAddButton={true}
         addButtonText="Add Transaction"
         onAddClick={setOpen}
       />

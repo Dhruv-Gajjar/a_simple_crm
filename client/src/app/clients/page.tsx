@@ -32,12 +32,12 @@ const Clients: FC = () => {
   };
 
   const pageCount = useMemo(() => {
-    if (clientsData?.total_clients === undefined) return -1;
-    return Math.ceil(clientsData.total_clients / 10);
-  }, [clientsData?.total_clients]);
+    if (clientsData?.result.total === undefined) return -1;
+    return Math.ceil(clientsData.result.total / 10);
+  }, [clientsData?.result.total]);
 
-  const isEndOfData = clientsData?.clients
-    ? clientsData.clients.length < 10
+  const isEndOfData = clientsData?.result?.clients
+    ? clientsData.result?.clients.length < 10
     : false;
 
   if (isClientsLoading) {
@@ -66,7 +66,7 @@ const Clients: FC = () => {
       <DeleteDialog name={clientName} />
       <AppDataTable
         columns={clientColumns}
-        data={clientsData.result?.clients || []}
+        data={clientsData?.result?.clients ?? []}
         isPagination={true}
         nextPage={handleNextPage}
         previousPage={handlePreviousPage}

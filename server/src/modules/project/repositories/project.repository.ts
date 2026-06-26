@@ -21,11 +21,12 @@ export class ProjectRepository extends BaseRepository<ProjectEntity> {
   }
 
   async getAllProjects(): Promise<ProjectResponse> {
-    const stats = await this.repository
-      .createQueryBuilder('projects')
-      .select('COUNT(*)', 'total')
-      .addSelect(`COUNT(*) FILTER(WHERE status = 'in_progress')`, 'active')
-      .getRawOne();
+    const stats = await this.queryBuilder('projects', (qb) =>
+      qb
+        .select('COUNT(*)', 'total')
+        .addSelect(`COUNT(*) FILTER(WHERE status = 'in_progress')`, 'active')
+        .getRawOne(),
+    );
 
     const projects = await this.repository.find({
       relations: {

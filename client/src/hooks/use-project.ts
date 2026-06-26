@@ -1,6 +1,6 @@
 import { ProjectService } from "@/services/projectService";
 import { useGlobalStore } from "@/stores/globalStore";
-import { NewProject, Project } from "@/types";
+import { NewProject, Project, ProjectResponse, ResponsePayload } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const useProject = () => {
@@ -25,13 +25,18 @@ const useProject = () => {
     mutationFn: ProjectService.createProject,
     onMutate: async (newProject: NewProject) => {
       await queryClient.cancelQueries({ queryKey: ["projects"] });
-      const previousProjects = queryClient.getQueryData<ProjectResponse>([
-        "projects",
-      ]);
+      const previousProjects = queryClient.getQueryData<
+        ResponsePayload<ProjectResponse>
+      >(["projects"]);
       if (previousProjects) {
-        queryClient.setQueryData<ProjectResponse>(["projects"], {
+        queryClient.setQueryData(["projects"], {
           ...previousProjects,
-          projects: [...previousProjects.projects, newProject as Project],
+          result: {
+            projects: [
+              ...previousProjects.result.projects,
+              newProject as Project,
+            ],
+          },
         });
       }
       return { previousProjects };
@@ -49,16 +54,23 @@ const useProject = () => {
     mutationFn: ProjectService.updateProject,
     onMutate: async (updatedProject: Project) => {
       await queryClient.cancelQueries({ queryKey: ["projects"] });
-      const previousProjects = queryClient.getQueryData<ProjectResponse>([
-        "projects",
-      ]);
+      const previousProjects = queryClient.getQueryData<
+        ResponsePayload<ProjectResponse>
+      >(["projects"]);
       if (previousProjects) {
-        queryClient.setQueryData<ProjectResponse>(["projects"], {
-          ...previousProjects,
-          projects: previousProjects.projects.map((project) =>
-            project.id === updatedProject.id ? updatedProject : project,
-          ),
-        });
+        queryClient.setQueryData<ResponsePayload<ProjectResponse>>(
+          ["projects"],
+          {
+            ...previousProjects,
+            result: {
+              projects: previousProjects.result.projects.map((project) =>
+                project.id === updatedProject.id ? updatedProject : project,
+              ),
+              total: previousProjects.result.total,
+              active: previousProjects.result.active,
+            },
+          },
+        );
       }
       return { previousProjects };
     },
@@ -75,16 +87,23 @@ const useProject = () => {
     mutationFn: ProjectService.deleteProject,
     onMutate: async (projectId: string) => {
       await queryClient.cancelQueries({ queryKey: ["projects"] });
-      const previousProjects = queryClient.getQueryData<ProjectResponse>([
-        "projects",
-      ]);
+      const previousProjects = queryClient.getQueryData<
+        ResponsePayload<ProjectResponse>
+      >(["projects"]);
       if (previousProjects) {
-        queryClient.setQueryData<ProjectResponse>(["projects"], {
-          ...previousProjects,
-          projects: previousProjects.projects.filter(
-            (project) => project.id !== projectId,
-          ),
-        });
+        queryClient.setQueryData<ResponsePayload<ProjectResponse>>(
+          ["projects"],
+          {
+            ...previousProjects,
+            result: {
+              projects: previousProjects.result.projects.filter(
+                (project) => project.id !== projectId,
+              ),
+              total: previousProjects.result.total,
+              active: previousProjects.result.active,
+            },
+          },
+        );
       }
       return { previousProjects };
     },

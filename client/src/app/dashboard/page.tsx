@@ -102,6 +102,7 @@ const Dashboard: FC = () => {
                         ? clientsData?.result?.clients
                         : []
                     }
+                    showAddButton={false}
                     isPagination={false}
                   />
                 )}

@@ -1,13 +1,8 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { ClientRepository } from './repositories/client.repository';
 import { PinoLogger } from 'nestjs-pino';
-import { ClientEntity } from './entities/client.entity';
 
 @Injectable()
 export class ClientService {

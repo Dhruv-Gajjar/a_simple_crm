@@ -10,23 +10,34 @@ const ClientNameCell = ({ projectId }: { projectId: string }) => {
   const { projectsData } = useProject();
   const { clientsData } = useClientManager();
 
-  const project = projectsData?.result?.find(
+  const project = projectsData?.result.projects.find(
     (p: Project) => p.id === projectId,
-  );
-  const client = clientsData?.clients?.find(
+  ) as Project;
+  const client = clientsData?.result.clients.find(
     (c: Client) => c.id === project?.clientId,
   );
+
   return <span>{client ? client.name : "-"}</span>;
+};
+
+const ProjectNameCell = ({ projectId }: { projectId: string }) => {
+  const { projectsData } = useProject();
+
+  const project = projectsData?.result.projects.find(
+    (p: Project) => p.id === projectId,
+  ) as Project;
+
+  return <span>{project ? project.name : "-"}</span>;
 };
 
 export const transactionsColumns: ColumnDef<Transactions>[] = [
   {
-    accessorKey: "payment_date",
+    accessorKey: "paymentDate",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Date" />
     ),
     cell: ({ row }) => {
-      const dateVal = row.getValue("payment_date");
+      const dateVal = row.getValue("paymentDate");
       if (!dateVal) return "-";
       try {
         return (
@@ -40,23 +51,34 @@ export const transactionsColumns: ColumnDef<Transactions>[] = [
     },
   },
   {
-    accessorKey: "project_id",
+    accessorKey: "projectId",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Client Name" />
     ),
     cell: ({ row }) => {
-      const projectId = row.getValue("project_id") as string;
+      const projectId = row.getValue("projectId") as string;
       return <ClientNameCell projectId={projectId} />;
     },
   },
   {
-    accessorKey: "payment_method",
+    id: "projectName",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Project Name" />
+    ),
+    cell: ({ row }) => {
+      const projectId = row.getValue("projectId") as string;
+      return <ProjectNameCell projectId={projectId} />;
+    },
+  },
+
+  {
+    accessorKey: "paymentMethod",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Method" />
     ),
   },
   {
-    accessorKey: "amount_paid",
+    accessorKey: "amount",
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Amount" />
     ),
