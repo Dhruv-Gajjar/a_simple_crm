@@ -1,4 +1,4 @@
-import { AppSidebar } from "@/components/app-sidebar";
+import { AppSidebar } from "@/components/AppSidebar/app-sidebar";
 import {
   SidebarInset,
   SidebarProvider,
@@ -17,10 +17,11 @@ import {
   Montserrat,
 } from "next/font/google";
 import "./globals.css";
+import { SiteHeader } from "@/components/SiteHeader";
 
 const interHeading = Inter({ subsets: ["latin"], variable: "--font-heading" });
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
 const notoSansHeading = Noto_Sans({
   subsets: ["latin"],
@@ -67,16 +68,23 @@ export default function RootLayout({
       >
         <Providers>
           <TooltipProvider>
-            <SidebarProvider>
+            <SidebarProvider
+              style={
+                {
+                  "--sidebar-width": "calc(var(--spacing) * 72)",
+                  "--header-height": "calc(var(--spacing) * 12)",
+                } as React.CSSProperties
+              }
+            >
               <AppSidebar />
               <SidebarInset>
-                <div className="flex flex-1 flex-col gap-4 p-4">
-                  <main>
-                    <SidebarTrigger />
+                <SiteHeader />
+                <div className="flex flex-1 flex-col">
+                  <div className="@container/main flex flex-1 flex-col gap-2 p-4">
                     {children}
-                  </main>
-                  <Toaster />
+                  </div>
                 </div>
+                <Toaster />
               </SidebarInset>
             </SidebarProvider>
           </TooltipProvider>
