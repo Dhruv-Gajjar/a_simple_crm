@@ -85,7 +85,7 @@ export interface Transactions {
   id: string;
   projectId?: string;
   project_id?: string;
-  amount_paid?: number;
+  amount?: number;
   amountPaid?: number;
   paymentMethod?: string;
   payment_method?: string;

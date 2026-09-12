@@ -34,14 +34,14 @@ const transactionFormSchema = z.object({
   paymentDate: z.date(),
   projectId: z.string(),
   paymentMethod: z.string(),
-  paymentAmount: z.string(),
+  amount: z.string(),
 });
 
 const defaultValues: z.infer<typeof transactionFormSchema> = {
   paymentDate: new Date(),
   projectId: "",
   paymentMethod: "",
-  paymentAmount: "0",
+  amount: "0",
 };
 
 const TransactionForm = () => {
@@ -80,9 +80,7 @@ const TransactionForm = () => {
           projectId: transaction.projectId || transaction.project_id,
           paymentMethod:
             transaction.paymentMethod || transaction.payment_method,
-          paymentAmount: String(
-            transaction.amountPaid ?? transaction.amount_paid ?? 0,
-          ),
+          amount: String(transaction.amountPaid ?? transaction.amount ?? 0),
         });
       } else {
         toast.error("Transaction not found!", { duration: 3000 });
@@ -125,7 +123,7 @@ const TransactionForm = () => {
             paymentDate: newTransaction.paymentDate,
             paymentMethod: newTransaction.paymentMethod,
             projectId: newTransaction.projectId,
-            amount: newTransaction.amountPaid,
+            amount: newTransaction.amount,
           } as Transactions,
           {
             onSuccess: (data) => {
@@ -157,7 +155,7 @@ const TransactionForm = () => {
         paymentDate: data.paymentDate,
         paymentMethod: data.paymentMethod,
         projectId: data.projectId,
-        amountPaid: parseInt(data.paymentAmount),
+        amount: parseInt(data.amount),
       };
 
       if (!isEditMode) {
@@ -253,7 +251,7 @@ const TransactionForm = () => {
             )}
           />
           <Controller
-            name="paymentAmount"
+            name="amount"
             control={form.control}
             render={({ field, fieldState }) => (
               <Field data-invalid={fieldState.invalid}>
