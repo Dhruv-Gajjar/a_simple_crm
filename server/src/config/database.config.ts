@@ -1,11 +1,13 @@
 import { registerAs } from '@nestjs/config';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 export default registerAs('database', () => ({
-  host: process.env.DB_HOST ?? 'localhost',
-  port: parseInt(process.env.DB_PORT ?? '5432', 10),
-  username: process.env.DB_USERNAME ?? 'admin',
-  password: process.env.DB_PASSWORD ?? 'root',
-  database: process.env.DB_NAME ?? 'founder_diary',
+  host: process.env.DB_HOST,
+  port: parseInt(process.env.DB_PORT!, 10),
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   ssl: process.env.DB_SSL == 'true',
   logging: process.env.DB_LOGGING === 'true',
   synchronize: process.env.DB_SYNCHRONIZE === 'true',

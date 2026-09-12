@@ -5,7 +5,15 @@ import {
   SidebarFooter,
   SidebarHeader,
 } from "@/components/ui/sidebar";
-import { Blocks, Handshake, ListTodo, Settings, Users } from "lucide-react";
+import {
+  Blocks,
+  ChartBar,
+  Folder,
+  Handshake,
+  ListTodo,
+  Settings,
+  Users,
+} from "lucide-react";
 import { NavHeader } from "./nav-header";
 import { NavMain } from "./nvm-main";
 import { NavUser } from "./nav-user";
@@ -24,20 +32,39 @@ const data = {
       isActive: false,
     },
     {
-      title: "Contacts",
-      url: "/contacts",
+      title: "Clients",
+      url: "/clients",
       icon: Users,
     },
     {
-      title: "Deals",
-      url: "/deals",
-      icon: Handshake,
+      title: "Projects",
+      url: "",
+      icon: Folder,
       isActive: true,
+      items: [
+        {
+          title: "All Projects",
+          url: "/projects",
+        },
+        {
+          title: "Transactions",
+          url: "/transactions",
+        },
+        {
+          title: "Invoices",
+          url: "/invoices",
+        },
+      ],
     },
     {
       title: "Tasks",
       url: "/tasks",
       icon: ListTodo,
+    },
+    {
+      title: "Analytics",
+      url: "/analytics",
+      icon: ChartBar,
     },
     {
       title: "Settings",
