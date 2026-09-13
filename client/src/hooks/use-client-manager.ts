@@ -26,7 +26,7 @@ const useClientManager = () => {
     isError: isClientsError,
     error: clientsError,
   } = useQuery({
-    queryKey: ["clients", page],
+    queryKey: ["clients", page ?? ""],
     queryFn: async () => {
       const clients = await ClientService.getAllClients(page);
       return clients;
@@ -39,11 +39,11 @@ const useClientManager = () => {
     isError: isClientError,
     error: clientError,
   } = useQuery({
-    queryKey: ["clients", clientId],
+    queryKey: ["clients", clientId ?? ""],
     queryFn: async () => {
       if (!clientId) {
         console.log("ERROR_SERVICE: client id not found.!");
-        return;
+        return [];
       }
       const client = await ClientService.getClientById(clientId);
       return client;

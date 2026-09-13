@@ -9,13 +9,12 @@ import {
   Blocks,
   ChartBar,
   Folder,
-  Handshake,
   ListTodo,
   Settings,
   Users,
 } from "lucide-react";
 import { NavHeader } from "./nav-header";
-import { NavMain } from "./nvm-main";
+import { NavMain } from "./nav-main";
 import { NavUser } from "./nav-user";
 
 const data = {
