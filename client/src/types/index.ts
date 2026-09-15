@@ -63,6 +63,7 @@ export interface Project {
   description: string;
   status: PROJECT_STATUS;
   clientId: string;
+  client: Client;
   startDate: Date;
   endDate: Date;
   start_date?: Date;
@@ -112,4 +113,11 @@ export interface Invoices {
   issueDate: Date;
   dueDate: Date;
   createdAt: Date;
+}
+
+export interface DashboardAnalytics {
+  totalActiveClients: number;
+  totalActiveProjects: number;
+  totalEarnings: number;
+  activeProjects: Project[];
 }

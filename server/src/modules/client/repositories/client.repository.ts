@@ -21,11 +21,13 @@ export class ClientRepository extends BaseRepository<ClientEntity> {
   }
 
   async getAllClients(): Promise<ClientResponse> {
-    const stats = await this.queryBuilder('clients', (qb) =>
-      qb
-        .select('COUNT(*)', 'total')
-        .addSelect(`COUNT(*) FILTER(WHERE status = 'active')`, 'active')
-        .getRawOne(),
+    const stats: ClientResponse | undefined = await this.queryBuilder(
+      'clients',
+      (qb) =>
+        qb
+          .select('COUNT(*)', 'total')
+          .addSelect(`COUNT(*) FILTER(WHERE status = 'active')`, 'active')
+          .getRawOne(),
     );
 
     const clients = await this.repository.find({

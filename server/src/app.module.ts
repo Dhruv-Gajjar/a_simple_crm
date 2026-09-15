@@ -8,10 +8,10 @@ import databaseConfig from './config/database.config';
 import { LoggerModule } from 'nestjs-pino';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { ClientModule } from './modules/client/client.module';
-import { ClientEntity } from './modules/client/entities/client.entity';
 import { ProjectModule } from './modules/project/project.module';
 import { TransactionModule } from './modules/transaction/transaction.module';
 import { NoteModule } from './modules/note/note.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -37,8 +37,9 @@ import { NoteModule } from './modules/note/note.module';
             password: configService.getOrThrow('DB_PASSWORD'),
             database: configService.getOrThrow('DB_NAME'),
             synchronize: true,
+            migrations: [__dirname + '/migrations/**/*{.js,.ts}'],
             logging: configService.getOrThrow('DB_LOGGING') == 'true',
-            entities: [ClientEntity],
+            entities: [],
             autoLoadEntities: true,
           };
           console.log('Connected to DB.!');
@@ -54,6 +55,7 @@ import { NoteModule } from './modules/note/note.module';
     ProjectModule,
     TransactionModule,
     NoteModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

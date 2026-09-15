@@ -15,8 +15,11 @@ import { PlusCircle } from "lucide-react";
 import { FC } from "react";
 import { toast } from "sonner";
 import { AppPieChart } from "@/components/AppPieChart";
-import { mockClients } from "@/mockData";
 import useProject from "@/hooks/use-project";
+import { ActiveProjectsWidget } from "@/components/ActiveProjectsWidget";
+import { ActiveTasksWidget } from "@/components/ActiveTasksWidget";
+import { useQuery } from "@tanstack/react-query";
+import { DashboardService } from "@/services/dashboard.service";
 
 const Dashboard: FC = () => {
   const { clientsData, isClientsLoading, isClientsError, clientsError } =
@@ -28,19 +31,31 @@ const Dashboard: FC = () => {
     (state) => state.setOpenClientDialog,
   );
 
+  const {
+    data: dashboardAnalyticsData,
+    isLoading: isDashboardAnalyticsLoading,
+    isError: isDashboardAnalyticsError,
+    error: dashboardAnalyticsError,
+  } = useQuery({
+    queryKey: ["dashboard-analytics"],
+    queryFn: async () => {
+      const data = await DashboardService.getDashboardMetrics();
+
+      return data;
+    },
+  });
+
   const clientName = useClientStore((state) => state.clientName);
-  console.log("Client_Data: ", clientsData?.result);
+
   if (isClientsError) {
-    return (
-      <div className="text-red-400 w-full h-screen">
-        {isClientsError && clientsError instanceof Error
-          ? toast.error(clientsError?.message, { duration: 5000 })
-          : "Unknown Error"}
-      </div>
-    );
+    return toast.error(clientsError?.message ?? "Failed to load clients.!");
   }
 
-  if (isClientsLoading) {
+  if (isDashboardAnalyticsError) {
+    return toast.error(dashboardAnalyticsError.message);
+  }
+
+  if (isClientsLoading || isDashboardAnalyticsLoading) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
         <Spinner className="size-8 text-primary" />
@@ -65,47 +80,58 @@ const Dashboard: FC = () => {
           </div>
           <TabsContent value="overview">
             <>
-              <div className="grid grid-cols-3 gap-4 items-center">
+              <div className="grid grid-cols-4 gap-4 items-center">
                 <Card size="sm" className="mx-auto w-full max-w-sm">
                   <CardContent>
-                    <h4 className="text-foreground">Total Clients</h4>
+                    <h4 className="text-foreground">Active Clients</h4>
                     <p className="text-3xl font-bold pt-2">
-                      {clientsData?.result ? clientsData?.result?.active : 0} /
-                      {clientsData?.result ? clientsData?.result?.total : 0}
+                      {dashboardAnalyticsData?.result.totalActiveClients}
+                    </p>
+                    <p className="text-orange-400 font-semibold">
+                      +2 leads pending
                     </p>
                   </CardContent>
                 </Card>
                 <Card size="sm" className="mx-auto w-full max-w-sm">
                   <CardContent>
-                    <h4 className="text-foreground">Total Projects</h4>
+                    <h4 className="text-foreground">Active Projects</h4>
                     <p className="text-3xl font-bold pt-2">
-                      {projectsData?.result?.active || 0} /
-                      {projectsData?.result?.total || 0}
+                      {dashboardAnalyticsData?.result.totalActiveProjects}
+                    </p>
+                    <p className="text-green-400 font-semibold">
+                      +2 projects completed
                     </p>
                   </CardContent>
                 </Card>
                 <Card size="sm" className="mx-auto w-full max-w-sm">
                   <CardContent>
                     <h4 className="text-foreground">Total Earnings</h4>
-                    <p className="text-3xl font-bold pt-2">$ {20000}</p>
+                    <p className="text-3xl font-bold pt-2">
+                      $ {dashboardAnalyticsData?.result.totalEarnings}
+                    </p>
+                    <p className="text-green-400 font-semibold">
+                      +12 % this month
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card size="sm" className="mx-auto w-full max-w-sm">
+                  <CardContent>
+                    <h4 className="text-foreground">Pending Invoices</h4>
+                    <p className="text-3xl font-bold pt-2">$ {10000}</p>
+                    <p className="text-orange-400 font-semibold">
+                      2 invoices pending
+                    </p>
                   </CardContent>
                 </Card>
               </div>
 
-              <div className="pt-4">
-                <DeleteDialog name={clientName} />
-                {clientsData.result && (
-                  <AppDataTable
-                    columns={clientColumns}
-                    data={
-                      clientsData?.result?.clients
-                        ? clientsData?.result?.clients
-                        : []
-                    }
-                    showAddButton={false}
-                    isPagination={false}
-                  />
-                )}
+              <div className="grid grid-cols-12 gap-6 pt-4">
+                <ActiveProjectsWidget
+                  activeProjects={
+                    dashboardAnalyticsData?.result.activeProjects ?? []
+                  }
+                />
+                <ActiveTasksWidget />
               </div>
             </>
           </TabsContent>

@@ -1,4 +1,4 @@
-import { TransactionService } from "@/services/transactionService";
+import { TransactionService } from "@/services/transaction.service";
 import { useGlobalStore } from "@/stores/globalStore";
 import { NewTransaction, ResponsePayload, Transactions } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";

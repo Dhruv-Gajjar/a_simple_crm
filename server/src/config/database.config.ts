@@ -10,5 +10,5 @@ export default registerAs('database', () => ({
   database: process.env.DB_NAME,
   ssl: process.env.DB_SSL == 'true',
   logging: process.env.DB_LOGGING === 'true',
-  synchronize: process.env.DB_SYNCHRONIZE === 'true',
+  synchronize: true,
 }));

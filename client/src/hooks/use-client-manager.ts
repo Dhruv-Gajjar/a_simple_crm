@@ -1,4 +1,4 @@
-import { ClientService } from "@/services/clientService";
+import { ClientService } from "@/services/client.service";
 import { useClientStore } from "@/stores/clientStore";
 import { useGlobalStore } from "@/stores/globalStore";
 import { Client, NewClient } from "@/types";

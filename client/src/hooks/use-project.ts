@@ -1,4 +1,4 @@
-import { ProjectService } from "@/services/projectService";
+import { ProjectService } from "@/services/project.service";
 import { useGlobalStore } from "@/stores/globalStore";
 import { NewProject, Project, ProjectResponse, ResponsePayload } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
