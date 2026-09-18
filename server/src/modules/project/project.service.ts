@@ -23,7 +23,10 @@ export class ProjectService {
 
   async findOne(id: string) {
     this.logger.info({ id: id }, `Get project with ID: ${id}`);
-    return await this.projectRepository.findOne({ where: { id: id } });
+    return await this.projectRepository.findOne({
+      relations: { client: true, transactions: true, notes: true },
+      where: { id: id },
+    });
   }
 
   async update(id: string, payload: UpdateProjectDto) {

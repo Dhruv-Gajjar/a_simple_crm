@@ -8,38 +8,22 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 
-type ProjectResponse = {
-  projects: ProjectEntity[];
-  total: number;
-  active: number;
-};
-
 @Injectable()
 export class ProjectRepository extends BaseRepository<ProjectEntity> {
   constructor(dataSource: DataSource) {
     super(dataSource, ProjectEntity);
   }
 
-  async getAllProjects(): Promise<ProjectResponse> {
-    const stats = await this.queryBuilder('projects', (qb) =>
-      qb
-        .select('COUNT(*)', 'total')
-        .addSelect(`COUNT(*) FILTER(WHERE status = 'in_progress')`, 'active')
-        .getRawOne(),
-    );
-
+  async getAllProjects(): Promise<ProjectEntity[]> {
     const projects = await this.repository.find({
       relations: {
+        client: true,
         transactions: true,
         notes: true,
       },
     });
 
-    return {
-      projects: projects,
-      total: stats.total,
-      active: stats.active,
-    };
+    return projects;
   }
 
   async update(id: string, payload: UpdateProjectDto): Promise<ProjectEntity> {
@@ -51,7 +35,10 @@ export class ProjectRepository extends BaseRepository<ProjectEntity> {
       throw new NotFoundException(`project with id: ${id} not found.!`);
     }
 
-    const project = await this.repository.save(payload);
+    const project = await this.repository.save({
+      ...existingProject,
+      ...payload,
+    });
 
     if (!project) {
       throw new BadRequestException(

@@ -10,10 +10,10 @@ const ClientNameCell = ({ projectId }: { projectId: string }) => {
   const { projectsData } = useProject();
   const { clientsData } = useClientManager();
 
-  const project = projectsData?.result.projects.find(
+  const project = projectsData?.result.find(
     (p: Project) => p.id === projectId,
   ) as Project;
-  const client = clientsData?.result.clients.find(
+  const client = clientsData?.result.find(
     (c: Client) => c.id === project?.clientId,
   );
 
@@ -23,7 +23,7 @@ const ClientNameCell = ({ projectId }: { projectId: string }) => {
 const ProjectNameCell = ({ projectId }: { projectId: string }) => {
   const { projectsData } = useProject();
 
-  const project = projectsData?.result.projects.find(
+  const project = projectsData?.result.find(
     (p: Project) => p.id === projectId,
   ) as Project;
 

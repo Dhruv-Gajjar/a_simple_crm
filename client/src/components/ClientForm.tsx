@@ -73,7 +73,7 @@ const ClientForm = () => {
 
   useEffect(() => {
     if (isEditMode && clientID && clientsData) {
-      const client = clientsData?.result?.clients.find(
+      const client = clientsData?.result.find(
         (client: Client) => client.id === clientID,
       );
 
@@ -131,7 +131,7 @@ const ClientForm = () => {
 
   function editClient(data: NewClient) {
     if (clientID && clientsData) {
-      const client = clientsData?.result?.clients.find(
+      const client = clientsData?.result.find(
         (client: Client) => client.id === clientID,
       );
 

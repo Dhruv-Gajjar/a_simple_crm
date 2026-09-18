@@ -301,7 +301,7 @@ const TransactionForm = () => {
                     <SelectValue placeholder="Project Name" />
                   </SelectTrigger>
                   <SelectContent position="item-aligned">
-                    {projectsData?.result?.projects.map((project: Project) => (
+                    {projectsData?.result?.map((project: Project) => (
                       <SelectItem key={project.id} value={project.id}>
                         {project.name}
                       </SelectItem>

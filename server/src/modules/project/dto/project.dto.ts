@@ -12,6 +12,7 @@ import { PROJECT_STATUS } from '../entities/project.entity';
 import { Type } from 'class-transformer';
 import { TransactionEntity } from 'src/modules/transaction/entities/transaction.entity';
 import { NoteEntity } from 'src/modules/note/entities/note.entity';
+import { ClientEntity } from 'src/modules/client/entities/client.entity';
 
 export class ProjectDto {
   constructor(partial: Partial<ProjectDto>) {
@@ -33,6 +34,11 @@ export class ProjectDto {
   @IsString()
   @IsNotEmpty()
   clientId!: string;
+
+  @IsOptional()
+  @ValidateNested()
+  @Type(() => ClientEntity)
+  client?: ClientEntity;
 
   @IsEnum(PROJECT_STATUS)
   @IsNotEmpty()

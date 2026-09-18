@@ -1,11 +1,14 @@
 import { ProjectService } from "@/services/project.service";
 import { useGlobalStore } from "@/stores/globalStore";
-import { NewProject, Project, ProjectResponse, ResponsePayload } from "@/types";
+import { useProjectStore } from "@/stores/projectStore";
+import { NewProject, Project, ResponsePayload } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const useProject = () => {
-  const page = useGlobalStore((state) => state.page);
   const queryClient = useQueryClient();
+
+  const page = useGlobalStore((state) => state.page);
+  const projectId = useProjectStore((state) => state.selectedProjectId);
 
   const {
     data: projectsData,
@@ -20,22 +23,36 @@ const useProject = () => {
     },
   });
 
+  const {
+    data: projectData,
+    isLoading: isProjectLoading,
+    isError: isProjectError,
+    error: projectError,
+  } = useQuery({
+    queryKey: ["projects", projectId],
+    queryFn: async () => {
+      if (!projectId) {
+        console.log("ERROR_SERVICE: project id not found.!");
+        throw new Error("Project ID not set.");
+      }
+      const project = await ProjectService.getProjectByID(projectId);
+      return project;
+    },
+  });
+
   const createNewProject = useMutation({
     mutationKey: ["create_project"],
     mutationFn: ProjectService.createProject,
     onMutate: async (newProject: NewProject) => {
       await queryClient.cancelQueries({ queryKey: ["projects"] });
       const previousProjects = queryClient.getQueryData<
-        ResponsePayload<ProjectResponse>
+        ResponsePayload<Project[]>
       >(["projects"]);
       if (previousProjects) {
         queryClient.setQueryData(["projects"], {
           ...previousProjects,
           result: {
-            projects: [
-              ...previousProjects.result.projects,
-              newProject as Project,
-            ],
+            projects: [...previousProjects.result, newProject as Project],
           },
         });
       }
@@ -55,22 +72,15 @@ const useProject = () => {
     onMutate: async (updatedProject: Project) => {
       await queryClient.cancelQueries({ queryKey: ["projects"] });
       const previousProjects = queryClient.getQueryData<
-        ResponsePayload<ProjectResponse>
+        ResponsePayload<Project[]>
       >(["projects"]);
       if (previousProjects) {
-        queryClient.setQueryData<ResponsePayload<ProjectResponse>>(
-          ["projects"],
-          {
-            ...previousProjects,
-            result: {
-              projects: previousProjects.result.projects.map((project) =>
-                project.id === updatedProject.id ? updatedProject : project,
-              ),
-              total: previousProjects.result.total,
-              active: previousProjects.result.active,
-            },
-          },
-        );
+        queryClient.setQueryData<ResponsePayload<Project[]>>(["projects"], {
+          ...previousProjects,
+          result: previousProjects.result.map((project) =>
+            project.id === updatedProject.id ? updatedProject : project,
+          ),
+        });
       }
       return { previousProjects };
     },
@@ -88,22 +98,15 @@ const useProject = () => {
     onMutate: async (projectId: string) => {
       await queryClient.cancelQueries({ queryKey: ["projects"] });
       const previousProjects = queryClient.getQueryData<
-        ResponsePayload<ProjectResponse>
+        ResponsePayload<Project[]>
       >(["projects"]);
       if (previousProjects) {
-        queryClient.setQueryData<ResponsePayload<ProjectResponse>>(
-          ["projects"],
-          {
-            ...previousProjects,
-            result: {
-              projects: previousProjects.result.projects.filter(
-                (project) => project.id !== projectId,
-              ),
-              total: previousProjects.result.total,
-              active: previousProjects.result.active,
-            },
-          },
-        );
+        queryClient.setQueryData<ResponsePayload<Project[]>>(["projects"], {
+          ...previousProjects,
+          result: previousProjects.result.filter(
+            (project) => project.id !== projectId,
+          ),
+        });
       }
       return { previousProjects };
     },
@@ -120,6 +123,10 @@ const useProject = () => {
     isProjectsLoading,
     isProjectsError,
     projectsError,
+    projectData,
+    isProjectLoading,
+    isProjectError,
+    projectError,
     createNewProject,
     updateProject,
     deleteProject,

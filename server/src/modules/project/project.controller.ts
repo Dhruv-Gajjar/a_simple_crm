@@ -54,7 +54,7 @@ export class ProjectController {
   @Get()
   @ApiOperation({ summary: 'Get all projects' })
   @ApiResponse({ status: 200, description: 'All projects fetch successfully' })
-  async findAll() {
+  async findAll(): Promise<ProjectDto[]> {
     const projectsRes = await this.projectService.findAll();
 
     if (!projectsRes) {
@@ -67,26 +67,23 @@ export class ProjectController {
       );
     }
 
-    return {
-      projects: projectsRes.projects.map(
-        (project: ProjectEntity) =>
-          new ProjectDto({
-            id: project.id,
-            name: project.name,
-            description: project.description,
-            clientId: project.clientId,
-            status: project.status,
-            totalAmount: project.totalAmount,
-            iterations: project.iterations,
-            startDate: project.startDate,
-            endDate: project.endDate,
-            transactions: project.transactions,
-            notes: project.notes,
-          }),
-      ),
-      total: projectsRes.total,
-      active: projectsRes.active,
-    };
+    return projectsRes.map(
+      (project: ProjectEntity) =>
+        new ProjectDto({
+          id: project.id,
+          name: project.name,
+          description: project.description,
+          clientId: project.clientId,
+          client: project.client,
+          status: project.status,
+          totalAmount: project.totalAmount,
+          iterations: project.iterations,
+          startDate: project.startDate,
+          endDate: project.endDate,
+          transactions: project.transactions,
+          notes: project.notes,
+        }),
+    );
   }
 
   @Get(':id')
@@ -105,6 +102,7 @@ export class ProjectController {
       name: project.name,
       description: project.description,
       clientId: project.clientId,
+      client: project.client,
       status: project.status,
       totalAmount: project.totalAmount,
       iterations: project.iterations,
@@ -134,6 +132,7 @@ export class ProjectController {
       name: project.name,
       description: project.description,
       clientId: project.clientId,
+      client: project.client,
       status: project.status,
       totalAmount: project.totalAmount,
       iterations: project.iterations,

@@ -44,25 +44,24 @@ export class ClientController {
   @Get()
   @ApiOperation({ summary: 'List all clients' })
   @ApiResponse({ status: 200, description: 'Returns all clients' })
-  async findAll(@Param('page') page: string, @Param('limit') limit: string) {
+  async findAll(
+    @Param('page') page: string,
+    @Param('limit') limit: string,
+  ): Promise<ClientDto[]> {
     const clientsRes = await this.clientService.findAll();
-    return {
-      clients: clientsRes.clients.map(
-        (client: ClientEntity) =>
-          new ClientDto({
-            id: client.id,
-            name: client.name,
-            email: client.email,
-            source: client.source,
-            status: client.status,
-            phoneNumber: client.phoneNumber,
-            remarks: client.remarks,
-            projects: client.projects,
-          }),
-      ),
-      total: clientsRes.total,
-      active: clientsRes.active,
-    };
+    return clientsRes.map(
+      (client: ClientEntity) =>
+        new ClientDto({
+          id: client.id,
+          name: client.name,
+          email: client.email,
+          source: client.source,
+          status: client.status,
+          phoneNumber: client.phoneNumber,
+          remarks: client.remarks,
+          projects: client.projects,
+        }),
+    );
   }
 
   @Get(':id')
@@ -82,6 +81,7 @@ export class ClientController {
       status: client.status,
       phoneNumber: client.phoneNumber,
       remarks: client.remarks,
+      projects: client.projects,
     });
   }
 

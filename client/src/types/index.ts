@@ -26,12 +26,6 @@ export type ResponsePayload<T> = {
   error: boolean;
 };
 
-export interface ClientResponse {
-  clients: Client[];
-  total: number;
-  active: number;
-}
-
 export interface Client {
   id: string;
   name: string;
@@ -51,19 +45,13 @@ export interface Client {
 
 export type NewClient = Omit<Client, "id" | "projects">;
 
-export interface ProjectResponse {
-  projects: Project[];
-  total: number;
-  active: number;
-}
-
 export interface Project {
   id: string;
   name: string;
   description: string;
   status: PROJECT_STATUS;
   clientId: string;
-  client: Client;
+  client?: Client;
   startDate: Date;
   endDate: Date;
   start_date?: Date;

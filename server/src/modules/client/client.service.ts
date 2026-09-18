@@ -44,6 +44,9 @@ export class ClientService {
 
   async findOne(id: string) {
     const client = await this.clientRepository.findOne({
+      relations: {
+        projects: true,
+      },
       where: { id: id },
     });
 

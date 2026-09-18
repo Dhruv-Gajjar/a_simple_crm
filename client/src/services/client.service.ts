@@ -1,10 +1,8 @@
 import axiosInstance from "@/api";
-import { Client, ClientResponse, NewClient, ResponsePayload } from "@/types";
+import { Client, NewClient, ResponsePayload } from "@/types";
 
 export const ClientService = {
-  getAllClients: async (
-    page: number,
-  ): Promise<ResponsePayload<ClientResponse>> => {
+  getAllClients: async (page: number): Promise<ResponsePayload<Client[]>> => {
     const response = await axiosInstance.get(`client`);
     return response.data;
   },
