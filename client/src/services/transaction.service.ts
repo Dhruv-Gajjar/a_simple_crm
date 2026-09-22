@@ -6,6 +6,12 @@ export const TransactionService = {
     const transactions = await axiosInstance.get("transaction/");
     return transactions.data;
   },
+  getTransactionByID: async (
+    id: string,
+  ): Promise<ResponsePayload<Transactions>> => {
+    const response = await axiosInstance.get(`transaction/${id}`);
+    return response.data;
+  },
   createTransaction: async (
     newTransaction: NewTransaction,
   ): Promise<ResponsePayload<Transactions>> => {

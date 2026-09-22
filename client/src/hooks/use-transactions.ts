@@ -1,11 +1,16 @@
 import { TransactionService } from "@/services/transaction.service";
 import { useGlobalStore } from "@/stores/globalStore";
+import { useTransactionStore } from "@/stores/transactionStore";
 import { NewTransaction, ResponsePayload, Transactions } from "@/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const useTransaction = () => {
-  const page = useGlobalStore((state) => state.page);
   const queryClient = useQueryClient();
+
+  const page = useGlobalStore((state) => state.page);
+  const transactionID = useTransactionStore(
+    (state) => state.selectedTransactionId,
+  );
 
   const {
     data: transactionsData,
@@ -17,6 +22,24 @@ const useTransaction = () => {
     queryFn: async (): Promise<ResponsePayload<Transactions[]>> => {
       const transactions = await TransactionService.getAllTransactions();
       return transactions;
+    },
+  });
+
+  const {
+    data: transactionData,
+    isLoading: isTransactionLoading,
+    isError: isTransactionError,
+    error: transactionError,
+  } = useQuery({
+    queryKey: ["transactions", transactionID],
+    queryFn: async (): Promise<ResponsePayload<Transactions>> => {
+      if (!transactionID) {
+        console.log("ERROR_SERVICE: transaction id not found.!");
+        throw new Error("Transaction ID not set.");
+      }
+      const transaction =
+        await TransactionService.getTransactionByID(transactionID);
+      return transaction;
     },
   });
 
@@ -125,6 +148,10 @@ const useTransaction = () => {
     isTransactionsLoading,
     isTransactionsError,
     transactionsError,
+    transactionData,
+    isTransactionLoading,
+    isTransactionError,
+    transactionError,
     createNewTransaction,
     updateTransaction,
     deleteTransaction,

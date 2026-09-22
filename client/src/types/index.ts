@@ -13,6 +13,12 @@ export const enum PROJECT_STATUS {
   Canceled = "canceled",
 }
 
+export const enum TRANSACTION_STATUS {
+  Pending = "pending",
+  Paid = "paid",
+  Failed = "failed",
+}
+
 export const enum INVOICES_STATUS {
   Draft = "draft",
   Paid = "paid",
@@ -73,13 +79,12 @@ export type NewProject = Omit<
 export interface Transactions {
   id: string;
   projectId?: string;
-  project_id?: string;
+  project?: Project;
   amount?: number;
   amountPaid?: number;
   paymentMethod?: string;
-  payment_method?: string;
   paymentDate?: Date;
-  payment_date?: Date;
+  status: TRANSACTION_STATUS;
   createdAt: Date;
 }
 

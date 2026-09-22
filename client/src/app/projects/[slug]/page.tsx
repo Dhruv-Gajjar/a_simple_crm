@@ -563,18 +563,14 @@ export default function ProjectDetailsPage({
                       {transactions.map((tx) => (
                         <TableRow key={tx.id}>
                           <TableCell className="font-medium">
-                            {formatDate(
-                              tx.paymentDate || tx.payment_date || tx.createdAt,
-                            )}
+                            {formatDate(tx.paymentDate || tx.createdAt)}
                           </TableCell>
                           <TableCell className="font-mono text-xs text-muted-foreground">
                             {tx.id.slice(0, 8)}...
                           </TableCell>
                           <TableCell>
                             <Badge variant="outline" className="capitalize">
-                              {tx.paymentMethod ||
-                                tx.payment_method ||
-                                "Payment"}
+                              {tx.paymentMethod || "Payment"}
                             </Badge>
                           </TableCell>
                           <TableCell className="text-right font-semibold text-emerald-600 dark:text-emerald-400">

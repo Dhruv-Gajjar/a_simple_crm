@@ -54,7 +54,7 @@ export const clientColumns: ColumnDef<Client>[] = [
   {
     accessorKey: "source",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title="Soruce" />
+      <DataTableColumnHeader column={column} title="Source" />
     ),
   },
 

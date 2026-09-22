@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import useClientManager from "@/hooks/use-client-manager";
 import useProject from "@/hooks/use-project";
 import { DataTableRowActions } from "../data-table-actions";
+import { Badge } from "@/components/ui/badge";
 
 const ClientNameCell = ({ projectId }: { projectId: string }) => {
   const { projectsData } = useProject();
@@ -70,7 +71,31 @@ export const transactionsColumns: ColumnDef<Transactions>[] = [
       return <ProjectNameCell projectId={projectId} />;
     },
   },
+  {
+    accessorKey: "status",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Status" />
+    ),
+    cell: ({ row }) => {
+      const status: string = row.getValue("status");
 
+      const statusColors: Record<string, string> = {
+        paid: "bg-emerald-500/15 text-emerald-700 border-emerald-500/20",
+        failed: "bg-destructive/15 text-destructive border-destructive/20",
+        pending: "bg-orange-400/15 text-orange-800 border-orange/20",
+      };
+
+      const colorClass =
+        statusColors[status.toLowerCase()] ||
+        "bg-secondary text-secondary-foreground";
+
+      return (
+        <Badge className={`${colorClass} font-medium capitalize shadow-none `}>
+          {status}
+        </Badge>
+      );
+    },
+  },
   {
     accessorKey: "paymentMethod",
     header: ({ column }) => (
@@ -83,6 +108,7 @@ export const transactionsColumns: ColumnDef<Transactions>[] = [
       <DataTableColumnHeader column={column} title="Amount" />
     ),
   },
+
   {
     id: "actions",
     cell: ({ row }) => <DataTableRowActions row={row} />,

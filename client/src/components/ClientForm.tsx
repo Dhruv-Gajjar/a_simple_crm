@@ -306,7 +306,7 @@ const ClientForm = () => {
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="form-client-remarks">Remakrs</FieldLabel>
+                  <FieldLabel htmlFor="form-client-remarks">Remarks</FieldLabel>
                   <InputGroup>
                     <InputGroupTextarea
                       {...field}

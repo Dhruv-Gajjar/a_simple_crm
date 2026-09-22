@@ -22,7 +22,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { NewTransaction, Project, Transactions } from "@/types";
+import {
+  NewTransaction,
+  Project,
+  TRANSACTION_STATUS,
+  Transactions,
+} from "@/types";
 import useProject from "@/hooks/use-project";
 import { useGlobalStore } from "@/stores/globalStore";
 import useTransaction from "@/hooks/use-transactions";
@@ -35,6 +40,11 @@ const transactionFormSchema = z.object({
   projectId: z.string(),
   paymentMethod: z.string(),
   amount: z.string(),
+  status: z.enum([
+    TRANSACTION_STATUS.Pending,
+    TRANSACTION_STATUS.Paid,
+    TRANSACTION_STATUS.Failed,
+  ]),
 });
 
 const defaultValues: z.infer<typeof transactionFormSchema> = {
@@ -42,6 +52,7 @@ const defaultValues: z.infer<typeof transactionFormSchema> = {
   projectId: "",
   paymentMethod: "",
   amount: "0",
+  status: TRANSACTION_STATUS.Pending,
 };
 
 const TransactionForm = () => {
@@ -81,6 +92,7 @@ const TransactionForm = () => {
           paymentMethod:
             transaction.paymentMethod || transaction.payment_method,
           amount: String(transaction.amountPaid ?? transaction.amount ?? 0),
+          status: transaction.status,
         });
       } else {
         toast.error("Transaction not found!", { duration: 3000 });
@@ -124,6 +136,7 @@ const TransactionForm = () => {
             paymentMethod: newTransaction.paymentMethod,
             projectId: newTransaction.projectId,
             amount: newTransaction.amount,
+            status: newTransaction.status,
           } as Transactions,
           {
             onSuccess: (data) => {
@@ -156,6 +169,7 @@ const TransactionForm = () => {
         paymentMethod: data.paymentMethod,
         projectId: data.projectId,
         amount: parseInt(data.amount),
+        status: data.status,
       };
 
       if (!isEditMode) {
@@ -269,6 +283,49 @@ const TransactionForm = () => {
                 {fieldState.invalid && (
                   <FieldError errors={[fieldState.error]} />
                 )}
+              </Field>
+            )}
+          />
+          <Controller
+            name="status"
+            control={form.control}
+            render={({ field, fieldState }) => (
+              <Field orientation="responsive" data-invalid={fieldState.invalid}>
+                <FieldContent>
+                  <FieldLabel htmlFor="form-transaction-status">
+                    Status
+                  </FieldLabel>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </FieldContent>
+                <Select
+                  key={field.value}
+                  name={field.name}
+                  value={field.value}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                  }}
+                >
+                  <SelectTrigger
+                    id="form-transaction-status"
+                    aria-invalid={fieldState.invalid}
+                    className="w-full"
+                  >
+                    <SelectValue placeholder="Transaction Status" />
+                  </SelectTrigger>
+                  <SelectContent position="item-aligned">
+                    <SelectItem value={TRANSACTION_STATUS.Pending}>
+                      Pending
+                    </SelectItem>
+                    <SelectItem value={TRANSACTION_STATUS.Paid}>
+                      Paid
+                    </SelectItem>
+                    <SelectItem value={TRANSACTION_STATUS.Failed}>
+                      Failed
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </Field>
             )}
           />
