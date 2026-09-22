@@ -34,7 +34,11 @@ export class TransactionService {
   }
 
   async findAll(): Promise<TransactionEntity[]> {
-    const transactions = await this.transactionRepository.findAll();
+    const transactions = await this.transactionRepository.findAll({
+      relations: {
+        project: true,
+      },
+    });
 
     if (!transactions) {
       this.logger.warn('Failed to get all transactions.');
@@ -46,6 +50,11 @@ export class TransactionService {
 
   async findOne(id: string): Promise<TransactionEntity> {
     const transaction = await this.transactionRepository.findOne({
+      relations: {
+        project: {
+          client: true
+        },
+      },
       where: { id: id },
     });
 

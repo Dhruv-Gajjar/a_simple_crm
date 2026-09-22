@@ -8,6 +8,7 @@ export class NoteEntity extends BaseEntity {
   projectId!: string;
 
   @ManyToOne(() => ProjectEntity, (project) => project.notes, {
+    cascade: ['soft-remove'],
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'project_id' })

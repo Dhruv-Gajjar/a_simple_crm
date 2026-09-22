@@ -1,4 +1,11 @@
-import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsDate,
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
+import { TRANSACTION_STATUS } from '../entities/transaction.entity';
 
 export class CreateTransactionDto {
   constructor(partial: Partial<CreateTransactionDto>) {
@@ -20,4 +27,8 @@ export class CreateTransactionDto {
   @IsDate()
   @IsNotEmpty()
   paymentDate!: Date;
+
+  @IsEnum(TRANSACTION_STATUS)
+  @IsNotEmpty()
+  status!: TRANSACTION_STATUS;
 }

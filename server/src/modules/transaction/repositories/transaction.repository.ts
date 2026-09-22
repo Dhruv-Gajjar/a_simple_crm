@@ -10,8 +10,8 @@ import { UpdateTransactionDto } from '../dto/update-transaction.dto';
 
 @Injectable()
 export class TransactionRepository extends BaseRepository<TransactionEntity> {
-  constructor(dataSoruce: DataSource) {
-    super(dataSoruce, TransactionEntity);
+  constructor(dataSource: DataSource) {
+    super(dataSource, TransactionEntity);
   }
 
   async update(

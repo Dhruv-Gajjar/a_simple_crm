@@ -24,6 +24,7 @@ export class ProjectEntity extends BaseEntity {
   clientId!: string;
 
   @ManyToOne(() => ClientEntity, (client) => client.projects, {
+    cascade: ['soft-remove'],
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'client_id' })
@@ -37,16 +38,34 @@ export class ProjectEntity extends BaseEntity {
   })
   status!: PROJECT_STATUS;
 
-  @Column({ name: 'total_amount', type: 'float' })
+  @Column({
+    name: 'amount',
+    type: 'numeric',
+    precision: 12,
+    scale: 2,
+    default: 0,
+    transformer: {
+      to: (value: number) => value,
+      from: (value: string | null) => (value != null ? parseFloat(value) : 0),
+    },
+  })
   totalAmount!: number;
 
   @Column({ name: 'iterations', type: 'int', default: 0 })
   iterations!: number;
 
-  @Column({ name: 'start_date', type: 'timestamptz', default: new Date() })
+  @Column({
+    name: 'start_date',
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   startDate!: Date;
 
-  @Column({ name: 'end_date', type: 'timestamptz', default: new Date() })
+  @Column({
+    name: 'end_date',
+    type: 'timestamptz',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   endDate!: Date;
 
   @OneToMany(() => TransactionEntity, (transaction) => transaction.project)

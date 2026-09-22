@@ -17,7 +17,7 @@ export class ClientEntity extends BaseEntity {
   @Column({ name: 'email', type: 'varchar', length: 120 })
   email!: string;
 
-  @Column({ name: 'soruce', type: 'varchar' })
+  @Column({ name: 'source', type: 'varchar', default: '' })
   source!: string;
 
   @Column({
@@ -36,4 +36,7 @@ export class ClientEntity extends BaseEntity {
 
   @OneToMany(() => ProjectEntity, (project) => project.client)
   projects!: ProjectEntity[];
+
+  @Column({ name: 'last_contacted_at', type: 'timestamp', nullable: true })
+  lastContactedAt!: Date;
 }

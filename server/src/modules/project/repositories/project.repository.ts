@@ -28,6 +28,11 @@ export class ProjectRepository extends BaseRepository<ProjectEntity> {
 
   async update(id: string, payload: UpdateProjectDto): Promise<ProjectEntity> {
     const existingProject = await this.repository.findOne({
+      relations: {
+        client: true,
+        transactions: true,
+        notes: true,
+      },
       where: { id: id },
     });
 

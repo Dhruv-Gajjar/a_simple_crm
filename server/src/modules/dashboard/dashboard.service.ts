@@ -6,6 +6,7 @@ import { ClientDto } from '../client/dto/client.dto';
 import { CLIENT_STATUS } from '../client/entities/client.entity';
 import { AnalyticsDto } from './dto/analytics.dto';
 import { PROJECT_STATUS } from '../project/entities/project.entity';
+import { TRANSACTION_STATUS } from '../transaction/entities/transaction.entity';
 
 @Injectable()
 export class DashboardService {
@@ -53,6 +54,9 @@ export class DashboardService {
       'transactions',
       (qb) =>
         qb
+          .where('transactions.status = :status', {
+            status: TRANSACTION_STATUS.Paid,
+          })
           .select('SUM(transactions.amount)', 'totalEarnings')
           .getRawOne<{ totalEarnings: number | null }>(),
     );

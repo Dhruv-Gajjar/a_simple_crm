@@ -36,5 +36,5 @@ export class CreateClientDto {
 
   @IsString()
   @IsOptional()
-  remakrs!: string;
+  remarks!: string;
 }

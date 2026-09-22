@@ -12,6 +12,7 @@ import { ProjectModule } from './modules/project/project.module';
 import { TransactionModule } from './modules/transaction/transaction.module';
 import { NoteModule } from './modules/note/note.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -28,26 +29,14 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
-        try {
-          const dataSource: TypeOrmModuleOptions = {
-            type: 'postgres',
-            host: configService.getOrThrow('DB_HOST'),
-            port: configService.getOrThrow('DB_PORT'),
-            username: configService.getOrThrow('DB_USERNAME'),
-            password: configService.getOrThrow('DB_PASSWORD'),
-            database: configService.getOrThrow('DB_NAME'),
-            synchronize: true,
-            migrations: [__dirname + '/migrations/**/*{.js,.ts}'],
-            logging: configService.getOrThrow('DB_LOGGING') == 'true',
-            entities: [],
-            autoLoadEntities: true,
-          };
-          console.log('Connected to DB.!');
-          return dataSource;
-        } catch (error) {
-          console.log(`ERROR: DB connection error - ${error as Error}`);
-          throw error;
+        const dbConfig =
+          configService.getOrThrow<TypeOrmModuleOptions>('database');
+
+        if (!dbConfig) {
+          throw new Error('Database configuration could not be loaded.');
         }
+
+        return dbConfig;
       },
       inject: [ConfigService],
     }),
@@ -56,6 +45,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     TransactionModule,
     NoteModule,
     DashboardModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],

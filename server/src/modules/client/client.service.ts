@@ -28,7 +28,7 @@ export class ClientService {
       source: payload.source,
       status: payload.status,
       phoneNumber: payload.phoneNumber,
-      remarks: payload.remakrs ? payload.remakrs : '',
+      remarks: payload.remarks ? payload.remarks : '',
     });
 
     this.logger.info({ name: payload.name }, 'Client created...!');

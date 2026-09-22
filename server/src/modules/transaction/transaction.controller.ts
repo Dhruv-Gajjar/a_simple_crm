@@ -43,6 +43,7 @@ export class TransactionController {
       amount: transaction.amount,
       paymentMethod: transaction.paymentMethod,
       paymentDate: transaction.paymentDate,
+      status: transaction.status,
     });
   }
 
@@ -71,9 +72,11 @@ export class TransactionController {
         new TransactionDto({
           id: transaction.id,
           projectId: transaction.projectId,
+          project: transaction.project,
           amount: transaction.amount,
           paymentMethod: transaction.paymentMethod,
           paymentDate: transaction.paymentDate,
+          status: transaction.status,
         }),
     );
   }
@@ -98,9 +101,11 @@ export class TransactionController {
     return new TransactionDto({
       id: transaction.id,
       projectId: transaction.projectId,
+      project: transaction.project,
       amount: transaction.amount,
       paymentMethod: transaction.paymentMethod,
       paymentDate: transaction.paymentDate,
+      status: transaction.status,
     });
   }
 
@@ -127,6 +132,7 @@ export class TransactionController {
       amount: transaction.amount,
       paymentMethod: transaction.paymentMethod,
       paymentDate: transaction.paymentDate,
+      status: transaction.status,
     });
   }
 
