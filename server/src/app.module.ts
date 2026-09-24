@@ -13,6 +13,10 @@ import { TransactionModule } from './modules/transaction/transaction.module';
 import { NoteModule } from './modules/note/note.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { UserModule } from './modules/user/user.module';
+import { WorkspaceModule } from './modules/workspace/workspace.module';
+import { WorkspaceMemberModule } from './modules/workspace-member/workspace-member.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { AuthJwtModule } from './modules/jwt/jwt.module';
 
 @Module({
   imports: [
@@ -46,6 +50,10 @@ import { UserModule } from './modules/user/user.module';
     NoteModule,
     DashboardModule,
     UserModule,
+    WorkspaceModule,
+    WorkspaceMemberModule,
+    AuthModule,
+    AuthJwtModule,
   ],
   controllers: [AppController],
   providers: [AppService],

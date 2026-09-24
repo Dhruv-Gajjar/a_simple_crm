@@ -1,6 +1,7 @@
-import { Column, Entity, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { BaseEntity } from 'src/common/entities/base.entity';
 import { ProjectEntity } from 'src/modules/project/entities/project.entity';
+import { WorkspaceEntity } from 'src/modules/workspace/entities/workspace.entity';
 
 export enum CLIENT_STATUS {
   Active = 'active',
@@ -33,6 +34,15 @@ export class ClientEntity extends BaseEntity {
 
   @Column({ name: 'remarks', type: 'varchar', nullable: true })
   remarks!: string;
+
+  @Column({ name: 'workspace_id', type: 'uuid', nullable: false })
+  workspace_id!: string;
+
+  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.clients, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'workspace_id' })
+  workspace!: WorkspaceEntity;
 
   @OneToMany(() => ProjectEntity, (project) => project.client)
   projects!: ProjectEntity[];
