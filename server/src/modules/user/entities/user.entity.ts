@@ -1,4 +1,5 @@
 import { BaseEntity } from 'src/common/entities/base.entity';
+import { RefreshTokenEntity } from 'src/modules/refresh-tokens/entities/refresh-token.entity';
 import { WorkspaceMemberEntity } from 'src/modules/workspace-member/entities/workspace-member.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
@@ -34,4 +35,7 @@ export class UserEntity extends BaseEntity {
 
   @OneToMany(() => WorkspaceMemberEntity, (member) => member.user)
   memberships!: WorkspaceMemberEntity[];
+
+  @OneToMany(() => RefreshTokenEntity, (token) => token.user)
+  refreshTokens!: RefreshTokenEntity[];
 }

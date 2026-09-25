@@ -34,8 +34,9 @@ export class UserController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  getUserProfile(@Req() request: Request): void {
+  getUserProfile(@Req() request: Request): string {
     console.log('user', (request as any).user);
+    return 'Acces Granted';
   }
 
   @Get(':id')

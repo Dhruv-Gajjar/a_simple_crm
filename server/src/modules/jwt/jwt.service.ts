@@ -1,45 +1,90 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { JwtService } from '@nestjs/jwt';
+import { JwtService, JwtSignOptions } from '@nestjs/jwt';
+import type { SignOptions } from 'jsonwebtoken';
 import * as argon2 from 'argon2';
+
+export interface JwtAuthPayload {
+  sub: string;
+  username: string;
+  [key: string]: any;
+}
+
+export interface GeneratedTokenPair {
+  accessToken: string;
+  refreshToken: string;
+}
 
 @Injectable()
 export class AuthJwtService {
   constructor(
-    private jwtService: JwtService,
-    private configService: ConfigService,
+    private readonly jwtService: JwtService,
+    private readonly configService: ConfigService,
   ) {}
 
-  sign(payload: any): string {
-    const access_token = this.jwtService.sign(payload);
-    return access_token;
+  generateTokens(payload: JwtAuthPayload): GeneratedTokenPair {
+    const accessToken = this.jwtService.sign(payload);
+
+    const refreshTokenExpiresIn = this.configService.get<string>(
+      'JWT_REFRESH_EXPIRES_IN',
+      '7d',
+    ) as SignOptions['expiresIn'];
+
+    const refreshToken = this.jwtService.sign(payload, {
+      secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
+      expiresIn: refreshTokenExpiresIn,
+    });
+
+    return { accessToken, refreshToken };
   }
 
-  async hash(password: string): Promise<string> {
-    try {
-      const passwordHash = await argon2.hash(password, {
-        type: argon2.argon2id,
-        memoryCost: 19456,
-        timeCost: parseInt(this.configService.getOrThrow('SALT_ROUNDES')),
-        parallelism: 1,
-      });
+  async signAsync(
+    payload: JwtAuthPayload,
+    options?: JwtSignOptions,
+  ): Promise<string> {
+    return await this.jwtService.signAsync(payload, options);
+  }
 
-      return passwordHash;
+  verify<T extends object = JwtAuthPayload>(token: string): T {
+    try {
+      return this.jwtService.verify<T>(token);
     } catch {
-      throw new Error('Failed to hash.');
+      throw new UnauthorizedException('Invalid or expired access token.');
     }
   }
 
-  async verifyHash(hash: string, password: string): Promise<boolean> {
+  verifyRefreshToken<T extends object = JwtAuthPayload>(token: string): T {
     try {
-      const isVerified = await argon2.verify(hash, password);
-      if (!isVerified) {
-        return false;
-      }
-
-      return isVerified;
+      return this.jwtService.verify<T>(token, {
+        secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
+      });
     } catch {
-      throw new InternalServerErrorException();
+      throw new UnauthorizedException('Invalid or expired refresh token.');
+    }
+  }
+
+  async hash(value: string): Promise<string> {
+    try {
+      return await argon2.hash(value, {
+        type: argon2.argon2id,
+        memoryCost: 19456,
+        timeCost: parseInt(this.configService.getOrThrow('SALT_ROUNDES'), 10),
+        parallelism: 1,
+      });
+    } catch {
+      throw new InternalServerErrorException('Failed to hash value.');
+    }
+  }
+
+  async verifyHash(hash: string, plainText: string): Promise<boolean> {
+    try {
+      return await argon2.verify(hash, plainText);
+    } catch {
+      throw new InternalServerErrorException('Error verifying hash.');
     }
   }
 }
