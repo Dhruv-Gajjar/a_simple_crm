@@ -26,15 +26,15 @@ export class AuthJwtService {
     private readonly configService: ConfigService,
   ) {}
 
-  generateTokens(payload: JwtAuthPayload): GeneratedTokenPair {
-    const accessToken = this.jwtService.sign(payload);
+  async generateTokens(payload: JwtAuthPayload): Promise<GeneratedTokenPair> {
+    const accessToken = await this.jwtService.signAsync(payload);
 
     const refreshTokenExpiresIn = this.configService.get<string>(
       'JWT_REFRESH_EXPIRES_IN',
       '7d',
     ) as SignOptions['expiresIn'];
 
-    const refreshToken = this.jwtService.sign(payload, {
+    const refreshToken = await this.jwtService.signAsync(payload, {
       secret: this.configService.getOrThrow<string>('JWT_REFRESH_SECRET'),
       expiresIn: refreshTokenExpiresIn,
     });
@@ -72,7 +72,7 @@ export class AuthJwtService {
       return await argon2.hash(value, {
         type: argon2.argon2id,
         memoryCost: 19456,
-        timeCost: parseInt(this.configService.getOrThrow('SALT_ROUNDES'), 10),
+        timeCost: parseInt(this.configService.getOrThrow('SALT_ROUNDS'), 10),
         parallelism: 1,
       });
     } catch {

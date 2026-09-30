@@ -32,6 +32,31 @@ export type ResponsePayload<T> = {
   error: boolean;
 };
 
+export interface Signup {
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  passwordHash: string;
+}
+
+export interface Signin {
+  username: string;
+  passwordHash: string;
+}
+
+export interface User {
+  id: string;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  accessToken: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+}
+
 export interface Client {
   id: string;
   name: string;

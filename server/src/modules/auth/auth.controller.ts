@@ -1,6 +1,8 @@
 import {
+  BadRequestException,
   Body,
   Controller,
+  Get,
   HttpStatus,
   Post,
   Req,
@@ -14,6 +16,7 @@ import { SigninDto } from './dtos/signin.dto';
 import { SignupDto } from './dtos/signup.dto';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
+import { UserDto } from '../user/dtos/user.dto';
 
 interface RequestWithCookies extends Request {
   cookies: Record<string, string | undefined>;
@@ -39,27 +42,7 @@ export class AuthController {
     @Body() input: SignupDto,
     @Res({ passthrough: true }) res: Response,
   ): Promise<AuthResponseDto> {
-    const data = await this.authService.signup(input);
-    console.log({ data });
-    const isProduction: boolean =
-      this.configService.getOrThrow<string>('NODE_ENV') === 'production';
-
-    res.cookie('access_token', data.accessToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: 'lax',
-      maxAge: 15 * 60 * 1000,
-      path: '/',
-    });
-
-    res.cookie('refresh_token', data.refreshToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/',
-    });
-
+    const data = await this.authService.signup(res, input);
     return data;
   }
 
@@ -72,22 +55,39 @@ export class AuthController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Failed to signin',
   })
-  async signin(@Body() input: SigninDto): Promise<AuthResponseDto> {
-    const user = await this.authService.signin(input);
+  async signin(
+    @Res({ passthrough: true }) res: Response,
+    @Body() input: SigninDto,
+  ): Promise<AuthResponseDto> {
+    const user = await this.authService.signin(res, input);
     return user;
+  }
+
+  @Get('me')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'User found.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Error finding user.',
+  })
+  async me(@Req() req: Request): Promise<UserDto> {
+    const token: unknown = req?.cookies['access_token'] ?? null;
+    const currentUser = await this.authService.me(token);
+    return currentUser;
   }
 
   @Post('refresh')
   async refreshToken(
     @Req() req: RequestWithCookies,
     @Res({ passthrough: true }) res: Response,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string }> {
     const rawRefreshToken = req.cookies?.['refresh_token'];
-    console.log('cookies', req.cookies);
     if (!rawRefreshToken) {
       throw new UnauthorizedException('Refresh token missing.');
     }
-    const { accessToken, refreshToken } =
+    const { accessToken } =
       await this.authService.refreshToken(rawRefreshToken);
 
     const isProduction = process.env.NODE_ENV === 'production';
@@ -100,17 +100,26 @@ export class AuthController {
       path: '/',
     });
 
-    res.cookie('refresh_token', refreshToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/auth/refresh',
-    });
-
     return {
       accessToken,
-      refreshToken,
     };
+  }
+
+  @Post('logout')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Sucessfully logged out.',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Failed to logout.',
+  })
+  logout(@Res({ passthrough: true }) res: Response): string {
+    const isLogout = this.authService.logout(res);
+    if (!isLogout) {
+      throw new BadRequestException('Failed to logout');
+    }
+
+    return 'Logout sucessfull';
   }
 }

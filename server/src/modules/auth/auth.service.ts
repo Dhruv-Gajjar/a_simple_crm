@@ -2,25 +2,26 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
-import { PinoLogger } from 'nestjs-pino';
 import { UserService } from '../user/user.service';
 import { SigninDto } from './dtos/signin.dto';
 import { AuthJwtService } from '../jwt/jwt.service';
 import { AuthResponseDto } from './dtos/auth-response.dto';
 import { SignupDto } from './dtos/signup.dto';
-import { RefreshTokensService } from '../refresh-tokens/refresh-tokens.service';
+import { UserDto } from '../user/dtos/user.dto';
+import { Response } from 'express';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private logger: PinoLogger,
+    private configService: ConfigService,
     private userService: UserService,
     private jwtService: AuthJwtService,
-    private refreshTokenService: RefreshTokensService,
   ) {}
 
-  async signup(input: SignupDto): Promise<AuthResponseDto> {
+  async signup(res: Response, input: SignupDto): Promise<AuthResponseDto> {
     const passwordHash = await this.jwtService.hash(input.passwordHash);
     input.passwordHash = passwordHash;
 
@@ -28,21 +29,34 @@ export class AuthService {
 
     const payload = { sub: newUser.id, username: newUser.username };
     const { accessToken, refreshToken } =
-      this.jwtService.generateTokens(payload);
+      await this.jwtService.generateTokens(payload);
 
-    await this.refreshTokenService.createSession({
-      userId: newUser.id,
-      rawToken: refreshToken,
+    const isProduction: boolean =
+      this.configService.getOrThrow<string>('NODE_ENV') === 'production';
+
+    res.cookie('access_token', accessToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax',
+      maxAge: this.configService.getOrThrow('JWT_EXPIRES_IN'),
+      path: '/',
+    });
+
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax',
+      maxAge: this.configService.getOrThrow('JWT_REFRESH_EXPIRES_IN'),
+      path: '/auth/refresh',
     });
 
     return new AuthResponseDto({
       accessToken,
-      refreshToken,
       user: newUser,
     });
   }
 
-  async signin(input: SigninDto): Promise<AuthResponseDto> {
+  async signin(res: Response, input: SigninDto): Promise<AuthResponseDto> {
     const user = await this.userService.findUserByUsername(input.username);
 
     if (!user) {
@@ -62,39 +76,80 @@ export class AuthService {
     const payload = { sub: user.id, username: user.username };
 
     const { accessToken, refreshToken } =
-      this.jwtService.generateTokens(payload);
+      await this.jwtService.generateTokens(payload);
 
-    await this.refreshTokenService.createSession({
-      userId: user.id,
-      rawToken: refreshToken,
+    const isProduction: boolean =
+      this.configService.getOrThrow<string>('NODE_ENV') === 'production';
+
+    res.cookie('access_token', accessToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax',
+      maxAge: 15 * 60 * 1000,
+      path: '/',
+    });
+
+    res.cookie('refresh_token', refreshToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: '/auth/refresh',
     });
 
     return new AuthResponseDto({
       accessToken,
-      refreshToken,
       user,
     });
   }
 
-  async refreshToken(rawToken: string) {
+  async me(token: unknown): Promise<UserDto> {
+    if (!token) {
+      throw new UnauthorizedException('Invalid token or user.');
+    }
+    const t = token as string;
+    const rawToken = this.jwtService.verify(t);
+
+    if (!rawToken) {
+      throw new UnauthorizedException();
+    }
+
+    const currentUser = await this.userService.findUserById(rawToken.sub);
+
+    return currentUser;
+  }
+
+  async refreshToken(rawToken: string): Promise<{ accessToken: string }> {
     const payload = this.jwtService.verifyRefreshToken(rawToken);
 
-    await this.refreshTokenService.validateAndRotate(payload.sub, rawToken);
-    const tokens = this.jwtService.generateTokens({
+    const accessToken = await this.jwtService.signAsync({
       sub: payload.sub,
       username: payload.username,
     });
 
-    await this.refreshTokenService.createSession({
-      rawToken: tokens.refreshToken,
-      userId: payload.sub,
-    });
-    return tokens;
+    return { accessToken };
   }
 
-  async logout(rawToken?: string, userId?: string) {
-    if (userId) {
-      await this.refreshTokenService.revokeUserSessions(userId);
-    }
+  logout(res: Response): boolean {
+    const isProduction: boolean =
+      this.configService.getOrThrow<string>('NODE_ENV') === 'production';
+
+    res.clearCookie('access_token', {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: '/',
+    });
+
+    res.clearCookie('refresh_token', {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+      path: '/auth/refresh',
+    });
+
+    return true;
   }
 }

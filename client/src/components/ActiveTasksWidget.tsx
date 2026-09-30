@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoaderCircle } from "lucide-react";
-import { ScrollArea } from "./ui/scroll-area";
 
 export function ActiveTasksWidget() {
   return (
@@ -9,7 +8,7 @@ export function ActiveTasksWidget() {
         <CardTitle className="text-xl">Priority Tasks</CardTitle>
       </CardHeader>
       <CardContent className="overflow-y-hidden w-full">
-        <ScrollArea className="w-full h-75 flex items-center flex-col gap-4">
+        <div className="-mx-4 no-scrollbar max-h-[50vh] rounded-sm overflow-y-auto px-4 space-y-2">
           <Card>
             <CardContent className="flex items-center gap-2">
               <LoaderCircle className="text-primary" size={18} />
@@ -58,7 +57,7 @@ export function ActiveTasksWidget() {
               <p>Contact Test Client for pending invoice payment.</p>
             </CardContent>
           </Card>
-        </ScrollArea>
+        </div>
       </CardContent>
     </Card>
   );

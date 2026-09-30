@@ -17,7 +17,6 @@ import { WorkspaceModule } from './modules/workspace/workspace.module';
 import { WorkspaceMemberModule } from './modules/workspace-member/workspace-member.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AuthJwtModule } from './modules/jwt/jwt.module';
-import { RefreshTokensModule } from './modules/refresh-tokens/refresh-tokens.module';
 
 @Module({
   imports: [
@@ -55,7 +54,6 @@ import { RefreshTokensModule } from './modules/refresh-tokens/refresh-tokens.mod
     WorkspaceMemberModule,
     AuthModule,
     AuthJwtModule,
-    RefreshTokensModule,
   ],
   controllers: [AppController],
   providers: [AppService],

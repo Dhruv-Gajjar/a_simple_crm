@@ -1,9 +1,3 @@
-import { AppSidebar } from "@/components/AppSidebar/app-sidebar";
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -17,7 +11,7 @@ import {
   Roboto,
 } from "next/font/google";
 import "./globals.css";
-import { SiteHeader } from "@/components/SiteHeader";
+import AuthContextProvider from "@/contexts/AuthContext";
 
 const robotoHeading = Roboto({
   subsets: ["latin"],
@@ -71,25 +65,8 @@ export default function RootLayout({
       >
         <Providers>
           <TooltipProvider>
-            <SidebarProvider
-              style={
-                {
-                  "--sidebar-width": "calc(var(--spacing) * 72)",
-                  "--header-height": "calc(var(--spacing) * 12)",
-                } as React.CSSProperties
-              }
-            >
-              <AppSidebar />
-              <SidebarInset>
-                <SiteHeader />
-                <div className="flex flex-1 flex-col">
-                  <div className="@container/main flex flex-1 flex-col gap-2 p-4">
-                    {children}
-                  </div>
-                </div>
-                <Toaster />
-              </SidebarInset>
-            </SidebarProvider>
+            <AuthContextProvider>{children}</AuthContextProvider>
+            <Toaster />
           </TooltipProvider>
         </Providers>
       </body>

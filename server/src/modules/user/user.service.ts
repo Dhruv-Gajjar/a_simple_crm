@@ -38,6 +38,8 @@ export class UserService {
     const newUser = await this.userRepository.createAndSave({
       email: input.email,
       username: input.username,
+      firstName: input.firstName,
+      lastName: input.lastName,
       passwordHash: input.passwordHash,
     });
 
@@ -51,6 +53,8 @@ export class UserService {
       email: newUser.email,
       id: newUser.id,
       username: newUser.username,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
       createdAt: newUser.createdAt,
     });
   }
@@ -64,13 +68,15 @@ export class UserService {
     );
     console.log({ user });
     if (!user) {
-      throw new NotFoundException(`Erro: User with email: ${input} not found.`);
+      throw new NotFoundException(`Erro: User with user: ${input} not found.`);
     }
 
     return new UserByEmailDtoResponse({
       id: user.id,
       email: user.email,
       username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       passwordHash: user.passwordHash,
@@ -92,6 +98,8 @@ export class UserService {
       id: user.id,
       email: user.email,
       username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     });
