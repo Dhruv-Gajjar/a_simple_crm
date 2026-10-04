@@ -1,8 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LoaderCircle } from "lucide-react";
+import { ListCheck, LoaderCircle, Plus } from "lucide-react";
+import { Button } from "./ui/button";
 
 export function ActiveTasksWidget() {
-  return (
+  const activeTasks = [];
+  return activeTasks.length <= 0 ? (
+    <EmptyStateTasks />
+  ) : (
     <Card className="w-full col-span-4">
       <CardHeader>
         <CardTitle className="text-xl">Priority Tasks</CardTitle>
@@ -60,5 +64,31 @@ export function ActiveTasksWidget() {
         </div>
       </CardContent>
     </Card>
+  );
+}
+
+function EmptyStateTasks() {
+  return (
+    <div className="container mx-auto min-w-sm col-span-4">
+      <Card className="h-100">
+        <CardContent className="py-4 h-full">
+          <div className="flex flex-col justify-center items-center space-y-4 h-full">
+            <div className="flex items-center justify-center gap-4">
+              <ListCheck size={24} />
+              <h2 className="text-xl font-semibold tracking-tight">
+                No tasks found.
+              </h2>
+            </div>
+            <p className="text-muted-foreground mx-auto md:tracking-tighter lg:tracking-tight">
+              You can add a new task by clicking on the button below.
+            </p>
+            <Button>
+              <Plus />
+              New Task
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

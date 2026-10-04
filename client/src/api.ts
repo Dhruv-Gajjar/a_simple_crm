@@ -14,28 +14,19 @@ interface FailedQueueItem {
   reject: (reason?: unknown) => void;
 }
 
-let isRefreshing: boolean = false;
+let isRefreshing = false;
 let failedQueue: FailedQueueItem[] = [];
 
 const processQueue = (error: AxiosError | null) => {
-  failedQueue?.forEach((promise) => {
+  failedQueue.forEach((promise) => {
     if (error) {
       promise.reject(error);
     } else {
-      promise.resolve();
+      promise.resolve(null);
     }
   });
   failedQueue = [];
 };
-
-// axiosInstance.interceptors.response.use(
-//   (response) => {
-//     return response;
-//   },
-//   (error) => {
-//     return Promise.reject(error);
-//   },
-// );
 
 axiosInstance.interceptors.response.use(
   (response) => response,
@@ -67,14 +58,12 @@ axiosInstance.interceptors.response.use(
 
       try {
         await axiosInstance.post("/auth/refresh");
-
         processQueue(null);
-
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError as AxiosError);
 
-        if (typeof window !== undefined) {
+        if (typeof window !== "undefined") {
           const currentPath = window.location.pathname;
           if (
             currentPath !== "/auth/sign-in" &&

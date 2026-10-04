@@ -35,8 +35,7 @@ export default function SigninForm() {
     }
 
     setUser(newUser.result);
-    toast.success("User created sucessfully");
-    console.log("Sign_In_Form: ", newUser, newUser.result.accessToken);
+    toast.success("User logged in.");
     redirect("/");
   }
 

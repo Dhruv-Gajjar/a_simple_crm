@@ -2,12 +2,13 @@
 
 import { AuthService } from "@/services/auth.service";
 import { User } from "@/types";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   createContext,
   Dispatch,
   ReactNode,
   SetStateAction,
+  useCallback,
   useEffect,
   useState,
 } from "react";
@@ -15,15 +16,13 @@ import {
 interface AuthContextProps {
   user: User | null;
   setUser: Dispatch<SetStateAction<User | null>>;
-  // token: string | null;
-  // setToken: Dispatch<SetStateAction<string | null>>;
+  isLoading: boolean;
 }
 
 const defaultValues = {
   user: null,
-  // token: null,
   setUser: () => {},
-  // setToken: () => {},
+  isLoading: true,
 };
 
 export const AuthContext = createContext<AuthContextProps>(defaultValues);
@@ -34,28 +33,44 @@ export default function AuthContextProvider({
   children: ReactNode;
 }) {
   const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const router = useRouter();
+  const pathname = usePathname();
 
-  useEffect(() => {
-    console.log("UseEffect, Current User Not Found.!");
-    const fetchCurrentUser = async () => {
+  const fetchCurrentUser = useCallback(async () => {
+    try {
       const currentUser = await AuthService.getCurrentUser();
-
-      console.log("Current User Not Found.!", currentUser.result);
+      setUser(currentUser.result);
       if (!currentUser.result) {
         router.replace("/auth/sign-in");
         return;
       }
-
-      setUser(currentUser.result);
-    };
-
-    fetchCurrentUser();
+    } catch {
+      setUser(null);
+    } finally {
+      setIsLoading(false);
+    }
   }, [router]);
 
+  useEffect(() => {
+    console.log("UseEffect, Current User Not Found.!");
+
+    const isAuthPage =
+      pathname.startsWith("/auth/sign-in") ||
+      pathname.startsWith("/auth/sign-up") ||
+      pathname.startsWith("/signin") ||
+      pathname.startsWith("/signup");
+
+    if (!isAuthPage) {
+      fetchCurrentUser();
+    } else {
+      setIsLoading(false);
+    }
+  }, [fetchCurrentUser, pathname]);
+
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, setUser, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

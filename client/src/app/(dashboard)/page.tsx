@@ -1,8 +1,5 @@
 "use client";
-import { clientColumns } from "@/components/AppTable/columns/clients-columns";
-import { AppDataTable } from "@/components/AppTable/data-table";
 import CreateClientDialog from "@/components/CreateClientDialog";
-import DeleteDialog from "@/components/DeleteDialog";
 import { AppBarChart } from "@/components/AppBarChart";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -24,7 +21,6 @@ import { DashboardService } from "@/services/dashboard.service";
 const Dashboard: FC = () => {
   const { clientsData, isClientsLoading, isClientsError, clientsError } =
     useClientManager();
-
   const { projectsData } = useProject();
 
   const setOepnCreateClient = useGlobalStore(

@@ -27,13 +27,12 @@ import { redirect } from "next/navigation";
 export function NavUser() {
   const { isMobile } = useSidebar();
 
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
 
-  if (!user) {
-    toast("User not found.");
-    return <p>User not found</p>;
+  if (isLoading && !user) {
+    return;
   }
-  console.log({ user });
+
   return (
     <SidebarMenu className="text-accent">
       <SidebarMenuItem>
@@ -43,12 +42,14 @@ export function NavUser() {
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              q
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user?.username} alt={user?.username} />
-                <AvatarFallback className="rounded-lg">
-                  {user?.firstName?.split("")[0] + user?.lastName?.split("")[0]}
-                </AvatarFallback>
+                {user && (
+                  <AvatarFallback className="rounded-lg">
+                    {user?.firstName?.split("")[0] +
+                      user?.lastName?.split("")[0]}
+                  </AvatarFallback>
+                )}
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user?.username}</span>
@@ -66,12 +67,17 @@ export function NavUser() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.username} alt={user.username} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarImage src={user?.username} alt={user?.username} />
+                  {user && (
+                    <AvatarFallback className="rounded-lg">
+                      {user?.firstName?.split("")[0] +
+                        user?.lastName?.split("")[0]}
+                    </AvatarFallback>
+                  )}
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.username}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate font-medium">{user?.username}</span>
+                  <span className="truncate text-xs">{user?.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -92,7 +98,7 @@ export function NavUser() {
                   if (!user) {
                     console.log("Logout: No user found.");
                   }
-                  const response = await AuthService.logout(user.id);
+                  const response = await AuthService.logout();
 
                   if (response.error) {
                     toast.error("Failed to log out");

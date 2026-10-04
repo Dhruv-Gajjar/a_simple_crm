@@ -26,6 +26,12 @@ export const enum INVOICES_STATUS {
   Overdue = "overdue",
 }
 
+export const enum WORKSPACE_ROLE {
+  OWNER = "owner",
+  ADMIN = "admin",
+  MEMBER = "member",
+}
+
 export type ResponsePayload<T> = {
   message: string;
   result: T;
@@ -138,4 +144,22 @@ export interface DashboardAnalytics {
   totalActiveProjects: number;
   totalEarnings: number;
   activeProjects: Project[];
+}
+
+export interface Workspace {
+  id: string;
+  name: string;
+  slug: string;
+  isActive: boolean;
+  members?: WorkspaceMember[];
+  clients?: Client[];
+}
+
+export interface WorkspaceMember {
+  id: string;
+  workspaceId: string;
+  userId: string;
+  role: WORKSPACE_ROLE;
+  workspace: Workspace;
+  user: User;
 }

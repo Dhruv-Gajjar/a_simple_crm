@@ -1,26 +1,104 @@
-import Link from "next/link";
-import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar";
-import { AudioWaveform, ChevronsUpDown } from "lucide-react";
+import {
+  SidebarGroup,
+  SidebarGroupLabel,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  useSidebar,
+} from "../ui/sidebar";
+import { AudioWaveform, ChevronsUpDown, Plus } from "lucide-react";
+import useWorkspace from "@/hooks/use-workspace";
+import { Skeleton } from "../ui/skeleton";
+import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
 
 export function NavHeader() {
+  const { isMobile } = useSidebar();
+  const {
+    workspacesData,
+    isWorkspacesLoading,
+    isWorkspacesError,
+    workspacesError,
+  } = useWorkspace();
+
+  if (isWorkspacesLoading) {
+    return (
+      <div className="flex items-center gap-4">
+        <Skeleton className="aspect-square size-8 h-8 w-12 rounded-full" />
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-40" />
+          <Skeleton className="h-4 w-40" />
+        </div>
+      </div>
+    );
+  }
+
+  if (isWorkspacesError) {
+    return toast.error(workspacesError?.message);
+  }
+
+  const activeWorkspaces = workspacesData?.filter(
+    (workspace) => workspace.isActive,
+  );
+
   return (
     <SidebarMenu className="text-accent">
       <SidebarMenuItem>
-        <Link href={"/"}>
-          <SidebarMenuButton
-            size="lg"
-            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuButton
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            >
+              <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
+                <AudioWaveform className="size-4" />
+              </div>
+              {activeWorkspaces && (
+                <div className="grid flex-1 text-left text-sm leading-tight">
+                  <span className="truncate font-medium">
+                    {activeWorkspaces[0].name}
+                  </span>
+                  {/*<span className="truncate text-xs">{activeTeam.plan}</span>*/}
+                </div>
+              )}
+              <ChevronsUpDown className="ml-auto" />
+            </SidebarMenuButton>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            align="start"
+            side={isMobile ? "bottom" : "right"}
+            sideOffset={4}
           >
-            <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-              <AudioWaveform className="size-4" />
-            </div>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">Founder diary</span>
-              <span className="truncate text-xs">A simple CRM</span>
-            </div>
-            <ChevronsUpDown className="ml-auto" />
-          </SidebarMenuButton>
-        </Link>
+            <DropdownMenuLabel className="text-xs text-muted-foreground">
+              Workspaces
+            </DropdownMenuLabel>
+            {activeWorkspaces &&
+              activeWorkspaces.map((workspace) => (
+                <DropdownMenuItem key={workspace.id} className="gap-2 p-2">
+                  {workspace.name}
+                </DropdownMenuItem>
+              ))}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="gap-2 p-2">
+              <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
+                <Plus className="size-4" />
+              </div>
+              <div className="font-medium text-muted-foreground">
+                Add workspace
+              </div>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </SidebarMenuItem>
     </SidebarMenu>
   );

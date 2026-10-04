@@ -5,12 +5,17 @@ import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/use-auth-context";
 import { useClientStore } from "@/stores/clientStore";
 import { usePathname } from "next/navigation";
+import { Spinner } from "./ui/spinner";
 
 export function SiteHeader() {
   const pathname = usePathname();
   const title = pathname.split("/");
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   console.log(pathname, title);
+
+  if (isLoading) {
+    return;
+  }
 
   return (
     <header className="flex h-(--header-height) shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-(--header-height)">
@@ -22,7 +27,7 @@ export function SiteHeader() {
         />
         <h1 className="text-base font-medium capitalize">{title[1]}</h1>
         <div className="ml-auto flex items-center gap-2">
-          <p className="">Welcome, {user && user.username}</p>
+          <p className="">Welcome, {user && user?.username}</p>
         </div>
       </div>
     </header>

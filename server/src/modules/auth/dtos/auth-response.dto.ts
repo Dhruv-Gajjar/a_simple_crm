@@ -14,6 +14,11 @@ export class AuthResponseDto {
   accessToken!: string;
 
   @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  refreshToken!: string;
+
+  @ApiProperty()
   @ValidateNested()
   @Type(() => UserDto)
   user!: UserDto;

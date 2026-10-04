@@ -38,7 +38,9 @@ export class AuthService {
       httpOnly: true,
       secure: isProduction,
       sameSite: 'lax',
-      maxAge: this.configService.getOrThrow('JWT_EXPIRES_IN'),
+      maxAge: Number(
+        this.configService.getOrThrow('JWT_ACCESS_COOKIE_MAX_AGE'),
+      ),
       path: '/',
     });
 
@@ -46,12 +48,15 @@ export class AuthService {
       httpOnly: true,
       secure: isProduction,
       sameSite: 'lax',
-      maxAge: this.configService.getOrThrow('JWT_REFRESH_EXPIRES_IN'),
-      path: '/auth/refresh',
+      maxAge: Number(
+        this.configService.getOrThrow('JWT_REFRESH_COOKIE_MAX_AGE'),
+      ),
+      path: '/',
     });
 
     return new AuthResponseDto({
       accessToken,
+      refreshToken,
       user: newUser,
     });
   }
@@ -85,7 +90,9 @@ export class AuthService {
       httpOnly: true,
       secure: isProduction,
       sameSite: 'lax',
-      maxAge: 15 * 60 * 1000,
+      maxAge: Number(
+        this.configService.getOrThrow('JWT_ACCESS_COOKIE_MAX_AGE'),
+      ),
       path: '/',
     });
 
@@ -93,12 +100,15 @@ export class AuthService {
       httpOnly: true,
       secure: isProduction,
       sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/auth/refresh',
+      maxAge: Number(
+        this.configService.getOrThrow('JWT_REFRESH_COOKIE_MAX_AGE'),
+      ),
+      path: '/',
     });
 
     return new AuthResponseDto({
       accessToken,
+      refreshToken,
       user,
     });
   }
@@ -119,12 +129,28 @@ export class AuthService {
     return currentUser;
   }
 
-  async refreshToken(rawToken: string): Promise<{ accessToken: string }> {
+  async refreshToken(
+    res: Response,
+    rawToken: string,
+  ): Promise<{ accessToken: string }> {
     const payload = this.jwtService.verifyRefreshToken(rawToken);
 
     const accessToken = await this.jwtService.signAsync({
       sub: payload.sub,
       username: payload.username,
+    });
+
+    const isProduction: boolean =
+      this.configService.getOrThrow<string>('NODE_ENV') === 'production';
+
+    res.cookie('access_token', accessToken, {
+      httpOnly: true,
+      secure: isProduction,
+      sameSite: 'lax',
+      maxAge: Number(
+        this.configService.getOrThrow('JWT_ACCESS_COOKIE_MAX_AGE'),
+      ),
+      path: '/',
     });
 
     return { accessToken };
@@ -138,7 +164,9 @@ export class AuthService {
       httpOnly: true,
       secure: isProduction,
       sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
+      maxAge: Number(
+        this.configService.getOrThrow('JWT_ACCESS_COOKIE_MAX_AGE'),
+      ),
       path: '/',
     });
 
@@ -146,8 +174,10 @@ export class AuthService {
       httpOnly: true,
       secure: isProduction,
       sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      path: '/auth/refresh',
+      maxAge: Number(
+        this.configService.getOrThrow('JWT_REFRESH_COOKIE_MAX_AGE'),
+      ),
+      path: '/',
     });
 
     return true;

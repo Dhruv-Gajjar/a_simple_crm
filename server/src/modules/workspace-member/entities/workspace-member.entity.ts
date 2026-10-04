@@ -1,7 +1,7 @@
 import { BaseEntity } from 'src/common/entities/base.entity';
 import { UserEntity } from 'src/modules/user/entities/user.entity';
 import { WorkspaceEntity } from 'src/modules/workspace/entities/workspace.entity';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, Unique } from 'typeorm';
 
 export enum WorkspaceRole {
   OWNER = 'owner',
@@ -10,6 +10,7 @@ export enum WorkspaceRole {
 }
 
 @Entity({ name: 'workspace_members' })
+@Unique(['workspaceId', 'userId'])
 export class WorkspaceMemberEntity extends BaseEntity {
   @Column({ name: 'workspace_id', type: 'uuid' })
   workspaceId!: string;

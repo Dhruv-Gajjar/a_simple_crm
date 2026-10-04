@@ -17,6 +17,7 @@ import { SignupDto } from './dtos/signup.dto';
 import { ConfigService } from '@nestjs/config';
 import { Request, Response } from 'express';
 import { UserDto } from '../user/dtos/user.dto';
+import { Public } from 'src/common/decorators/public.decorator';
 
 interface RequestWithCookies extends Request {
   cookies: Record<string, string | undefined>;
@@ -29,6 +30,7 @@ export class AuthController {
     private configService: ConfigService,
   ) {}
 
+  @Public()
   @Post('sign-up')
   @ApiResponse({
     status: HttpStatus.OK,
@@ -46,6 +48,7 @@ export class AuthController {
     return data;
   }
 
+  @Public()
   @Post('sign-in')
   @ApiResponse({
     status: HttpStatus.OK,
@@ -78,6 +81,7 @@ export class AuthController {
     return currentUser;
   }
 
+  @Public()
   @Post('refresh')
   async refreshToken(
     @Req() req: RequestWithCookies,
@@ -87,24 +91,17 @@ export class AuthController {
     if (!rawRefreshToken) {
       throw new UnauthorizedException('Refresh token missing.');
     }
-    const { accessToken } =
-      await this.authService.refreshToken(rawRefreshToken);
-
-    const isProduction = process.env.NODE_ENV === 'production';
-
-    res.cookie('access_token', accessToken, {
-      httpOnly: true,
-      secure: isProduction,
-      sameSite: 'lax',
-      maxAge: 15 * 60 * 1000,
-      path: '/',
-    });
+    const { accessToken } = await this.authService.refreshToken(
+      res,
+      rawRefreshToken,
+    );
 
     return {
       accessToken,
     };
   }
 
+  @Public()
   @Post('logout')
   @ApiResponse({
     status: HttpStatus.OK,

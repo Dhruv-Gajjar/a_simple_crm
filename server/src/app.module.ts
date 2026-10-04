@@ -17,6 +17,8 @@ import { WorkspaceModule } from './modules/workspace/workspace.module';
 import { WorkspaceMemberModule } from './modules/workspace-member/workspace-member.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AuthJwtModule } from './modules/jwt/jwt.module';
+import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -56,6 +58,12 @@ import { AuthJwtModule } from './modules/jwt/jwt.module';
     AuthJwtModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+    AppService,
+  ],
 })
 export class AppModule {}
