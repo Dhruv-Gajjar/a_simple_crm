@@ -4,14 +4,22 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
   Length,
 } from 'class-validator';
 import { CLIENT_STATUS } from '../entities/client.entity';
+import { Type } from 'class-transformer';
+import { ProjectEntity } from 'src/modules/project/entities/project.entity';
+import { WorkspaceEntity } from 'src/modules/workspace/entities/workspace.entity';
 
 export class CreateClientDto {
   constructor(partial: Partial<CreateClientDto>) {
     Object.assign(this, partial);
   }
+
+  @IsUUID()
+  @IsNotEmpty()
+  workspaceId!: string;
 
   @IsString()
   @IsNotEmpty()
@@ -37,4 +45,12 @@ export class CreateClientDto {
   @IsString()
   @IsOptional()
   remarks!: string;
+
+  @Type(() => ProjectEntity)
+  @IsOptional()
+  projects!: ProjectEntity[];
+
+  @Type(() => WorkspaceEntity)
+  @IsOptional()
+  workspace!: WorkspaceEntity;
 }

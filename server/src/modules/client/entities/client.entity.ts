@@ -36,7 +36,7 @@ export class ClientEntity extends BaseEntity {
   remarks!: string;
 
   @Column({ name: 'workspace_id', type: 'uuid', nullable: false })
-  workspace_id!: string;
+  workspaceId!: string;
 
   @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.clients, {
     onDelete: 'CASCADE',

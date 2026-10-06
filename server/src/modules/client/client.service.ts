@@ -29,6 +29,7 @@ export class ClientService {
       status: payload.status,
       phoneNumber: payload.phoneNumber,
       remarks: payload.remarks ? payload.remarks : '',
+      workspaceId: payload.workspaceId,
     });
 
     this.logger.info({ name: payload.name }, 'Client created...!');

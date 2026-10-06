@@ -1,9 +1,8 @@
 "use client";
-import { Button } from "@/components/ui/button";
+
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import { useAuth } from "@/hooks/use-auth-context";
-import { useClientStore } from "@/stores/clientStore";
 import { usePathname } from "next/navigation";
 import { Spinner } from "./ui/spinner";
 
@@ -25,7 +24,7 @@ export function SiteHeader() {
           orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-4"
         />
-        <h1 className="text-base font-medium capitalize">{title[1]}</h1>
+        <h1 className="text-base font-medium capitalize">{title[1] === "" ? "Dashboard" : title[1]}</h1>
         <div className="ml-auto flex items-center gap-2">
           <p className="">Welcome, {user && user?.username}</p>
         </div>

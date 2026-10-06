@@ -225,6 +225,10 @@ export class WorkspaceService {
   }
 
   async checkSlugAvailability(slug: string): Promise<string> {
+    if (!slug) {
+      throw new BadRequestException('Slug is required.');
+    }
+
     const existingslug = await this.repository.findOne({
       where: {
         slug: slug,
@@ -232,7 +236,9 @@ export class WorkspaceService {
     });
 
     if (existingslug) {
-      return 'This URL is already taken, try another one.';
+      throw new ConflictException(
+        `This URL is not available, try another one.`,
+      );
     }
 
     return 'This URL is available.';

@@ -52,7 +52,7 @@ export class TransactionService {
     const transaction = await this.transactionRepository.findOne({
       relations: {
         project: {
-          client: true
+          client: true,
         },
       },
       where: { id: id },

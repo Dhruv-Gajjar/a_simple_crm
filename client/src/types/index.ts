@@ -70,10 +70,10 @@ export interface Client {
   source: string;
   status: CLIENT_STATUS;
   phoneNumber?: string;
-  phone_number?: string;
   remarks?: string;
   projects?: Project[];
-  Projects?: Project[];
+  workspaceId: string;
+  workspace?: Workspace;
 
   createdAt?: Date;
   updatedAt?: Date;
@@ -91,9 +91,6 @@ export interface Project {
   client?: Client;
   startDate: Date;
   endDate: Date;
-  start_date?: Date;
-  end_date?: Date;
-  total_cost?: number;
   totalAmount?: number;
   iterations: number;
 
@@ -154,6 +151,8 @@ export interface Workspace {
   members?: WorkspaceMember[];
   clients?: Client[];
 }
+
+export type NewWorkspace = Omit<Workspace, "id" | "createdAt" | "isActive">;
 
 export interface WorkspaceMember {
   id: string;

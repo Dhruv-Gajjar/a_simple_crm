@@ -1,4 +1,5 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
+import { useWorkspaceStore } from "@/stores/workspaceStore";
 
 const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_BASE_URL,
@@ -27,6 +28,16 @@ const processQueue = (error: AxiosError | null) => {
   });
   failedQueue = [];
 };
+
+axiosInstance.interceptors.request.use((config) => {
+  const activeWorkspaceId = useWorkspaceStore.getState().activeWorkspaceId;
+
+  if (activeWorkspaceId) {
+    config.headers["x-workspace-id"] = activeWorkspaceId;
+  }
+
+  return config;
+});
 
 axiosInstance.interceptors.response.use(
   (response) => response,

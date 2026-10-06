@@ -1,6 +1,4 @@
 import {
-  SidebarGroup,
-  SidebarGroupLabel,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -13,13 +11,11 @@ import { toast } from "sonner";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
 
 export function NavHeader() {
   const { isMobile } = useSidebar();
@@ -62,14 +58,16 @@ export function NavHeader() {
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                 <AudioWaveform className="size-4" />
               </div>
-              {activeWorkspaces && (
+              {activeWorkspaces && activeWorkspaces?.length > 0 ? (
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">
                     {activeWorkspaces[0].name}
                   </span>
                   {/*<span className="truncate text-xs">{activeTeam.plan}</span>*/}
                 </div>
-              )}
+              ): <span className="truncate font-small">
+                No workspace.
+              </span>}
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>

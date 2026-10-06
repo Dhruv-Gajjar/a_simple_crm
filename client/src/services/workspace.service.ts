@@ -1,10 +1,10 @@
 import axiosInstance from "@/api";
-import { ResponsePayload, Workspace } from "@/types";
+import { NewWorkspace, ResponsePayload, Workspace } from "@/types";
 import { isAxiosError } from "axios";
 
 export const WorkspaceService = {
   createWorkspace: async (
-    payload: Workspace,
+    payload: NewWorkspace,
   ): Promise<ResponsePayload<Workspace | null>> => {
     try {
       const response = await axiosInstance.post(`/workspace`, payload);
@@ -130,7 +130,7 @@ export const WorkspaceService = {
     slug: string,
   ): Promise<ResponsePayload<string | null>> => {
     try {
-      const response = await axiosInstance.delete(
+      const response = await axiosInstance.get(
         `/workspace/check-slug/${slug}`,
       );
       return response.data;

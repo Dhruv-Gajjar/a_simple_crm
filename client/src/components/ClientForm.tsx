@@ -29,6 +29,7 @@ import { Spinner } from "./ui/spinner";
 import { useGlobalStore } from "@/stores/globalStore";
 import { useClientStore } from "@/stores/clientStore";
 import { useEffect } from "react";
+import useWorkspace from "@/hooks/use-workspace";
 
 const formSchema = z.object({
   name: z.string().min(4).max(50),
@@ -63,6 +64,7 @@ const ClientForm = () => {
     name: "status",
   });
   const { clientsData, createNewClient, updateClient } = useClientManager();
+  const { workspacesData, isWorkspacesLoading } = useWorkspace();
 
   const clientID = useClientStore((state) => state.selectedClientID);
   const setClientID = useClientStore((state) => state.setClientID);
@@ -95,6 +97,10 @@ const ClientForm = () => {
   }, [isEditMode, clientID, clientsData, form]);
 
   function createClient(data: NewClient) {
+    if (!workspacesData) {
+      toast.error("Failed to get workspace");
+      return;
+    }
     createNewClient.mutate(
       {
         name: data.name,
@@ -103,6 +109,7 @@ const ClientForm = () => {
         status: data.status,
         phoneNumber: data.phoneNumber,
         remarks: data.remarks ? data.remarks : "",
+        workspaceId: workspacesData[0].id,
       },
       {
         onSuccess: () => {
@@ -134,6 +141,10 @@ const ClientForm = () => {
       const client = clientsData?.result.find(
         (client: Client) => client.id === clientID,
       );
+      if (!workspacesData) {
+        toast.error("Failed to get workspace");
+        return;
+      }
 
       if (client) {
         updateClient.mutate(
@@ -146,6 +157,7 @@ const ClientForm = () => {
             phoneNumber: data.phoneNumber,
             remarks: data.remarks ? data.remarks : "",
             projects: client.projects,
+            workspaceId: workspacesData[0].id,
           },
           {
             onSuccess: (data) => {

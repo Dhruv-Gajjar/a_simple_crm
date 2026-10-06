@@ -109,8 +109,8 @@ export class WorkspaceController {
     return isDeleated;
   }
 
-  @Post('check-slug')
-  async checkSlugAvailability(@Body() slug: string): Promise<string> {
+  @Get('check-slug/:slug')
+  async checkSlugAvailability(@Param('slug') slug: string): Promise<string> {
     const slugAvailability =
       await this.workspaceService.checkSlugAvailability(slug);
 
