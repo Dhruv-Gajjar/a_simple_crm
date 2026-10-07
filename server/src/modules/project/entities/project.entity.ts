@@ -3,6 +3,7 @@ import { ClientEntity } from 'src/modules/client/entities/client.entity';
 import { TransactionEntity } from 'src/modules/transaction/entities/transaction.entity';
 import { NoteEntity } from 'src/modules/note/entities/note.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { WorkspaceEntity } from 'src/modules/workspace/entities/workspace.entity';
 
 export enum PROJECT_STATUS {
   Todo = 'todo',
@@ -19,6 +20,15 @@ export class ProjectEntity extends BaseEntity {
 
   @Column({ name: 'description', type: 'varchar', length: 240 })
   description!: string;
+
+  @Column({ name: 'workspace_id', type: 'uuid', nullable: false })
+  workspaceId!: string;
+
+  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.projects, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'workspace_id' })
+  workspace!: WorkspaceEntity;
 
   @Column({ name: 'client_id', type: 'uuid' })
   clientId!: string;

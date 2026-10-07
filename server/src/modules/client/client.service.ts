@@ -11,7 +11,7 @@ export class ClientService {
     private logger: PinoLogger,
   ) {}
 
-  async create(payload: CreateClientDto) {
+  async create(workspaceId: string, payload: CreateClientDto) {
     const existingClient = await this.clientRepository.findOne({
       where: { email: payload.email },
     });
@@ -29,7 +29,7 @@ export class ClientService {
       status: payload.status,
       phoneNumber: payload.phoneNumber,
       remarks: payload.remarks ? payload.remarks : '',
-      workspaceId: payload.workspaceId,
+      workspaceId: workspaceId,
     });
 
     this.logger.info({ name: payload.name }, 'Client created...!');
@@ -37,31 +37,31 @@ export class ClientService {
     return newClient;
   }
 
-  async findAll() {
+  async findAll(workspaceId: string) {
     this.logger.info({ action: 'getClients' }, 'Getting all clients');
-    const clients = await this.clientRepository.getAllClients();
+    const clients = await this.clientRepository.getAllClients(workspaceId);
     return clients;
   }
 
-  async findOne(id: string) {
+  async findOne(id: string, workspaceId: string) {
     const client = await this.clientRepository.findOne({
       relations: {
         projects: true,
       },
-      where: { id: id },
+      where: { id: id, workspaceId: workspaceId },
     });
 
     this.logger.info({ id: id }, 'Getting client with id');
     return client;
   }
 
-  async update(id: string, payload: UpdateClientDto) {
+  async update(id: string, workspaceId: string, payload: UpdateClientDto) {
     this.logger.info({ name: payload.name }, 'Client updated...!');
-    return await this.clientRepository.update(id, payload);
+    return await this.clientRepository.update(id, workspaceId, payload);
   }
 
-  async remove(id: string) {
+  async remove(id: string, workspaceId: string) {
     this.logger.info({ id: id }, 'Client deleted...!');
-    return await this.clientRepository.deleteClient(id);
+    return await this.clientRepository.deleteClient(id, workspaceId);
   }
 }

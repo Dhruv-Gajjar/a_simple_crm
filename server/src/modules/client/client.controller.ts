@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   NotFoundException,
+  UseGuards,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
 import { CreateClientDto } from './dto/create-client.dto';
@@ -15,6 +16,8 @@ import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { ClientEntity } from './entities/client.entity';
 import { ClientDto } from './dto/client.dto';
 import { PinoLogger } from 'nestjs-pino';
+import { WorkspaceGuard } from 'src/common/guards/workspace.guard';
+import { CurrentWorkspaceId } from 'src/common/decorators/current-workspace.decorator';
 
 @Controller('client')
 export class ClientController {
@@ -24,11 +27,18 @@ export class ClientController {
   ) {}
 
   @Post()
+  @UseGuards(WorkspaceGuard)
   @ApiOperation({ summary: 'Register a new client' })
   @ApiResponse({ status: 201, description: 'Client registered successfully' })
   @ApiResponse({ status: 400, description: 'Client already exists' })
-  async create(@Body() createClientDto: CreateClientDto) {
-    const client = await this.clientService.create(createClientDto);
+  async create(
+    @CurrentWorkspaceId() workspaceId: string,
+    @Body() createClientDto: CreateClientDto,
+  ) {
+    const client = await this.clientService.create(
+      workspaceId,
+      createClientDto,
+    );
 
     return new ClientDto({
       id: client.id,
@@ -42,13 +52,13 @@ export class ClientController {
   }
 
   @Get()
+  @UseGuards(WorkspaceGuard)
   @ApiOperation({ summary: 'List all clients' })
   @ApiResponse({ status: 200, description: 'Returns all clients' })
   async findAll(
-    @Param('page') page: string,
-    @Param('limit') limit: string,
+    @CurrentWorkspaceId() workspaceId: string,
   ): Promise<ClientDto[]> {
-    const clientsRes = await this.clientService.findAll();
+    const clientsRes = await this.clientService.findAll(workspaceId);
     return clientsRes.map(
       (client: ClientEntity) =>
         new ClientDto({
@@ -65,8 +75,13 @@ export class ClientController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: string) {
-    const client = await this.clientService.findOne(id);
+  @UseGuards(WorkspaceGuard)
+  @UseGuards(WorkspaceGuard)
+  async findOne(
+    @Param('id') id: string,
+    @CurrentWorkspaceId() workspaceId: string,
+  ) {
+    const client = await this.clientService.findOne(id, workspaceId);
 
     if (!client) {
       this.logger.warn({ id: id }, `Client with ID: ${id} not found...`);
@@ -86,8 +101,13 @@ export class ClientController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() payload: UpdateClientDto) {
-    const client = await this.clientService.update(id, payload);
+  @UseGuards(WorkspaceGuard)
+  async update(
+    @Param('id') id: string,
+    @CurrentWorkspaceId() workspaceId: string,
+    @Body() payload: UpdateClientDto,
+  ) {
+    const client = await this.clientService.update(id, workspaceId, payload);
 
     if (!client) {
       this.logger.warn({ id: id }, `Client with ID: ${id} not found...`);
@@ -106,8 +126,12 @@ export class ClientController {
   }
 
   @Delete(':id')
-  async remove(@Param('id') id: string) {
-    const isDeleated = await this.clientService.remove(id);
+  @UseGuards(WorkspaceGuard)
+  async remove(
+    @Param('id') id: string,
+    @CurrentWorkspaceId() workspaceId: string,
+  ) {
+    const isDeleated = await this.clientService.remove(id, workspaceId);
     return isDeleated;
   }
 }

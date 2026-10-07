@@ -14,19 +14,26 @@ export class ClientRepository extends BaseRepository<ClientEntity> {
     super(dataSource, ClientEntity);
   }
 
-  async getAllClients(): Promise<ClientEntity[]> {
+  async getAllClients(workspaceId: string): Promise<ClientEntity[]> {
     const clients = await this.repository.find({
       relations: {
         projects: true,
+      },
+      where: {
+        workspaceId: workspaceId,
       },
     });
 
     return clients;
   }
 
-  async update(id: string, payload: UpdateClientDto): Promise<ClientEntity> {
+  async update(
+    id: string,
+    workspaceId: string,
+    payload: UpdateClientDto,
+  ): Promise<ClientEntity> {
     const existingClient = await this.repository.findOne({
-      where: { id: id },
+      where: { id: id, workspaceId: workspaceId },
     });
 
     if (!existingClient) {
@@ -42,9 +49,9 @@ export class ClientRepository extends BaseRepository<ClientEntity> {
     return client;
   }
 
-  async deleteClient(id: string): Promise<boolean> {
+  async deleteClient(id: string, workspaceId: string): Promise<boolean> {
     const existingClient = await this.repository.findOne({
-      where: { id: id },
+      where: { id: id, workspaceId: workspaceId },
     });
 
     if (!existingClient) {

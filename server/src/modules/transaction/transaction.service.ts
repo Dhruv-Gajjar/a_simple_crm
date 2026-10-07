@@ -16,9 +16,18 @@ export class TransactionService {
     private logger: PinoLogger,
   ) {}
 
-  async create(payload: CreateTransactionDto): Promise<TransactionEntity> {
-    const newTransaction =
-      await this.transactionRepository.createAndSave(payload);
+  async create(
+    workspaceId: string,
+    payload: CreateTransactionDto,
+  ): Promise<TransactionEntity> {
+    const newTransaction = await this.transactionRepository.createAndSave({
+      workspaceId: workspaceId,
+      projectId: payload.projectId,
+      amount: payload.amount,
+      paymentMethod: payload.paymentMethod,
+      paymentDate: payload.paymentDate,
+      status: payload.status,
+    });
 
     if (!newTransaction) {
       this.logger.warn('Failed to create transaction.');
@@ -33,10 +42,13 @@ export class TransactionService {
     return newTransaction;
   }
 
-  async findAll(): Promise<TransactionEntity[]> {
+  async findAll(workspaceId: string): Promise<TransactionEntity[]> {
     const transactions = await this.transactionRepository.findAll({
       relations: {
         project: true,
+      },
+      where: {
+        workspaceId: workspaceId,
       },
     });
 
@@ -48,14 +60,14 @@ export class TransactionService {
     return transactions;
   }
 
-  async findOne(id: string): Promise<TransactionEntity> {
+  async findOne(id: string, workspaceId: string): Promise<TransactionEntity> {
     const transaction = await this.transactionRepository.findOne({
       relations: {
         project: {
           client: true,
         },
       },
-      where: { id: id },
+      where: { id: id, workspaceId: workspaceId },
     });
 
     if (!transaction) {
@@ -68,9 +80,14 @@ export class TransactionService {
 
   async update(
     id: string,
+    workspaceId: string,
     payload: UpdateTransactionDto,
   ): Promise<TransactionEntity> {
-    const transaction = await this.transactionRepository.update(id, payload);
+    const transaction = await this.transactionRepository.update(
+      id,
+      workspaceId,
+      payload,
+    );
 
     if (!transaction) {
       this.logger.warn(
@@ -83,8 +100,11 @@ export class TransactionService {
     return transaction;
   }
 
-  async remove(id: string): Promise<boolean> {
-    const isDeleated = await this.transactionRepository.deleteTransaction(id);
+  async remove(id: string, workspaceId: string): Promise<boolean> {
+    const isDeleated = await this.transactionRepository.deleteTransaction(
+      id,
+      workspaceId,
+    );
 
     if (!isDeleated) {
       this.logger.warn(

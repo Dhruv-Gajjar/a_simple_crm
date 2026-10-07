@@ -14,16 +14,21 @@ export class NoteRepository extends BaseRepository<NoteEntity> {
     super(dataSource, NoteEntity);
   }
 
-  async update(id: string, payload: UpdateNoteDto): Promise<NoteEntity> {
+  async update(
+    id: string,
+    workspaceId: string,
+    payload: UpdateNoteDto,
+  ): Promise<NoteEntity> {
     const existingNote = await this.repository.findOne({
-      where: { id: id },
+      where: { id: id, workspaceId: workspaceId },
     });
 
     if (!existingNote) {
       throw new NotFoundException(`Note with ID: ${id} not found.`);
     }
 
-    const note = await this.repository.save(payload);
+    Object.assign(existingNote, payload);
+    const note = await this.repository.save(existingNote);
 
     if (!note) {
       throw new BadRequestException(`ERROR: updating the note with ID: ${id}`);
@@ -32,9 +37,9 @@ export class NoteRepository extends BaseRepository<NoteEntity> {
     return note;
   }
 
-  async deleteNote(id: string): Promise<boolean> {
+  async deleteNote(id: string, workspaceId: string): Promise<boolean> {
     const existingNote = await this.repository.findOne({
-      where: { id: id },
+      where: { id: id, workspaceId: workspaceId },
     });
 
     if (!existingNote) {

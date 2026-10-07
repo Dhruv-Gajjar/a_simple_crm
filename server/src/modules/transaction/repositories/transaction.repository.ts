@@ -16,17 +16,19 @@ export class TransactionRepository extends BaseRepository<TransactionEntity> {
 
   async update(
     id: string,
+    workspaceId: string,
     payload: UpdateTransactionDto,
   ): Promise<TransactionEntity> {
     const existingTransaction = await this.repository.findOne({
-      where: { id: id },
+      where: { id: id, workspaceId: workspaceId },
     });
 
     if (!existingTransaction) {
       throw new NotFoundException(`Transaction with ID: ${id} not found.`);
     }
 
-    const transaction = await this.repository.save(payload);
+    Object.assign(existingTransaction, payload);
+    const transaction = await this.repository.save(existingTransaction);
 
     if (!transaction) {
       throw new BadRequestException(
@@ -37,9 +39,9 @@ export class TransactionRepository extends BaseRepository<TransactionEntity> {
     return transaction;
   }
 
-  async deleteTransaction(id: string): Promise<boolean> {
+  async deleteTransaction(id: string, workspaceId: string): Promise<boolean> {
     const existingTransaction = await this.repository.findOne({
-      where: { id: id },
+      where: { id: id, workspaceId: workspaceId },
     });
 
     if (!existingTransaction) {

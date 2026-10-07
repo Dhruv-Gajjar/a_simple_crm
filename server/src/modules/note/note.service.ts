@@ -16,24 +16,32 @@ export class NoteService {
     private logger: PinoLogger,
   ) {}
 
-  async create(payload: CreateNoteDto): Promise<NoteEntity> {
-    const newNote = await this.noteRepository.createAndSave(payload);
+  async create(
+    workspaceId: string,
+    payload: CreateNoteDto,
+  ): Promise<NoteEntity> {
+    const newNote = await this.noteRepository.createAndSave({
+      projectId: payload.projectId,
+      workspaceId: workspaceId,
+      content: payload.content,
+    });
 
     if (!newNote) {
       this.logger.warn('Failed to create note.');
       throw new BadRequestException(`Failed to create note.`);
     }
 
-    this.logger.info(
-      { projectId: payload.projectId },
-      `Created new note.`,
-    );
+    this.logger.info({ projectId: payload.projectId }, `Created new note.`);
 
     return newNote;
   }
 
-  async findAll(): Promise<NoteEntity[]> {
-    const notes = await this.noteRepository.findAll();
+  async findAll(workspaceId: string): Promise<NoteEntity[]> {
+    const notes = await this.noteRepository.findAll({
+      where: {
+        workspaceId: workspaceId,
+      },
+    });
 
     if (!notes) {
       this.logger.warn('Failed to get all notes.');
@@ -43,9 +51,9 @@ export class NoteService {
     return notes;
   }
 
-  async findOne(id: string): Promise<NoteEntity> {
+  async findOne(id: string, workspaceId: string): Promise<NoteEntity> {
     const note = await this.noteRepository.findOne({
-      where: { id: id },
+      where: { id: id, workspaceId: workspaceId },
     });
 
     if (!note) {
@@ -58,29 +66,24 @@ export class NoteService {
 
   async update(
     id: string,
+    workspaceId: string,
     payload: UpdateNoteDto,
   ): Promise<NoteEntity> {
-    const note = await this.noteRepository.update(id, payload);
+    const note = await this.noteRepository.update(id, workspaceId, payload);
 
     if (!note) {
-      this.logger.warn(
-        { id: id },
-        `ERROR: updating note with ID: ${id}`,
-      );
+      this.logger.warn({ id: id }, `ERROR: updating note with ID: ${id}`);
       throw new BadRequestException(`Failed to update note.`);
     }
 
     return note;
   }
 
-  async remove(id: string): Promise<boolean> {
-    const isDeleted = await this.noteRepository.deleteNote(id);
+  async remove(id: string, workspaceId: string): Promise<boolean> {
+    const isDeleted = await this.noteRepository.deleteNote(id, workspaceId);
 
     if (!isDeleted) {
-      this.logger.warn(
-        { id: id },
-        `ERROR: Deleting note with ID: ${id}`,
-      );
+      this.logger.warn({ id: id }, `ERROR: Deleting note with ID: ${id}`);
       throw new BadRequestException(`Failed to delete note.`);
     }
 

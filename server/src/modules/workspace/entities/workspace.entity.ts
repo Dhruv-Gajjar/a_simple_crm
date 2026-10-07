@@ -1,5 +1,8 @@
 import { BaseEntity } from 'src/common/entities/base.entity';
 import { ClientEntity } from 'src/modules/client/entities/client.entity';
+import { NoteEntity } from 'src/modules/note/entities/note.entity';
+import { ProjectEntity } from 'src/modules/project/entities/project.entity';
+import { TransactionEntity } from 'src/modules/transaction/entities/transaction.entity';
 import { WorkspaceMemberEntity } from 'src/modules/workspace-member/entities/workspace-member.entity';
 import { Column, Entity, OneToMany } from 'typeorm';
 
@@ -19,4 +22,13 @@ export class WorkspaceEntity extends BaseEntity {
 
   @OneToMany(() => ClientEntity, (client) => client.workspace)
   clients!: ClientEntity[];
+
+  @OneToMany(() => ProjectEntity, (project) => project.workspace)
+  projects!: ProjectEntity[];
+
+  @OneToMany(() => NoteEntity, (note) => note.workspace)
+  notes!: NoteEntity[];
+
+  @OneToMany(() => TransactionEntity, (transaction) => transaction.workspace)
+  transactions!: TransactionEntity[];
 }

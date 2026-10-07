@@ -14,36 +14,40 @@ export class ProjectRepository extends BaseRepository<ProjectEntity> {
     super(dataSource, ProjectEntity);
   }
 
-  async getAllProjects(): Promise<ProjectEntity[]> {
+  async getAllProjects(workspaceId: string): Promise<ProjectEntity[]> {
     const projects = await this.repository.find({
       relations: {
         client: true,
         transactions: true,
         notes: true,
       },
+      where: {
+        workspaceId: workspaceId,
+      },
     });
 
     return projects;
   }
 
-  async update(id: string, payload: UpdateProjectDto): Promise<ProjectEntity> {
+  async update(
+    id: string,
+    workspaceId: string,
+    payload: UpdateProjectDto,
+  ): Promise<ProjectEntity> {
     const existingProject = await this.repository.findOne({
       relations: {
         client: true,
         transactions: true,
         notes: true,
       },
-      where: { id: id },
+      where: { id: id, workspaceId: workspaceId },
     });
 
     if (!existingProject) {
       throw new NotFoundException(`project with id: ${id} not found.!`);
     }
-
-    const project = await this.repository.save({
-      ...existingProject,
-      ...payload,
-    });
+    Object.assign(existingProject, payload);
+    const project = await this.repository.save(existingProject);
 
     if (!project) {
       throw new BadRequestException(
@@ -54,9 +58,9 @@ export class ProjectRepository extends BaseRepository<ProjectEntity> {
     return project;
   }
 
-  async deleteProject(id: string): Promise<boolean> {
+  async deleteProject(id: string, workspaceId: string): Promise<boolean> {
     const existingProject = await this.repository.findOne({
-      where: { id: id },
+      where: { id: id, workspaceId: workspaceId },
     });
 
     if (!existingProject) {

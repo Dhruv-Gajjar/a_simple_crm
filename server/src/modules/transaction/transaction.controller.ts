@@ -8,6 +8,7 @@ import {
   Delete,
   BadRequestException,
   InternalServerErrorException,
+  UseGuards,
 } from '@nestjs/common';
 import { TransactionService } from './transaction.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
@@ -16,6 +17,8 @@ import { TransactionDto } from './dto/transaction.dto';
 import { PinoLogger } from 'nestjs-pino';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { TransactionEntity } from './entities/transaction.entity';
+import { WorkspaceGuard } from 'src/common/guards/workspace.guard';
+import { CurrentWorkspaceId } from 'src/common/decorators/current-workspace.decorator';
 
 @Controller('transaction')
 export class TransactionController {
@@ -25,11 +28,18 @@ export class TransactionController {
   ) {}
 
   @Post()
+  @UseGuards(WorkspaceGuard)
   @ApiOperation({ summary: 'Create a new transaction' })
   @ApiResponse({ status: 201, description: 'Transaction created successfully' })
   @ApiResponse({ status: 400, description: 'Failed to create transaction' })
-  async create(@Body() payload: CreateTransactionDto): Promise<TransactionDto> {
-    const transaction = await this.transactionService.create(payload);
+  async create(
+    @CurrentWorkspaceId() workspaceId: string,
+    @Body() payload: CreateTransactionDto,
+  ): Promise<TransactionDto> {
+    const transaction = await this.transactionService.create(
+      workspaceId,
+      payload,
+    );
 
     if (!transaction) {
       this.logger.warn(`Failed to create new transaction.`);
@@ -48,14 +58,17 @@ export class TransactionController {
   }
 
   @Get()
+  @UseGuards(WorkspaceGuard)
   @ApiOperation({ summary: 'Get all transactions' })
   @ApiResponse({
     status: 200,
     description: 'All transactions fetch sucessfully',
   })
   @ApiResponse({ status: 400, description: 'Failed to get all transactions' })
-  async findAll(): Promise<TransactionDto[]> {
-    const transactions = await this.transactionService.findAll();
+  async findAll(
+    @CurrentWorkspaceId() workspaceId: string,
+  ): Promise<TransactionDto[]> {
+    const transactions = await this.transactionService.findAll(workspaceId);
 
     if (!transactions) {
       this.logger.warn(
@@ -82,14 +95,18 @@ export class TransactionController {
   }
 
   @Get(':id')
+  @UseGuards(WorkspaceGuard)
   @ApiOperation({ summary: 'Get Transaction By ID' })
   @ApiResponse({ status: 200, description: 'Fetch transaction by ID' })
   @ApiResponse({
     status: 400,
     description: 'Failed to find transaction with id',
   })
-  async findOne(@Param('id') id: string): Promise<TransactionDto> {
-    const transaction = await this.transactionService.findOne(id);
+  async findOne(
+    @Param('id') id: string,
+    @CurrentWorkspaceId() workspaceId: string,
+  ): Promise<TransactionDto> {
+    const transaction = await this.transactionService.findOne(id, workspaceId);
 
     if (!transaction) {
       this.logger.warn({ id: id }, `Failed to get transaction by ID`);
@@ -110,14 +127,20 @@ export class TransactionController {
   }
 
   @Patch(':id')
+  @UseGuards(WorkspaceGuard)
   @ApiOperation({ summary: 'Update transaction' })
   @ApiResponse({ status: 200, description: 'Transaction updated successfully' })
   @ApiResponse({ status: 400, description: 'Failed to update transaction' })
   async update(
     @Param('id') id: string,
+    @CurrentWorkspaceId() workspaceId: string,
     @Body() payload: UpdateTransactionDto,
   ): Promise<TransactionDto> {
-    const transaction = await this.transactionService.update(id, payload);
+    const transaction = await this.transactionService.update(
+      id,
+      workspaceId,
+      payload,
+    );
 
     if (!transaction) {
       this.logger.warn({ id: id }, `Failed to update transaction.`);
@@ -137,14 +160,21 @@ export class TransactionController {
   }
 
   @Delete(':id')
+  @UseGuards(WorkspaceGuard)
   @ApiOperation({ summary: 'Delete transaction' })
   @ApiResponse({
     status: 200,
     description: 'Transaction deleated successfully',
   })
   @ApiResponse({ status: 400, description: 'Failed to delete transaction' })
-  async remove(@Param('id') id: string): Promise<boolean> {
-    const isTransactionDeleated = await this.transactionService.remove(id);
+  async remove(
+    @Param('id') id: string,
+    @CurrentWorkspaceId() workspaceId: string,
+  ): Promise<boolean> {
+    const isTransactionDeleated = await this.transactionService.remove(
+      id,
+      workspaceId,
+    );
 
     if (!isTransactionDeleated) {
       this.logger.warn({ id: id }, `Failed to delete transaction.`);

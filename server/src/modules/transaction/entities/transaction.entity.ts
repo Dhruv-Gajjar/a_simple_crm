@@ -1,5 +1,6 @@
 import { BaseEntity } from 'src/common/entities/base.entity';
 import { ProjectEntity } from 'src/modules/project/entities/project.entity';
+import { WorkspaceEntity } from 'src/modules/workspace/entities/workspace.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 
 export enum TRANSACTION_STATUS {
@@ -10,6 +11,15 @@ export enum TRANSACTION_STATUS {
 
 @Entity({ name: 'transactions' })
 export class TransactionEntity extends BaseEntity {
+  @Column({ name: 'workspace_id', type: 'uuid', nullable: false })
+  workspaceId!: string;
+
+  @ManyToOne(() => WorkspaceEntity, (workspace) => workspace.transactions, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'workspace_id' })
+  workspace!: WorkspaceEntity;
+
   @Column({ name: 'project_id', type: 'uuid' })
   projectId!: string;
 
