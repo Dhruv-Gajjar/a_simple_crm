@@ -16,6 +16,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { useWorkspaceStore } from "@/stores/workspaceStore";
+import Link from "next/link";
 
 export function NavHeader() {
   const { isMobile } = useSidebar();
@@ -25,6 +27,14 @@ export function NavHeader() {
     isWorkspacesError,
     workspacesError,
   } = useWorkspace();
+
+  const activeWorkspaceId = useWorkspaceStore(
+    (state) => state.activeWorkspaceId,
+  );
+
+  const setActiveWorkspaceId = useWorkspaceStore(
+    (state) => state.setActiveWorkspaceId,
+  );
 
   if (isWorkspacesLoading) {
     return (
@@ -46,6 +56,10 @@ export function NavHeader() {
     (workspace) => workspace.isActive,
   );
 
+  const activeWorkspace = workspacesData?.find(
+    (workspace) => workspace.id === activeWorkspaceId,
+  );
+
   return (
     <SidebarMenu className="text-accent">
       <SidebarMenuItem>
@@ -58,16 +72,18 @@ export function NavHeader() {
               <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                 <AudioWaveform className="size-4" />
               </div>
-              {activeWorkspaces && activeWorkspaces?.length > 0 ? (
+              {activeWorkspace &&
+              activeWorkspaces &&
+              activeWorkspaces?.length > 0 ? (
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">
-                    {activeWorkspaces[0].name}
+                    {activeWorkspace.name}
                   </span>
                   {/*<span className="truncate text-xs">{activeTeam.plan}</span>*/}
                 </div>
-              ): <span className="truncate font-small">
-                No workspace.
-              </span>}
+              ) : (
+                <span className="truncate font-small">No workspace.</span>
+              )}
               <ChevronsUpDown className="ml-auto" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
@@ -82,7 +98,11 @@ export function NavHeader() {
             </DropdownMenuLabel>
             {activeWorkspaces &&
               activeWorkspaces.map((workspace) => (
-                <DropdownMenuItem key={workspace.id} className="gap-2 p-2">
+                <DropdownMenuItem
+                  key={workspace.id}
+                  className="gap-2 p-2"
+                  onClick={() => setActiveWorkspaceId(workspace.id)}
+                >
                   {workspace.name}
                 </DropdownMenuItem>
               ))}
@@ -91,9 +111,11 @@ export function NavHeader() {
               <div className="flex size-6 items-center justify-center rounded-md border bg-transparent">
                 <Plus className="size-4" />
               </div>
-              <div className="font-medium text-muted-foreground">
-                Add workspace
-              </div>
+              <Link href={"/workspace"}>
+                <div className="font-medium text-muted-foreground">
+                  Add workspace
+                </div>
+              </Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
