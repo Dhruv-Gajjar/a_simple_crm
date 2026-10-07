@@ -6,9 +6,11 @@ import { useGlobalStore } from "@/stores/globalStore";
 import InvoiceForm from "./InvoiceForm";
 import { useInvoiceStore } from "@/stores/invoiceStore";
 import { Dialog, DialogContent, DialogHeader } from "./ui/dialog";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 const InvoiceDialog: FC = () => {
+  const router = useRouter();
+
   const isOpen = useGlobalStore((state) => state.isInvoiceDialogOpen);
   const setOpen = useGlobalStore((state) => state.setOpenInvoiceDialog);
   const isEditMode = useGlobalStore((state) => state.isEditMode);
@@ -22,7 +24,7 @@ const InvoiceDialog: FC = () => {
       setIsEditMode();
     }
     setSelectedInvoiceId("");
-    redirect("/invoice/create");
+    router.push("/invoice/create");
   };
 
   return (

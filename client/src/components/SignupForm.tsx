@@ -12,9 +12,11 @@ import {
 } from "@/schemas/sign-up-form.schema";
 import { useAuth } from "@/hooks/use-auth-context";
 import { AuthService } from "@/services/auth.service";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function SignupForm() {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof signupFormSchema>>({
     resolver: zodResolver(signupFormSchema),
     defaultValues: signupFormDefaultValues,
@@ -37,7 +39,7 @@ export default function SignupForm() {
     setUser(newUser.result);
     toast.success("User created sucessfully");
     console.log("Sign_Up_Form: ", newUser, newUser.result.accessToken);
-    redirect("/");
+    router.push("/");
   }
 
   return (

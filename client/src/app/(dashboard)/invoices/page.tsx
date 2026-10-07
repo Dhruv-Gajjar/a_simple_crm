@@ -3,14 +3,15 @@ import { invoicesColumns } from "@/components/AppTable/columns/invoices-columns"
 import { AppDataTable } from "@/components/AppTable/data-table";
 import InvoiceDialog from "@/components/InvoiceDialog";
 import { useGlobalStore } from "@/stores/globalStore";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { FC } from "react";
 
 const Invoices: FC = () => {
   const setOpen = useGlobalStore((state) => state.setOpenInvoiceDialog);
+  const router = useRouter();
 
   const handleClick = () => {
-    redirect("/invoices/create");
+    router.push("/invoices/create");
   };
 
   return (

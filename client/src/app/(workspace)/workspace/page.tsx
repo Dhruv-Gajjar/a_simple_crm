@@ -30,8 +30,8 @@ import { WorkspaceService } from "@/services/workspace.service";
 import { useWorkspaceStore } from "@/stores/workspaceStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "cn";
-import { redirect } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -40,6 +40,8 @@ export default function Workspace() {
   const [slugMessage, setSlugMessage] = useState<string | null>("");
   const [isSlugAvailable, setIsSlugAvailable] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof workspaceSchema>>({
     resolver: zodResolver(workspaceSchema),
@@ -73,11 +75,12 @@ export default function Workspace() {
       setIsLoading(false);
       toast.success(newWorkspce.message);
       console.log({ activeWorkspaceId });
-      redirect("/");
+      router.push("/");
     } else {
       setIsSlugAvailable(false);
       setSlugMessage(slugAvailable.message);
       setIsLoading(false);
+      toast.error(slugAvailable.message);
     }
   }
 

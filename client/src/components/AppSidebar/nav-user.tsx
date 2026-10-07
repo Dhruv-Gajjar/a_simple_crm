@@ -22,10 +22,11 @@ import { useAuth } from "@/hooks/use-auth-context";
 import { Button } from "../ui/button";
 import { AuthService } from "@/services/auth.service";
 import { toast } from "sonner";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
+  const router = useRouter();
 
   const { user, isLoading } = useAuth();
 
@@ -104,7 +105,7 @@ export function NavUser() {
                     toast.error("Failed to log out");
                     return;
                   }
-                  redirect("/auth/sign-in");
+                  router.push("/auth/sign-in");
                 }}
               >
                 <LogOut />

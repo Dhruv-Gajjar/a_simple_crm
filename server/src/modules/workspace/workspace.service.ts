@@ -108,7 +108,7 @@ export class WorkspaceService {
     });
 
     if (workspaces.length <= 0) {
-      throw new BadRequestException();
+      return [];
     }
 
     return workspaces.map(

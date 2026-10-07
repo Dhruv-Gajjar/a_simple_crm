@@ -8,13 +8,15 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 import { useAuth } from "@/hooks/use-auth-context";
 import { AuthService } from "@/services/auth.service";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   signinFormDefaultValues,
   signinFormSchema,
 } from "@/schemas/sign-in-form.schema";
 
 export default function SigninForm() {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof signinFormSchema>>({
     resolver: zodResolver(signinFormSchema),
     defaultValues: signinFormDefaultValues,
@@ -36,7 +38,7 @@ export default function SigninForm() {
 
     setUser(newUser.result);
     toast.success("User logged in.");
-    redirect("/");
+    router.push("/");
   }
 
   return (
