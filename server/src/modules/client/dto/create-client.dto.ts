@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
   Length,
 } from 'class-validator';
 import { CLIENT_STATUS } from '../entities/client.entity';
@@ -15,6 +16,10 @@ export class CreateClientDto {
   constructor(partial: Partial<CreateClientDto>) {
     Object.assign(this, partial);
   }
+
+  @IsUUID()
+  @IsNotEmpty()
+  workspaceId!: string;
 
   @IsString()
   @IsNotEmpty()
