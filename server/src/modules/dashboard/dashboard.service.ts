@@ -16,7 +16,7 @@ export class DashboardService {
     private transactionRepository: TransactionRepository,
   ) {}
 
-  async getDailyLeads(): Promise<ClientDto[]> {
+  async getDailyLeads(workspaceId: string): Promise<ClientDto[]> {
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
 
@@ -26,18 +26,24 @@ export class DashboardService {
     return await this.clientRepository.queryBuilder('clients', (qb) =>
       qb
         .where('clients.status = :status', { status: CLIENT_STATUS.Lead })
+        .andWhere('clients.workspace_id = :workspaceId', {
+          workspaceId: workspaceId,
+        })
         .orderBy('clients.status', 'DESC')
         .take(5)
         .getMany(),
     );
   }
 
-  async getDashboardData(): Promise<AnalyticsDto> {
+  async getDashboardData(workspaceId: string): Promise<AnalyticsDto> {
     const activeClients = await this.clientRepository.queryBuilder(
       'clients',
       (qb) =>
         qb
           .where('clients.status = :status', { status: CLIENT_STATUS.Active })
+          .andWhere('clients.workspace_id = :workspaceId', {
+            workspaceId: workspaceId,
+          })
           .getCount(),
     );
     const activeProjects = await this.projectRepository.queryBuilder(

@@ -1,20 +1,21 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { WorkspaceGuard } from 'src/common/guards/workspace.guard';
+import { CurrentWorkspaceId } from 'src/common/decorators/current-workspace.decorator';
 
 @Controller('dashboard')
 export class DashboardController {
   constructor(private readonly dashboardService: DashboardService) {}
 
   @Get('daily-leads')
-  @UseGuards(JwtAuthGuard)
-  async getDailyLeads() {
-    return await this.dashboardService.getDailyLeads();
+  @UseGuards(WorkspaceGuard)
+  async getDailyLeads(@CurrentWorkspaceId() workspaceId: string) {
+    return await this.dashboardService.getDailyLeads(workspaceId);
   }
 
   @Get('metrics')
-  @UseGuards(JwtAuthGuard)
-  async getDashboardMetrics() {
-    return await this.dashboardService.getDashboardData();
+  @UseGuards(WorkspaceGuard)
+  async getDashboardMetrics(@CurrentWorkspaceId() workspaceId: string) {
+    return await this.dashboardService.getDashboardData(workspaceId);
   }
 }
