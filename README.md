@@ -1,2 +1,2 @@
-# founder_diary
+# A Simple CRM app
 
