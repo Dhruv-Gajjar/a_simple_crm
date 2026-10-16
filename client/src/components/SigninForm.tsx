@@ -13,6 +13,7 @@ import {
   signinFormDefaultValues,
   signinFormSchema,
 } from "@/schemas/sign-in-form.schema";
+import { useWorkspaceStore } from "@/stores/workspaceStore";
 
 export default function SigninForm() {
   const router = useRouter();
@@ -23,6 +24,13 @@ export default function SigninForm() {
   });
 
   const { setUser } = useAuth();
+
+  const activeWorkspaceId = useWorkspaceStore(
+    (state) => state.activeWorkspaceId,
+  );
+  const setActiveWorkspaceId = useWorkspaceStore(
+    (state) => state.setActiveWorkspaceId,
+  );
 
   async function onSubmit(data: z.infer<typeof signinFormSchema>) {
     if (!data) {
@@ -36,7 +44,18 @@ export default function SigninForm() {
       return;
     }
 
-    setUser(newUser.result);
+    setUser(newUser.result.user);
+
+    if (newUser.result.user.memberships.length <= 0) {
+      router.push("/workspace");
+    }
+
+    if (!activeWorkspaceId) {
+      setActiveWorkspaceId(newUser.result.user.memberships[0].workspaceId);
+    } else {
+      setActiveWorkspaceId(activeWorkspaceId);
+    }
+
     toast.success("User logged in.");
     router.push("/");
   }

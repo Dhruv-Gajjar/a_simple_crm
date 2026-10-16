@@ -9,7 +9,7 @@ type State = {
 
 type Action = {
   setSelectedWorkspaceId: (workspaceId: string) => void;
-  setActiveWorkspaceId: (workspaceId: string) => void;
+  setActiveWorkspaceId: (workspaceId: string | null) => void;
   setWorkspaceName: (workspaceName: string) => void;
 };
 
@@ -25,7 +25,7 @@ export const useWorkspaceStore = create<State & Action>()(
           selectedWorkspaceId: workspaceId,
         }),
 
-      setActiveWorkspaceId: (workspaceId: string) =>
+      setActiveWorkspaceId: (workspaceId: string | null) =>
         set({
           activeWorkspaceId: workspaceId,
         }),

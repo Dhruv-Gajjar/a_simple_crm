@@ -63,6 +63,8 @@ export class UserService {
     const user = await this.userRepository.queryBuilder('users', (qb) =>
       qb
         .addSelect('users.passwordHash')
+        .leftJoinAndSelect('users.memberships', 'memberships')
+        // .leftJoinAndSelect('users.workspace', 'workspace')
         .where('users.username = :username', { username: input })
         .getOne(),
     );
@@ -77,6 +79,7 @@ export class UserService {
       username: user.username,
       firstName: user.firstName,
       lastName: user.lastName,
+      memberships: user.memberships,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
       passwordHash: user.passwordHash,

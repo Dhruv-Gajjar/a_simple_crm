@@ -51,12 +51,19 @@ export interface Signin {
   passwordHash: string;
 }
 
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: User;
+}
+
 export interface User {
   id: string;
   username: string;
   email: string;
   firstName: string;
   lastName: string;
+  memberships: WorkspaceMember[];
   accessToken: string;
   createdAt?: Date;
   updatedAt?: Date;

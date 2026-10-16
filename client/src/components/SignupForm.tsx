@@ -36,10 +36,9 @@ export default function SignupForm() {
       return;
     }
 
-    setUser(newUser.result);
+    setUser(newUser.result.user);
     toast.success("User created sucessfully");
-    console.log("Sign_Up_Form: ", newUser, newUser.result.accessToken);
-    router.push("/");
+    router.push("/workspace");
   }
 
   return (

@@ -1,9 +1,11 @@
 import axiosInstance from "@/api";
-import { ResponsePayload, Signin, Signup, User } from "@/types";
+import { AuthResponse, ResponsePayload, Signin, Signup, User } from "@/types";
 import { isAxiosError } from "axios";
 
 export const AuthService = {
-  signup: async (payload: Signup): Promise<ResponsePayload<User | null>> => {
+  signup: async (
+    payload: Signup,
+  ): Promise<ResponsePayload<AuthResponse | null>> => {
     try {
       const response = await axiosInstance.post(`/auth/sign-up`, payload, {
         withCredentials: true,
@@ -27,7 +29,9 @@ export const AuthService = {
       };
     }
   },
-  signin: async (payload: Signin) => {
+  signin: async (
+    payload: Signin,
+  ): Promise<ResponsePayload<AuthResponse | null>> => {
     try {
       const response = await axiosInstance.post(`/auth/sign-in`, payload, {
         withCredentials: true,

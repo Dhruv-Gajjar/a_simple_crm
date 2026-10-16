@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsEmail,
   IsNotEmpty,
@@ -6,6 +7,7 @@ import {
   IsString,
   IsUUID,
 } from 'class-validator';
+import { WorkspaceMemberEntity } from 'src/modules/workspace-member/entities/workspace-member.entity';
 
 export class UserByEmailDtoResponse {
   constructor(partial: Partial<UserByEmailDtoResponse>) {
@@ -33,6 +35,10 @@ export class UserByEmailDtoResponse {
   @ApiProperty()
   @IsString()
   lastName!: string;
+
+  @ApiProperty()
+  @Type(() => WorkspaceMemberEntity)
+  memberships!: WorkspaceMemberEntity[];
 
   @ApiProperty()
   @IsEmail()

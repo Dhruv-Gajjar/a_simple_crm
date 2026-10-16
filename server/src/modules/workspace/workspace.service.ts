@@ -126,15 +126,15 @@ export class WorkspaceService {
 
   async getById(userId: string, id: string): Promise<WorkspaceDto> {
     const workspace = await this.repository.findOne({
+      relations: {
+        members: true,
+        clients: true,
+      },
       where: {
         id,
         members: {
           userId: userId,
         },
-      },
-      relations: {
-        members: true,
-        clients: true,
       },
     });
 

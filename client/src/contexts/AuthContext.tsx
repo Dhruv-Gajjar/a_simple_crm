@@ -41,11 +41,11 @@ export default function AuthContextProvider({
   const fetchCurrentUser = useCallback(async () => {
     try {
       const currentUser = await AuthService.getCurrentUser();
-      setUser(currentUser.result);
       if (!currentUser.result) {
         router.replace("/auth/sign-in");
         return;
       }
+      setUser(currentUser.result);
     } catch {
       setUser(null);
     } finally {

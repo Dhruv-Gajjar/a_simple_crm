@@ -23,12 +23,16 @@ import { Button } from "../ui/button";
 import { AuthService } from "@/services/auth.service";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useWorkspaceStore } from "@/stores/workspaceStore";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
   const router = useRouter();
 
   const { user, isLoading } = useAuth();
+  const setActiveWorkspaceId = useWorkspaceStore(
+    (state) => state.setActiveWorkspaceId,
+  );
 
   if (isLoading && !user) {
     return;
@@ -99,6 +103,7 @@ export function NavUser() {
                   if (!user) {
                     console.log("Logout: No user found.");
                   }
+                  setActiveWorkspaceId(null);
                   const response = await AuthService.logout();
 
                   if (response.error) {
