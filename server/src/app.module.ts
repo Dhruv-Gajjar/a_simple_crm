@@ -19,6 +19,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { AuthJwtModule } from './modules/jwt/jwt.module';
 import { JwtAuthGuard } from './modules/auth/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { AppMailModule } from './modules/app-mail/app-mail.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { APP_GUARD } from '@nestjs/core';
     WorkspaceMemberModule,
     AuthModule,
     AuthJwtModule,
+    AppMailModule,
   ],
   controllers: [AppController],
   providers: [

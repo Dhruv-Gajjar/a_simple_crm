@@ -12,6 +12,9 @@ import { SignupDto } from './dtos/signup.dto';
 import { UserDto } from '../user/dtos/user.dto';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { Mailer } from '@nestjs/mail';
+import { WelcomeUserMail } from '../app-mail/welcome-user.mail';
+import { AppMailService } from '../app-mail/app-mail.service';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +22,8 @@ export class AuthService {
     private configService: ConfigService,
     private userService: UserService,
     private jwtService: AuthJwtService,
+    private mailer: Mailer,
+    private appMailService: AppMailService,
   ) {}
 
   async signup(res: Response, input: SignupDto): Promise<AuthResponseDto> {
@@ -53,6 +58,8 @@ export class AuthService {
       ),
       path: '/',
     });
+
+    await this.appMailService.sendEmail(newUser);
 
     return new AuthResponseDto({
       accessToken,
